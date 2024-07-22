@@ -1,0 +1,7 @@
+### GET request to example server
+GET https://127.0.0.1:8080/api/teams
+    ?generated-in=IntelliJ IDEA
+
+###
+POST https://127.0.0.1:8080/api/teams
+Content-Type: application/json
