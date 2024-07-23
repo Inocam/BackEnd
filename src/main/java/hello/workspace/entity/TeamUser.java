@@ -1,9 +1,15 @@
 package hello.workspace.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Teamuser")
+@NoArgsConstructor
+@Getter
+@Setter
 public class TeamUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

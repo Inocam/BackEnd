@@ -1,8 +1,10 @@
 package hello.workspace.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class RequestInvitationDto {
     private String status;
     private Long teamId;

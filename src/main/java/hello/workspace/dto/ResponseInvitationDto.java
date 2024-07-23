@@ -12,6 +12,7 @@ public class ResponseInvitationDto {
     private String status;
     private Long userId;
     private Long teamId;
+    private String message;
 
     public ResponseInvitationDto(Invitation invitation) {
         this.id = invitation.getId();
