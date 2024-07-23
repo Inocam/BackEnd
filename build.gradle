@@ -24,6 +24,8 @@ repositories {
 }
 
 dependencies {
+    //logging
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
 
     // JPA 설정
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'

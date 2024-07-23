@@ -1,7 +1,14 @@
 ### GET request to example server
-GET https://127.0.0.1:8080/api/teams
+GET http://127.0.0.1:8080/api/teams/user/
     ?generated-in=IntelliJ IDEA
 
 ###
-POST https://127.0.0.1:8080/api/teams
+POST http://127.0.0.1:8080/api/teams
 Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "New Team",
+  "projectName": "on team",
+  "description": "This is a new team."
+}

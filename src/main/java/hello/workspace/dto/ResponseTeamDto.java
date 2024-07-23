@@ -1,8 +1,10 @@
 package hello.workspace.dto;
 
 import hello.workspace.entity.Team;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor
 public class ResponseTeamDto {
 

@@ -16,7 +16,7 @@ public class TeamUser {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false) //
     private User user;
 
     @ManyToOne
@@ -24,6 +24,11 @@ public class TeamUser {
     private Team team;
 
     @Column(nullable = false)
-    private Long role;
+    private String role;
 
+    public TeamUser(User user, Team team, String role) {
+        this.user = user;
+        this.team = team;
+        this.role = role;
+    }
 }
