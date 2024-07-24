@@ -10,4 +10,10 @@ public interface TeamUserRepository extends JpaRepository<TeamUser, Long> {
 
     @Transactional
     void deleteByTeamAndUser(Team team, User user);
+
+
+    TeamUser findByTeamAndUser(Team team, User user);   //정의된 순서에 따라 호출 해야함.
+
+    boolean existsByTeamAndUser(Team team, User user);
+
 }

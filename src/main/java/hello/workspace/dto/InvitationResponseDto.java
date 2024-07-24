@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ResponseInvitationDto {
+public class InvitationResponseDto {
 
     private Long id;
     private String status;
@@ -14,7 +14,7 @@ public class ResponseInvitationDto {
     private Long teamId;
     private String message;
 
-    public ResponseInvitationDto(Invitation invitation) {
+    public InvitationResponseDto(Invitation invitation) {
         this.id = invitation.getId();
         this.status = invitation.getStatus();
         this.userId = invitation.getUser().getId();

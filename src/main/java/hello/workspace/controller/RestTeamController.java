@@ -30,6 +30,8 @@ public class RestTeamController {
     //응답 본문으로 responseteamDto를 설정하고, http 상태 코드를 설정해줌 (201, 성공적으로 생성되었음을 알리는 http)
 
     /* ______________________________Team___________________________________________________ */
+    //팀 생성 엔드포인트
+    //creatorId 추가함 -> 팀 생성 요청 시 팀의 생성자를 추가하기 위해서, 누가 팀을 생성했는지를 설정!
     @PostMapping
     public ResponseEntity<ResponseTeamDto> createTeam(@RequestBody RequestTeamDto requestTeamDto) {
         ResponseTeamDto responseTeamDto = teamService.createTeam(requestTeamDto);
@@ -39,11 +41,11 @@ public class RestTeamController {
 
     /* ______________________________Invitation___________________________________________________ */
 
-    // 팀원 초대할 때 요청자가 팀장인지, 대상이 팀에 이미 속해 있는지, 초대장이 이미 있는지 확인
+    //controller 팀원 초대할 때 요청자가 팀장인지, 대상이 팀에 이미 속해 있는지, 초대장이 이미 있는지 확인
     //팀원 초대 엔드포인트
     @PostMapping("/invite")
-    public ResponseEntity<ResponseInvitationDto> inviteTeam(@RequestBody RequestInvitationDto requestInvitationDto) {
-        ResponseInvitationDto responseInvitationDto = teamService.inviteUserToTeam(requestInvitationDto);
+    public ResponseEntity<InvitationResponseDto> inviteTeam(@RequestBody InvitationRequestDto invitationRequestDto) {
+        InvitationResponseDto responseInvitationDto = teamService.inviteUserToTeam(invitationRequestDto);
         return new ResponseEntity<>(responseInvitationDto, HttpStatus.CREATED);
     }
 

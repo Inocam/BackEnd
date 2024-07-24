@@ -25,9 +25,12 @@ public class Team {
     @Column(name = "description", nullable = false, length = 50)
     private String description;
 
+
+
     public Team(RequestTeamDto requestTeamDto) {
         this.name = requestTeamDto.getName();
         this.projectName = requestTeamDto.getProjectName();
         this.description = requestTeamDto.getDescription();
+
     }
 }
