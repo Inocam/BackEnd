@@ -1,7 +1,8 @@
 package com.sparta.backend.chat.controller;
 
-import com.sparta.backend.chat.dto.ChatRoomRequestDto;
-import com.sparta.backend.chat.dto.ChatRoomResponseDto;
+import com.sparta.backend.chat.dto.chatRoom.ChatRoomRequestDto;
+import com.sparta.backend.chat.dto.chatRoom.ChatRoomResponseDto;
+import com.sparta.backend.chat.dto.chatRoom.RoomListResponseDto;
 import com.sparta.backend.chat.service.ChatRoomService;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class ChatRoomController {
 
     // 채팅방 전체 조회
     @GetMapping("/rooms")
-    public List<ChatRoomResponseDto> getRoom() {
+    public List<RoomListResponseDto> getRoom() {
         return chatRoomService.getRoom();
     }
 

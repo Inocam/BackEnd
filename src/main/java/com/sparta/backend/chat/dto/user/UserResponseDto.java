@@ -1,4 +1,4 @@
-package com.sparta.backend.chat.dto;
+package com.sparta.backend.chat.dto.user;
 
 import com.sparta.backend.chat.entity.User;
 import lombok.Getter;

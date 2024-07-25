@@ -28,8 +28,9 @@ public class ChatRoom {
     @JoinColumn(name="userId")
     private User user;
 
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
-    private List<ChatMessage> messages = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name="guestId")
+    private User guest;
 
     public void setRoomName(String roomName) {
         this.roomName = roomName;
@@ -42,4 +43,5 @@ public class ChatRoom {
     public void setUser(User user) {
         this.user = user;
     }
+
 }

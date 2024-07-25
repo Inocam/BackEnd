@@ -1,4 +1,4 @@
-package com.sparta.backend.chat.dto;
+package com.sparta.backend.chat.dto.chatRoom;
 
 import lombok.Getter;
 
@@ -6,6 +6,6 @@ import lombok.Getter;
 public class ChatRoomRequestDto {
 
     private Long userId;
+    private Long guestId;
     private String roomName;
-
 }

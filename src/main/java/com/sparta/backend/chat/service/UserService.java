@@ -1,7 +1,7 @@
 package com.sparta.backend.chat.service;
 
-import com.sparta.backend.chat.dto.UserRequestDto;
-import com.sparta.backend.chat.dto.UserResponseDto;
+import com.sparta.backend.chat.dto.user.UserRequestDto;
+import com.sparta.backend.chat.dto.user.UserResponseDto;
 import com.sparta.backend.chat.entity.User;
 import com.sparta.backend.chat.repository.UserRepository;
 import org.springframework.stereotype.Service;

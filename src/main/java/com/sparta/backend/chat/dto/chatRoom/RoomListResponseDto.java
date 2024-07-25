@@ -1,21 +1,17 @@
-package com.sparta.backend.chat.dto;
+package com.sparta.backend.chat.dto.chatRoom;
 
 import com.sparta.backend.chat.entity.ChatRoom;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Getter
-public class ChatRoomResponseDto {
+public class RoomListResponseDto {
 
     private Long roomId;
-    private Long userId;
     private String roomName;
     private LocalDateTime createDate;
 
-    public ChatRoomResponseDto(ChatRoom chatRoom) {
+    public RoomListResponseDto(ChatRoom chatRoom) {
         this.roomId = chatRoom.getRoomId();
-        this.userId = chatRoom.getUser().getUserId();
         this.roomName = chatRoom.getRoomName();
         this.createDate = LocalDateTime.now();
     }
