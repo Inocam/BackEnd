@@ -8,7 +8,13 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "New Team",
-  "projectName": "on team",
-  "description": "This is a new team."
+  "name": "새로운 그룹",
+  "projectName": "팀 생성 프로젝트",
+  "description": "팀을 생성한다.",
+  "creatorId": 1
 }
+###
+POST http://127.0.0.1:8080/api/teams/invite
+Content-Type: application/json
+Accept: application/json
+

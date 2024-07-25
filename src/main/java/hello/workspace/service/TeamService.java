@@ -11,6 +11,7 @@ import hello.workspace.repository.TeamUserRepository;
 import hello.workspace.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,6 +42,7 @@ public class TeamService {
 
     //초대 생성 메서드
     //사용자가 팀에 새로운 멤버를 초대
+    @Transactional
     public InvitationResponseDto inviteUserToTeam(InvitationRequestDto invitationRequestDto) {
         //요청받은 초대 요청 dto에서 팀id와 사용자id 추출
         Long teamId = invitationRequestDto.getTeamId();
@@ -118,29 +120,6 @@ public class TeamService {
                 .collect(Collectors.toList());
     }
 
-//    //초대 수락 메서드
-//    public ResponseInvitationDto acceptInvitation(Long invitationId) {
-//        Invitation invitation = invitationRepository.findById(invitationId)
-//                .orElseThrow(() -> new IllegalArgumentException("잘못된 초대 ID 입니다."));
-//        invitation.setStatus("accepted");
-//        Invitation updqtedInvitation = invitationRepository.save(invitation);
-//        ResponseInvitationDto responseInvitationDto = new ResponseInvitationDto(updqtedInvitation);
-//        responseInvitationDto.setMessage("초대가 수락되었습니다.");
-//        return responseInvitationDto;
-//    } // -> 수락만 하고 팀원에 속하는 메서드가 없음(-)
-//
-//
-//    // 초대 거부 메서드
-//    public ResponseInvitationDto rejectInvitation(Long invitationId) {
-//        Invitation invitation = invitationRepository.findById(invitationId)     //초대ID로 초대를 조회,존재하지 않으면 예외를 던짐
-//                .orElseThrow(() -> new IllegalArgumentException("잘못된 초대 ID입니다."));
-//        invitation.setStatus("rejected");   //초대 상태를 rejected로 변경
-//        Invitation updatedInvitation = invitationRepository.save(invitation);   //변경된 초대를 db에 저장
-//        ResponseInvitationDto responseInvitationDto = new ResponseInvitationDto(updatedInvitation);
-//        responseInvitationDto.setMessage("초대가 거부되었습니다.");
-//        return responseInvitationDto;  //업데이트된 초대 정보를 dto로 변환하여 반환
-//    }
-
 
     //초대 수락,거부 메서드 // 클라이언트가 요청한 초대
     public String setInvitation(InvitationSetRequestDTO invitationSetRequestDTO){
@@ -169,5 +148,7 @@ public class TeamService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 사용자 ID입니다."));
         teamUserRepository.deleteByTeamAndUser(team, user); //** deleteByTeamAndUser이게 팀유저레포지토리에 있는 이유는,.(-)
     }
+
+
 }
 
