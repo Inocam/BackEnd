@@ -2,19 +2,30 @@
 GET http://127.0.0.1:8080/api/teams/user/
     ?generated-in=IntelliJ IDEA
 
-###
+### 팀 생성 요청
 POST http://127.0.0.1:8080/api/teams
 Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "새로운 그룹",
-  "projectName": "팀 생성 프로젝트",
-  "description": "팀을 생성한다.",
-  "creatorId": 1
+  "name": "새로운 그룹2",
+  "projectName": "팀 생성 프로젝트2",
+  "description": "다른 팀을 생성한다.",
+  "creatorId": 3
 }
-###
+### 팀원 초대 요청
 POST http://127.0.0.1:8080/api/teams/invite
 Content-Type: application/json
 Accept: application/json
 
+{
+  "teamId": 19,
+  "userId": 2,
+  "requesterId": 1,
+  "status": "pending"
+}
+
+### 팀 삭제 요청
+DELETE http://127.0.0.1:8080/api/teams/1
+Content-Type: application/json
+Accept: application/json

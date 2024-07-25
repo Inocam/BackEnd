@@ -26,6 +26,7 @@ public class Invitation {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+
     //팀과 유저를 서비스나, 컨트롤러에서 조회 후 주입하는 생성자
     public Invitation(String status, Team team, User user) {
         this.status = status;

@@ -34,7 +34,8 @@ public class TeamService {
 
         TeamUser teamUser = new TeamUser(creator, saveTeam, "팀장"); //팀 생성자를 팀장으로 추가
         teamUserRepository.save(teamUser);
-
+        // 변경 사항 저장 하는
+        //userRepository.save(creator);
         return new ResponseTeamDto(saveTeam);
     }
 
@@ -47,7 +48,7 @@ public class TeamService {
         //요청받은 초대 요청 dto에서 팀id와 사용자id 추출
         Long teamId = invitationRequestDto.getTeamId();
         Long userId = invitationRequestDto.getUserId();
-        Long requestId = invitationRequestDto.getRequesterId(); //요청자를 invitationRequestDto 에서 가져온다고 가정.. 지금 저기에 작성 안되어 있음
+        Long requesterId = invitationRequestDto.getRequesterId(); //요청자를 invitationRequestDto 에서 가져온다고 가정.. 지금 저기에 작성 안되어 있음
 
         //요청자가 팀장인지 확인
         if (isRequesterTeamLeader(userId, teamId)) {
@@ -120,7 +121,6 @@ public class TeamService {
                 .collect(Collectors.toList());
     }
 
-
     //초대 수락,거부 메서드 // 클라이언트가 요청한 초대
     public String setInvitation(InvitationSetRequestDTO invitationSetRequestDTO){
         // 초대 ID로 초대 객체를 조회
@@ -146,9 +146,17 @@ public class TeamService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 ID입니다."));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 사용자 ID입니다."));
-        teamUserRepository.deleteByTeamAndUser(team, user); //** deleteByTeamAndUser이게 팀유저레포지토리에 있는 이유는,.(-)
+        teamUserRepository.deleteByTeamAndUser(team, user); //** deleteByTeamAndUser이게 팀유저레포지토리에 있는 이유는,.(+) -> 해당 관계를 삭제하는 거기 때문에
     }
 
-
+    //팀 삭제 메서드
+    public void removeTeam(Long teamId) { //teamId -> 삭제할 팀을 고유하게 식별하는 값
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 Id 입니다."));
+        //팀 삭제 전에 해당 팀과 관련된 모든 teamUser 관계 삭제
+        teamUserRepository.deleteByTeam(team);
+        //팀 삭제
+        teamRepository.delete(team);
+    }
 }
 
