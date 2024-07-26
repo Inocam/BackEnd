@@ -3,12 +3,12 @@ package com.sparta.backend.chat.controller;
 import com.sparta.backend.chat.dto.user.UserRequestDto;
 import com.sparta.backend.chat.dto.user.UserResponseDto;
 import com.sparta.backend.chat.service.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/api/foot")
 public class UserController {
 
     private final UserService userService;

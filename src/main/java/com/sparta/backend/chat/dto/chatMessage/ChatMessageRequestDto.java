@@ -1,4 +1,4 @@
-package com.sparta.backend.chat.dto.chatMessage;
-
-public class ChatMessageRequestDto {
-}
+//package com.sparta.backend.chat.dto.chatMessage;
+//
+//public class ChatMessageRequestDto {
+//}

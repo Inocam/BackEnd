@@ -15,11 +15,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @Column(name="senderId", unique = true, nullable = false)
+    private Long senderId;
+
     @Column(name="userName", nullable = false)
     private String userName;
 
     public User(UserRequestDto requestDto) {
         this.userName = requestDto.getUserName();
+        this.senderId = requestDto.getSenderId();
     }
 
 

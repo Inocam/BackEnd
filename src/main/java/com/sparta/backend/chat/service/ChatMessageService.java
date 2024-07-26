@@ -1,4 +1,4 @@
-package com.sparta.backend.chat.service;
-
-public class ChatMessageService {
-}
+//package com.sparta.backend.chat.service;
+//
+//public class ChatMessageService {
+//}

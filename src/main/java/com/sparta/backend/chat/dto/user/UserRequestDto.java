@@ -5,5 +5,6 @@ import lombok.Getter;
 @Getter
 public class UserRequestDto {
 
+    private Long senderId;
     private String userName;
 }

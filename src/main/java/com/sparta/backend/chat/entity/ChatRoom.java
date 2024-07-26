@@ -29,8 +29,8 @@ public class ChatRoom {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name="guestId")
-    private User guest;
+    @JoinColumn(name = "senderId", nullable = false)
+    private User sender;
 
     public void setRoomName(String roomName) {
         this.roomName = roomName;
@@ -42,6 +42,10 @@ public class ChatRoom {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void setSender(User sender) {
+        this.sender = sender;
     }
 
 }

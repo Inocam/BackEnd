@@ -1,4 +1,4 @@
-package com.sparta.backend.chat.repository;
-
-public interface ChatMessageRepository {
-}
+//package com.sparta.backend.chat.repository;
+//
+//public interface ChatMessageRepository {
+//}

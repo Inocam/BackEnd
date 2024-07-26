@@ -32,15 +32,20 @@ public class ChatRoomService {
         User user = userRepository.findById(chatRoomRequestDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("사용자가 없습니다."));
 
-//        // 채팅방 중복 여부
-//        if (chatRoomRepository.existsByRoomName(chatRoomRequestDto.getRoomName())) {
-//            throw new IllegalArgumentException("이미 존재하는 채팅방 이름입니다.");
-//        }
+        // 초대된 사용자 정보 가져오기
+        User sender = userRepository.findById(chatRoomRequestDto.getSenderId())
+                .orElseThrow(() -> new IllegalArgumentException("초대된 사용자가 없습니다."));
+
+        // 채팅방 중복 여부
+        if (chatRoomRepository.existsByRoomName(chatRoomRequestDto.getRoomName())) {
+            throw new IllegalArgumentException("이미 존재하는 채팅방 이름입니다.");
+        }
 
         // ChatRoom 엔티티 생성
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.setRoomName(chatRoomRequestDto.getRoomName());
         chatRoom.setCreatedDate(LocalDateTime.now());
+        chatRoom.setSender(sender);
         chatRoom.setUser(user);
 
         // ChatRoom 저장 및 응답 DTO 생성
