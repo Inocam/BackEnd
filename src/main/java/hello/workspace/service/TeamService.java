@@ -10,6 +10,7 @@ import hello.workspace.repository.TeamRepository;
 import hello.workspace.repository.TeamUserRepository;
 import hello.workspace.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +19,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TeamService {
     private final TeamRepository teamRepository;
     private final InvitationRepository invitationRepository;
     private final UserRepository userRepository;
     private final TeamUserRepository teamUserRepository;
+
 
     //팀 생성 메서드
     public ResponseTeamDto createTeam(RequestTeamDto requestTeamDto) {  //RequestTeamDto 객체를 받고,ResponseTeamDto 객체를 반환함, requestTeamDto의 정보를 이용하여 team 객체를 생성하고, 생성된 team 객체를 teamRepository의 save 메서드를 사용해서 저장해서 saveteam 객체를 만든다. 그리고 ResponseTeamDto로 감싸서 반환한다.
@@ -50,8 +53,9 @@ public class TeamService {
         Long userId = invitationRequestDto.getUserId(); //user의 fk 초대 할 유저의 아이디
         Long requesterId = invitationRequestDto.getRequesterId();   //초대를 생성하는 유저의 아이디
 
+
         //요청자가 팀장인지 확인
-        if (isRequesterTeamLeader(userId, teamId)) {
+        if (isRequesterTeamLeader(requesterId, teamId)) { //userId -> requesterId 변경
             throw new IllegalArgumentException("요청자가 팀장이 아닙니다.");
         }
         //대상 사용자가 이미 팀에 속해 있는지 확인 -> 초대장을 보내서 초대하는 메서드 작성중이니깐 -> 이미 팀에 속해 있다면 예외를 던짐
@@ -78,14 +82,31 @@ public class TeamService {
     //요청자가 팀장인지 확인하는 메서드 //다른 서비스나 컨트롤러에서 요청자가 팀장인지 확인하는데 사용될 수 있음
     public boolean isRequesterTeamLeader(Long requesterId, Long teamId) {
         //요청자 id로 user 객체를 조회
+        log.info("요청자 ID: {}", requesterId);
+        log.info("팀 ID: {}", teamId);
+
         User requester = userRepository.findById(requesterId)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 사용자 ID 입니다."));
+        log.info("요청자: {}", requester.getUsername());
+
         //팀 ID로 Team 객체를 조회
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 ID입니다."));
+        log.info("팀: {}", team.getName());
+
         //User와 Team 객체를 사용하여 TeamUser를 조회 -> TeamUser 객체는 특정 팀에 속한 사용자의 역할을 정의
         TeamUser teamUser = teamUserRepository.findByTeamAndUser(team, requester);  // //정의된 순서에 따라 호출 -> teamUserRepository에 정의 된 순서에 따라서 호출!
-        return teamUser != null && teamUser.getRole().equals("팀장");
+       // return teamUser != null && teamUser.getRole().equals("팀장");
+
+        if (teamUser != null) {
+            log.info("요청자 역할: {}", teamUser.getRole());
+        } else {
+            log.info("요청자는 팀의 일부가 아닙니다.");
+        }
+
+        log.info("팀: {}", teamUser.getRole());
+        log.info("팀2: {}", "팀장".equals(teamUser.getRole()));
+        return !(teamUser != null && "팀장".equals(teamUser.getRole()));  // ! 이 없으니깐
 
         //teamUser 객체가 존재하는지 확인 -> null이라면 해당 사용자가 해당 팀에 속하지 않는다는 의미
         //조회된 teamUser 객체의 역할이 "팀장"인지 확인 -> equals 사용해서, teamUser.getRole() 반환 값과 "팀장" 문자열을 비교

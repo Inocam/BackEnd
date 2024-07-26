@@ -19,16 +19,21 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "teamId": 25,
-  "userId": 3,
-  "requesterId": 0,
+  "teamId": 20,
+  "userId":1,
+  "requesterId": 3,
   "status": "pending"
 }
 
 ### 팀 삭제 요청
-DELETE http://127.0.0.1:8080/foot/teams/1
+DELETE http://127.0.0.1:8080/foot/teams/2
 Content-Type: application/json
-Accept: application/json
+Accept: application/json/
+### 팀원 삭제 요청
+DELETE http://127.0.0.1:8080/foot/teams/20/members/1
+Content-Type: application/json
+Accept: application/json/
+
 
 ### 초대 받은 팀 목록 조회(accepted 상태만)
 GET http://127.0.0.1:8080/foot/teams/user/1
