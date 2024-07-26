@@ -19,18 +19,16 @@ public class Team {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Column(name = "projectName", nullable = false, length = 50)
-    private String projectName;
-
     @Column(name = "description", nullable = false, length = 50)
     private String description;
 
-
+    @Column(name = "creator_id", nullable = false)
+    private Long creatorId;
 
     public Team(RequestTeamDto requestTeamDto) {
         this.name = requestTeamDto.getName();
-        this.projectName = requestTeamDto.getProjectName();
         this.description = requestTeamDto.getDescription();
+        this.creatorId = requestTeamDto.getCreatorId();
 
     }
 }

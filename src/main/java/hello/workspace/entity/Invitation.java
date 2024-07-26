@@ -26,11 +26,14 @@ public class Invitation {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "requester_id", nullable = false)
+    private Long requesterId;
 
     //팀과 유저를 서비스나, 컨트롤러에서 조회 후 주입하는 생성자
-    public Invitation(String status, Team team, User user) {
+    public Invitation(String status, Team team, User user, Long requesterId) {
         this.status = status;
         this.team = team;
         this.user = user;
+        this.requesterId = requesterId;
     }
 }

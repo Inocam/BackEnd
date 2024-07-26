@@ -12,10 +12,11 @@ public class InvitationRequestDto {
     private Long requesterId; //요청자 ID 추가
 
     //기존의 생성자
-    public InvitationRequestDto(String status, Long teamId, Long userId) {
+    public InvitationRequestDto(String status, Long teamId, Long userId, Long requesterId) {
         this.status = status;
         this.teamId = teamId;
         this.userId = userId;
+        this.requesterId = requesterId;
     }
 
 }

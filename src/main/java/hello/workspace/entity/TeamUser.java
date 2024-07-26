@@ -26,7 +26,7 @@ public class TeamUser {
     @Column(nullable = false)
     private String role;
 
-    public TeamUser(User user, Team team, String role) {
+    public TeamUser(User user, Team team, String role) {    //팀장,팀원 구분 role로 함
         this.user = user;
         this.team = team;
         this.role = role;

@@ -10,14 +10,14 @@ public class ResponseTeamDto {
 
     private Long team_id;
     private String name;
-    private String projectName;
     private String description;
+    private Long creatorId;
 
     public ResponseTeamDto(Team team) {
         this.team_id = team.getTeam_id();
         this.name = team.getName();
         this.description = team.getDescription();
-        this.projectName = team.getProjectName();
+        this.creatorId = team.getCreatorId();
 
     }
 }

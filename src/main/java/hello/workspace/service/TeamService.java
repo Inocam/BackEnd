@@ -28,11 +28,11 @@ public class TeamService {
     public ResponseTeamDto createTeam(RequestTeamDto requestTeamDto) {  //RequestTeamDto 객체를 받고,ResponseTeamDto 객체를 반환함, requestTeamDto의 정보를 이용하여 team 객체를 생성하고, 생성된 team 객체를 teamRepository의 save 메서드를 사용해서 저장해서 saveteam 객체를 만든다. 그리고 ResponseTeamDto로 감싸서 반환한다.
         Team team = new Team(requestTeamDto); // 팀 객체 생성
         User creator = userRepository.findById(requestTeamDto.getCreatorId())
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 사용자 iD입니다"));
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 생성 입니다."));
 
         Team saveTeam = teamRepository.save(team); // 팀 객체 데베에 저장
 
-        TeamUser teamUser = new TeamUser(creator, saveTeam, "팀장"); //팀 생성자를 팀장으로 추가
+        TeamUser teamUser = new TeamUser(creator, saveTeam, "팀장"); //팀 생성자를 팀장으로 추가 //teamUser 객체 생성시 -> creator가 User 엔티티 객체, TeamUser 엔티티의 user 필드에 매핑됨,
         teamUserRepository.save(teamUser);
         // 변경 사항 저장 하는
         //userRepository.save(creator);
@@ -46,9 +46,9 @@ public class TeamService {
     @Transactional
     public InvitationResponseDto inviteUserToTeam(InvitationRequestDto invitationRequestDto) {
         //요청받은 초대 요청 dto에서 팀id와 사용자id 추출
-        Long teamId = invitationRequestDto.getTeamId();
-        Long userId = invitationRequestDto.getUserId();
-        Long requesterId = invitationRequestDto.getRequesterId(); //요청자를 invitationRequestDto 에서 가져온다고 가정.. 지금 저기에 작성 안되어 있음
+        Long teamId = invitationRequestDto.getTeamId(); //team의 fk 초대 할 팀의 아이디
+        Long userId = invitationRequestDto.getUserId(); //user의 fk 초대 할 유저의 아이디
+        Long requesterId = invitationRequestDto.getRequesterId();   //초대를 생성하는 유저의 아이디
 
         //요청자가 팀장인지 확인
         if (isRequesterTeamLeader(userId, teamId)) {
@@ -69,7 +69,7 @@ public class TeamService {
         User user = userRepository.findById(invitationRequestDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 사용자 이름 입니다."));
 
-        Invitation invitation = new Invitation(invitationRequestDto.getStatus(), team, user);
+        Invitation invitation = new Invitation(invitationRequestDto.getStatus(), team, user, requesterId);
         Invitation saveInvitation = invitationRepository.save(invitation);
 
         return new InvitationResponseDto(saveInvitation);
@@ -94,7 +94,7 @@ public class TeamService {
 
     //대상 사용자가 이미 팀에 속해 있는지 확인하는 메서드
     private boolean isUserInTeam(Long userId, Long teamId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(userId) //주어진 userId로 사용자를 조회한다. 존재하지 않는 사용자이면 예외 던짐.
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 사용자 입니다."));
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 입니다."));
@@ -109,10 +109,17 @@ public class TeamService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 입니다."));
         return invitationRepository.existsByUserAndTeam(user, team);
-        //
     }
 
-    //사용자가 초대받은 팀 목록 조회 메서드
+    //사용자가 초대받은 팀 목록 조회 메서드 (모든 상태)(+)
+    public List<ResponseTeamDto> getAllTeamsByUserId(Long userId) {
+        List<Invitation> invitations = invitationRepository.findByUserId(userId);
+        return invitations.stream()
+                .map(invitation -> new ResponseTeamDto(invitation.getTeam()))
+                .collect(Collectors.toList());
+    }
+
+    //사용자가 초대받은 팀 목록 조회 메서드(+) (뺄지,, 말지??(-))
     public List<ResponseTeamDto> getTeamsByUserId(Long userId) {
         //'accepted' 상태의 초대만 조회
         List<Invitation> invitations = invitationRepository.findByUserIdAndStatus(userId, "accepted");

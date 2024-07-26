@@ -1,31 +1,51 @@
 ### GET request to example server
-GET http://127.0.0.1:8080/api/teams/user/
+GET http://127.0.0.1:8080/foot/teams/user/
     ?generated-in=IntelliJ IDEA
 
 ### 팀 생성 요청
-POST http://127.0.0.1:8080/api/teams
+POST http://127.0.0.1:8080/foot/teams
 Content-Type: application/json
 Accept: application/json
 
 {
-  "name": "새로운 그룹2",
-  "projectName": "팀 생성 프로젝트2",
-  "description": "다른 팀을 생성한다.",
-  "creatorId": 3
+  "name": "앨리스 그룹",
+  "description": "여러 팀를 생성해서, 여러 팀의 팀장이 됨",
+  "creatorId": 1
 }
+
 ### 팀원 초대 요청
-POST http://127.0.0.1:8080/api/teams/invite
+POST http://127.0.0.1:8080/foot/teams/invite
 Content-Type: application/json
 Accept: application/json
 
 {
-  "teamId": 19,
-  "userId": 2,
-  "requesterId": 1,
+  "teamId": 25,
+  "userId": 3,
+  "requesterId": 0,
   "status": "pending"
 }
 
 ### 팀 삭제 요청
-DELETE http://127.0.0.1:8080/api/teams/1
+DELETE http://127.0.0.1:8080/foot/teams/1
 Content-Type: application/json
 Accept: application/json
+
+### 초대 받은 팀 목록 조회(accepted 상태만)
+GET http://127.0.0.1:8080/foot/teams/user/1
+Content-Type: application/json
+Accept: application/json
+
+### 초대 받은 팀 목록 조회
+GET http://127.0.0.1:8080/foot/teams/user/2/all
+Content-Type: application/json
+Accept: application/json
+
+### 초대 처리
+DELETE http://127.0.0.1:8080/foot/teams/invite
+Content-Type: application/json
+Accept: application/json
+
+{
+  "invitationId": 123,
+  "isAccept": true
+}

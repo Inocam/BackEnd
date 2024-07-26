@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/teams")
+@RequestMapping("/foot/teams")
 @RequiredArgsConstructor
 public class RestTeamController {
 
@@ -43,6 +43,12 @@ public class RestTeamController {
     public ResponseEntity<String> setInvitation(@RequestBody InvitationSetRequestDTO invitationSetRequestDTO) {
         String responseString = teamService.setInvitation(invitationSetRequestDTO);
         return ResponseEntity.ok(responseString);
+    }
+    //사용자가 초대받은 모든 팀 목록 조회 엔드포인트
+    @GetMapping("/user/{userId}/all")
+    public ResponseEntity<List<ResponseTeamDto>> getAllTeamsByUserId(@PathVariable Long userId) {
+        List<ResponseTeamDto> teams = teamService.getAllTeamsByUserId(userId);
+        return ResponseEntity.ok(teams);
     }
 
     //사용자가 초대받은 팀 목록 조회 엔드포인트
