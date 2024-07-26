@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "User")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -25,6 +25,5 @@ public class User {
         this.userName = requestDto.getUserName();
         this.senderId = requestDto.getSenderId();
     }
-
-
 }
+

@@ -1,17 +1,16 @@
 package com.sparta.backend.chat.entity;
 
+import com.sparta.backend.chat.dto.chatRoom.ChatRoomRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "ChatRoom")
+@Table(name = "chatRooms")
 public class ChatRoom {
 
     @Id
@@ -32,20 +31,11 @@ public class ChatRoom {
     @JoinColumn(name = "senderId", nullable = false)
     private User sender;
 
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
-    }
-
-    public void setCreatedDate(LocalDateTime now) {
-        this.createdDate = now;
-    }
-
-    public void setUser(User user) {
+    public ChatRoom(ChatRoomRequestDto chatRoomRequestDto, User user, User sender) {
+        this.roomName = chatRoomRequestDto.getRoomName();
+        this.createdDate = LocalDateTime.now();
         this.user = user;
-    }
-
-    public void setSender(User sender) {
         this.sender = sender;
     }
-
 }
+

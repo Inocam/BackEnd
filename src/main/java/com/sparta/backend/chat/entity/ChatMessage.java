@@ -31,27 +31,14 @@ public class ChatMessage {
     private User sender;
 
     @ManyToOne
-    @JoinColumn(name="chatRoomId")
+    @JoinColumn(name="roomId")
     private ChatRoom chatRoom;
 
-    public void setUser(User user) {
+    public ChatMessage(User user, User sender, ChatRoom chatRoom, String message) {
         this.user = user;
-    }
-
-    public void setSender(User sender) {
         this.sender = sender;
-    }
-
-    public void setChatRoom(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
-    }
-
-    public void setMessage(String message) {
         this.message = message;
-    }
-
-    public void setSendDate(LocalDateTime now) {
-        this.sendDate = now;
+        this.sendDate = LocalDateTime.now();
     }
 }
-

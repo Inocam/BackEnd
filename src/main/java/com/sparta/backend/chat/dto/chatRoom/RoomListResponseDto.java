@@ -1,9 +1,11 @@
 package com.sparta.backend.chat.dto.chatRoom;
 
 import com.sparta.backend.chat.entity.ChatRoom;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class RoomListResponseDto {
 
     private Long roomId;

@@ -9,7 +9,6 @@ import com.sparta.backend.chat.repository.ChatRoomRepository;
 import com.sparta.backend.chat.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,11 +41,7 @@ public class ChatRoomService {
         }
 
         // ChatRoom 엔티티 생성
-        ChatRoom chatRoom = new ChatRoom();
-        chatRoom.setRoomName(chatRoomRequestDto.getRoomName());
-        chatRoom.setCreatedDate(LocalDateTime.now());
-        chatRoom.setSender(sender);
-        chatRoom.setUser(user);
+        ChatRoom chatRoom = new ChatRoom(chatRoomRequestDto, user, sender);
 
         // ChatRoom 저장 및 응답 DTO 생성
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
@@ -67,7 +62,7 @@ public class ChatRoomService {
     }
 
     // 채팅방 삭제
-    public Long deleteRoom(Long roomId) {
+    public String deleteRoom(Long roomId) {
 
         // 채팅방 존재 여부 확인
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
@@ -75,6 +70,6 @@ public class ChatRoomService {
 
         chatRoomRepository.delete(chatRoom);
 
-        return roomId;
+        return "채팅방이 삭제 되었습니다.";
     }
 }

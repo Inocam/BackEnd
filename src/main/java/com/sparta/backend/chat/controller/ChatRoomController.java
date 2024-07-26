@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/foot/chat")
+@RequestMapping("/foot")
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
@@ -32,7 +32,7 @@ public class ChatRoomController {
 
     // 채팅방 삭제
     @DeleteMapping("/rooms/{roomId}")
-    public Long deleteRoom(@PathVariable Long roomId) {
+    public String deleteRoom(@PathVariable Long roomId) {
         return chatRoomService.deleteRoom(roomId);
     }
 }
