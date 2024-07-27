@@ -3,6 +3,7 @@ package hello.workspace.controller;
 import hello.workspace.dto.*;
 import hello.workspace.service.TeamService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/foot/teams")
 @RequiredArgsConstructor
+@Slf4j
 public class RestTeamController {
 
 
@@ -40,10 +42,13 @@ public class RestTeamController {
 
     // 초대 처리 엔드포인트
     @DeleteMapping("/invite")
-    public ResponseEntity<String> setInvitation(@RequestBody InvitationSetRequestDTO invitationSetRequestDTO) {
-        String responseString = teamService.setInvitation(invitationSetRequestDTO);
+    public ResponseEntity<String> setInvitation(@RequestBody InvitationSetRequestDto invitationSetRequestDto) {
+        log.info("Controller received: invitationId={}, isAccept={}",
+                invitationSetRequestDto.getInvitationId(), invitationSetRequestDto.isAccept());
+        String responseString = teamService.setInvitation(invitationSetRequestDto);
         return ResponseEntity.ok(responseString);
     }
+
     //사용자가 초대받은 모든 팀 목록 조회 엔드포인트
     @GetMapping("/user/{userId}/all")
     public ResponseEntity<List<ResponseTeamDto>> getAllTeamsByUserId(@PathVariable Long userId) {
@@ -69,6 +74,13 @@ public class RestTeamController {
     @DeleteMapping("/{teamId}")
     public ResponseEntity<Void> removeTeam(@PathVariable Long teamId) {
         teamService.removeTeam(teamId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    //팀장 권한 주기
+    @PostMapping("/{teamId}/transfer-leader/{newLeaderId}")
+    public ResponseEntity<Void> transferTeamLeader(@PathVariable Long teamId, @PathVariable Long newLeaderId) {
+        teamService.transferTeamLeader(teamId, newLeaderId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

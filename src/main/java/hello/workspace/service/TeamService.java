@@ -82,22 +82,15 @@ public class TeamService {
     //요청자가 팀장인지 확인하는 메서드 //다른 서비스나 컨트롤러에서 요청자가 팀장인지 확인하는데 사용될 수 있음
     public boolean isRequesterTeamLeader(Long requesterId, Long teamId) {
         //요청자 id로 user 객체를 조회
-        log.info("요청자 ID: {}", requesterId);
-        log.info("팀 ID: {}", teamId);
 
         User requester = userRepository.findById(requesterId)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 사용자 ID 입니다."));
-        log.info("요청자: {}", requester.getUsername());
-
         //팀 ID로 Team 객체를 조회
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 ID입니다."));
-        log.info("팀: {}", team.getName());
-
         //User와 Team 객체를 사용하여 TeamUser를 조회 -> TeamUser 객체는 특정 팀에 속한 사용자의 역할을 정의
         TeamUser teamUser = teamUserRepository.findByTeamAndUser(team, requester);  // //정의된 순서에 따라 호출 -> teamUserRepository에 정의 된 순서에 따라서 호출!
        // return teamUser != null && teamUser.getRole().equals("팀장");
-
         if (teamUser != null) {
             log.info("요청자 역할: {}", teamUser.getRole());
         } else {
@@ -149,26 +142,35 @@ public class TeamService {
                 .collect(Collectors.toList());
     }
 
-    //초대 수락,거부 메서드 // 클라이언트가 요청한 초대
-    public String setInvitation(InvitationSetRequestDTO invitationSetRequestDTO){
+    //초대 처리(수락,거부) 메서드(+) // 클라이언트가 요청한 초대
+    @Transactional
+    public String setInvitation(InvitationSetRequestDto invitationSetRequestDto){
+        log.info("Received invitation ID: {}", invitationSetRequestDto.getInvitationId());
+        log.info("accept : {}", invitationSetRequestDto.isAccept());
+
         // 초대 ID로 초대 객체를 조회
-        Invitation invitation = invitationRepository.findById(invitationSetRequestDTO.getInvitationId())     //클라이언트가 보낸 초대 id가 실제로 존재하는지 확인해야됨.
+        Invitation invitation = invitationRepository.findById(invitationSetRequestDto.getInvitationId())     //클라이언트가 보낸 초대 id가 실제로 존재하는지 확인해야됨.
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 초대 ID입니다."));
         String responseString;  //변수 생명주기 때문에 여기 넣어줌.
-        if(invitationSetRequestDTO.isAccept()){
+        log.info("isAccept : {}", invitationSetRequestDto.isAccept());
+
+        if(invitationSetRequestDto.isAccept()){
+            log.info("Accepting the invitation");
             TeamUser teamUser = new TeamUser(invitation.getUser(), invitation.getTeam(),"팀원");
             //유저 추가 -> 초대장 삭제
             teamUserRepository.save(teamUser);
             responseString = "초대가 완료되었습니다.";
         }else{
+            log.info("Rejecting the invitation");
             responseString = "초대가 거부되었습니다.";
         }
+        log.info("Deleting the invitation");
         //초대장 삭제
         invitationRepository.delete(invitation);
         return responseString;
     }
 
-    //팀원 삭제 메서드
+    //팀원 삭제 메서드 // 팀장만 가능??(-)
     public void removeTeamMember(Long teamId, Long userId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 ID입니다."));
@@ -177,7 +179,7 @@ public class TeamService {
         teamUserRepository.deleteByTeamAndUser(team, user); //** deleteByTeamAndUser이게 팀유저레포지토리에 있는 이유는,.(+) -> 해당 관계를 삭제하는 거기 때문에
     }
 
-    //팀 삭제 메서드
+    //팀 삭제 메서드 /팀장만 가능??(-)
     public void removeTeam(Long teamId) { //teamId -> 삭제할 팀을 고유하게 식별하는 값
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 Id 입니다."));
@@ -185,6 +187,31 @@ public class TeamService {
         teamUserRepository.deleteByTeam(team);
         //팀 삭제
         teamRepository.delete(team);
+    }
+    //팀장 권한을 다른 팀원에게 물려주는 메서드
+    public void transferTeamLeader(Long teamId, Long newLeaderId) {
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 ID 입니다."));
+        User newLeader = userRepository.findById(newLeaderId)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 사용자 ID 입니다."));
+
+        //기존 팀장을 찾아서 역할을 변경
+        TeamUser currentLeader = teamUserRepository.findByTeamAndRole(team,"팀장") //현재 팀장 조회 -> 특정 팀의 역할이 "팀장"인 TeamUser 객체 반환
+                .orElseThrow(() -> new IllegalArgumentException("현재 팀장을 찾을 수 없습니다."));
+        currentLeader.setRole("팀원");    //역할 변경 / 조회된 TeamUser 객체의 role 필드를 팀장 -> 팀원으로 변경
+        teamUserRepository.save(currentLeader); //변경된 TeamUser 객체를 db에 저장 // 변경된 역할 정보가 반영
+
+        //새로운 팀장을 설정
+        TeamUser newTeamLeader = teamUserRepository.findByTeamAndUser(team, newLeader);
+        if (newTeamLeader == null) {
+            //새로운 리더가 팀에 속해있지 않다면 추가
+            newTeamLeader = new TeamUser(newLeader, team, "팀장");
+        } else {
+            //기존 멤버라면 역할 변경만
+            newTeamLeader.setRole("팀장");
+        }
+        teamUserRepository.save(newTeamLeader); //변경된 역할 정보 저장
     }
 }
 

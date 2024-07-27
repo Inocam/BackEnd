@@ -19,9 +19,9 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "teamId": 20,
-  "userId":1,
-  "requesterId": 3,
+  "teamId": 24,
+  "userId":3,
+  "requesterId": 1,
   "status": "pending"
 }
 
@@ -29,6 +29,7 @@ Accept: application/json
 DELETE http://127.0.0.1:8080/foot/teams/2
 Content-Type: application/json
 Accept: application/json/
+
 ### 팀원 삭제 요청
 DELETE http://127.0.0.1:8080/foot/teams/20/members/1
 Content-Type: application/json
@@ -51,6 +52,11 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "invitationId": 123,
-  "isAccept": true
+  "invitationId": 16,
+  "isAccept":true
 }
+
+### 팀장 권한 주기
+POST http://127.0.0.1:8080//19/transfer-leader/3
+Content-Type: application/json
+Accept: application/json
