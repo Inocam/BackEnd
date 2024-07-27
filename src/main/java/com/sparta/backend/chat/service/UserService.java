@@ -20,10 +20,14 @@ public class UserService {
 
     // user 조회
     public List<UserResponseDto> getUsers() {
+
+        // 사용자 정보 List 생성
         List<UserResponseDto> userResponseDto = new ArrayList<>();
 
+        // 모든 사용자 조회
         List<User> users = userRepository.findAll();
 
+        //사용자 객체를 dto로 변환하여 List에 추가
         for (User user : users) {
             userResponseDto.add(new UserResponseDto(user));
         }
@@ -34,10 +38,18 @@ public class UserService {
     // user 등록
     public UserResponseDto createUser(UserRequestDto requestDto) {
 
+        // senderId 중복 확인
+        if (userRepository.findBySenderId(requestDto.getSenderId()).isPresent()) {
+            throw new IllegalArgumentException("중복된 senderId 입니다");
+        }
+
+        // User 엔티티 생성
         User user = new User(requestDto);
 
+        // User 저장
         User saveUser = userRepository.save(user);
 
+        // User 객체를 dto로 변환
         UserResponseDto userResponseDto = new UserResponseDto(saveUser);
 
         return userResponseDto;
