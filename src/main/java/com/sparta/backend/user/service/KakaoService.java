@@ -10,6 +10,7 @@ import com.sparta.backend.user.security.JwtUtil;
 import com.sparta.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.internal.util.logging.Log;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Slf4j(topic = "KAKAO Login")
@@ -43,8 +47,13 @@ public class KakaoService {
         // 3. 필요 시 회원가입
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
+        String token = jwtUtil.createToken(kakaoUser.getUsername(), kakaoUser.getRole());
+        String encodedValue = URLEncoder.encode(token, StandardCharsets.UTF_8);
+
+        log.info(encodedValue);
+
         // 4. Jwt 토큰 반환
-        return jwtUtil.createToken(kakaoUser.getUsername(), kakaoUser.getRole());
+        return encodedValue;
     }
 
     private String getToken(String code) throws JsonProcessingException {
