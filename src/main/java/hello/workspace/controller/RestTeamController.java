@@ -83,4 +83,11 @@ public class RestTeamController {
         teamService.transferTeamLeader(teamId, newLeaderId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    //팀 수정
+    @PutMapping("/{teamId}")
+    public ResponseEntity<TeamUpdateResponseDto> updateTeam(@PathVariable Long teamId, @RequestBody TeamUpdateRequestDto teamUpdateRequestDto) {
+        TeamUpdateResponseDto updatedTeam = teamService.updateTeam(teamId, teamUpdateRequestDto);
+        return new ResponseEntity<>(updatedTeam, HttpStatus.OK);
+    }
+
 }

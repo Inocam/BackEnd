@@ -195,9 +195,8 @@ public class TeamService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 ID 입니다."));
         User newLeader = userRepository.findById(newLeaderId)
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 사용자 ID 입니다."));
-
         //기존 팀장을 찾아서 역할을 변경
-        TeamUser currentLeader = teamUserRepository.findByTeamAndRole(team,"팀장") //현재 팀장 조회 -> 특정 팀의 역할이 "팀장"인 TeamUser 객체 반환
+        TeamUser currentLeader = teamUserRepository.findByTeamAndRole(team, "팀장") //현재 팀장 조회 -> 특정 팀의 역할이 "팀장"인 TeamUser 객체 반환
                 .orElseThrow(() -> new IllegalArgumentException("현재 팀장을 찾을 수 없습니다."));
         currentLeader.setRole("팀원");    //역할 변경 / 조회된 TeamUser 객체의 role 필드를 팀장 -> 팀원으로 변경
         teamUserRepository.save(currentLeader); //변경된 TeamUser 객체를 db에 저장 // 변경된 역할 정보가 반영
@@ -212,6 +211,21 @@ public class TeamService {
             newTeamLeader.setRole("팀장");
         }
         teamUserRepository.save(newTeamLeader); //변경된 역할 정보 저장
+    }
+        @Transactional //성공적으로 완료  or 하나라도 실패 시 전체 작업 롤백 -> 수정 도중 예외 발생 시 변경 하기전으로 복원 필요
+        public TeamUpdateResponseDto updateTeam(Long teamId, TeamUpdateRequestDto teamUpdateRequestDto) {
+            Team team = teamRepository.findById(teamId) //팀 id로 팀을 조회, 존재하지 않으면 예외를 던짐.
+                    .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 ID 입니다."));
+            //요청 dto에서 팀 이름이 null이 아닌경우 팀 이름을 업데이트 한다.
+            if (teamUpdateRequestDto.getName() != null) {
+                team.setName(teamUpdateRequestDto.getName());
+            }
+            if(teamUpdateRequestDto.getDescription() != null) {
+                team.setDescription(teamUpdateRequestDto.getDescription());
+            }
+            Team updateTeam = teamRepository.save(team);
+            return new TeamUpdateResponseDto(updateTeam.getTeam_id(), updateTeam.getName(), updateTeam.getDescription());
+
     }
 }
 

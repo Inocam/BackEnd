@@ -57,6 +57,17 @@ Accept: application/json
 }
 
 ### 팀장 권한 주기
-POST http://127.0.0.1:8080//19/transfer-leader/3
+POST http://127.0.0.1:8080/foot/teams/23/transfer-leader/3
 Content-Type: application/json
 Accept: application/json
+
+### 팀 수정
+PUT http://127.0.0.1:8080/foot/teams/3
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name" : "업데이트 팀 이름",
+  "description": "업데이트 팀 내용"
+}
+

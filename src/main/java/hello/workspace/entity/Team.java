@@ -31,4 +31,9 @@ public class Team {
         this.creatorId = requestTeamDto.getCreatorId();
 
     }
+    public Team(String name, String description, Long creatorId) {
+        this.name = name;
+        this.description = description;
+        this.creatorId = creatorId;
+    }
 }
