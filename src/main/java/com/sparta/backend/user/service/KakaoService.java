@@ -69,11 +69,13 @@ public class KakaoService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
+        final String server = "3.27.106.118";
+
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "7b763bccc220b29e4d4af23e000de57b");
-        body.add("redirect_uri", "http://3.106.189.126:8080/api/user/kakao/callback");
+        body.add("redirect_uri", "http://" + server + "/api/user/kakao/callback");
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
