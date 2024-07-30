@@ -69,7 +69,7 @@ public class KakaoService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        final String server = "3.27.106.118";
+        final String server = "3.27.65.230";
 
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
