@@ -1,5 +1,6 @@
 package com.sparta.backend.user.config;
 
+import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.security.JwtAuthenticationFilter;
 import com.sparta.backend.user.security.JwtAuthorizationFilter;
 import com.sparta.backend.user.security.UserDetailsServiceImpl;
@@ -26,6 +27,7 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -39,7 +41,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, refreshTokenRepository);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
     }

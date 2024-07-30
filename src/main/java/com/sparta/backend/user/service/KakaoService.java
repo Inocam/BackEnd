@@ -10,7 +10,6 @@ import com.sparta.backend.user.security.JwtUtil;
 import com.sparta.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.internal.util.logging.Log;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -47,7 +45,7 @@ public class KakaoService {
         // 3. 필요 시 회원가입
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
-        String token = jwtUtil.createToken(kakaoUser.getUsername(), kakaoUser.getRole());
+        String token = jwtUtil.createAccessToken(kakaoUser.getEmail(), kakaoUser.getRole());
         String encodedValue = URLEncoder.encode(token, StandardCharsets.UTF_8);
 
         log.info(encodedValue);
@@ -69,7 +67,8 @@ public class KakaoService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        final String server = "3.27.106.118";
+        //final String server = "3.27.106.118";
+        final String server = "localhost";
 
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
