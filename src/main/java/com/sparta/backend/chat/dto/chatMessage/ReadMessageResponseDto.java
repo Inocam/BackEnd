@@ -16,8 +16,8 @@ public class ReadMessageResponseDto {
 
     public ReadMessageResponseDto(ChatMessage chatMessage) {
         this.messageId = chatMessage.getMessageId();
-        this.userId = chatMessage.getUser().getUserId();
-        this.senderId = chatMessage.getSender().getSenderId();
+        this.userId = chatMessage.getUser().getId();
+        this.senderId = chatMessage.getSender().getId();
         this.message = chatMessage.getMessage();
         this.sendDate = chatMessage.getSendDate();
     }

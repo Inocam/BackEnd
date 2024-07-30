@@ -24,7 +24,7 @@ public class ChatRoom {
     private LocalDateTime createdDate;
 
     @ManyToOne
-    @JoinColumn(name="userId")
+    @JoinColumn(name="userId", nullable = false)
     private User user;
 
     @ManyToOne

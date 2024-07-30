@@ -38,11 +38,6 @@ public class UserService {
     // user 등록
     public UserResponseDto createUser(UserRequestDto requestDto) {
 
-        // senderId 중복 확인
-        if (userRepository.findBySenderId(requestDto.getSenderId()).isPresent()) {
-            throw new IllegalArgumentException("중복된 senderId 입니다");
-        }
-
         // User 엔티티 생성
         User user = new User(requestDto);
 
@@ -54,5 +49,4 @@ public class UserService {
 
         return userResponseDto;
     }
-
 }

@@ -23,15 +23,15 @@ public class ChatMessage {
     private LocalDateTime sendDate;
 
     @ManyToOne
-    @JoinColumn(name="userId")
+    @JoinColumn(name="userId", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name="senderId")
+    @JoinColumn(name="senderId", nullable = false)
     private User sender;
 
     @ManyToOne
-    @JoinColumn(name="roomId")
+    @JoinColumn(name="roomId", nullable = false)
     private ChatRoom chatRoom;
 
     public ChatMessage(User user, User sender, ChatRoom chatRoom, String message) {

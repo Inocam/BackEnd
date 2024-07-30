@@ -13,17 +13,13 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
-
-    @Column(name="senderId", unique = true, nullable = false)
-    private Long senderId;
+    private Long id;
 
     @Column(name="userName", nullable = false)
     private String userName;
 
     public User(UserRequestDto requestDto) {
         this.userName = requestDto.getUserName();
-        this.senderId = requestDto.getSenderId();
     }
 }
 
