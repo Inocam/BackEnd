@@ -38,5 +38,3 @@ out/
 
 # Exclude application-private.properties
 application-private.properties
-
-application.properties
