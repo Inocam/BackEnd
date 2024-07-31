@@ -9,6 +9,7 @@ import com.amazonaws.util.IOUtils;
 import hello.workspace.exception.ErrorCode;
 import hello.workspace.exception.S3Exception;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +29,7 @@ import java.net.URL;    //Url,Path
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class S3ImageService {
 
     private final AmazonS3 amazonS3;
@@ -84,15 +86,23 @@ public class S3ImageService {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
 
         try{
+            // 추가된 로그
+            log.info("Uploading to S3 with bucket: {} and file name: {}", bucketName, s3FileName);
             //S3로 putObject 할 때 사용할 요청 객체
             //생성자 : bucket 이름, 파일 명, byteInputStream, metadata
             PutObjectRequest putObjectRequest =
-                    new PutObjectRequest(bucketName, s3FileName, byteArrayInputStream, metadata)
-                            .withCannedAcl(CannedAccessControlList.PublicRead);
+                    new PutObjectRequest(bucketName, s3FileName, byteArrayInputStream, metadata);
+//                            .withCannedAcl(CannedAccessControlList.PublicRead);
+// 이 부분때문에 오류남, 버킷 설정이 acl을 지원하지 않아서 그렇다는데, 그래서 버킷 정책을 변경해줌(퍼블릭 읽기 권한을 부여하기 위해 S3 버킷 정책을 사용함)
+//버킷 정책에서 권한을 부여하기 때문에 위 코드처럼 추가적인 ACL을 사용하는 요청은 필요없음.
 
             //실제로 S3에 이미지 데이터를 넣는 부분이다.
             amazonS3.putObject(putObjectRequest); // put image to S3
+            // 추가된 로그
+            log.info("Upload successful");
         }catch (Exception e){
+            // 추가된 로그
+            log.error("Error uploading to S3", e);
             throw new S3Exception(ErrorCode.PUT_OBJECT_EXCEPTION);
         }finally {
             byteArrayInputStream.close();
