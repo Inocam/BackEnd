@@ -6,9 +6,12 @@ import lombok.Getter;
 public class TeamUpdateRequestDto {
     private String name;
     private String description;
+    private String imageUrl;
 
-     public TeamUpdateRequestDto(String name, String description) {
+     public TeamUpdateRequestDto(String name, String description, String imageUrl) {
          this.name = name;
          this.description = description;
+         this.imageUrl = imageUrl;
+
      }
 }

@@ -2,14 +2,20 @@ package hello.workspace.controller;
 
 import hello.workspace.dto.*;
 import hello.workspace.service.TeamService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/foot/teams")
@@ -84,6 +90,7 @@ public class RestTeamController {
         teamService.transferTeamLeader(teamId, newLeaderId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
     //팀 수정
     @PutMapping("/{teamId}")
     public ResponseEntity<TeamUpdateResponseDto> updateTeam(@PathVariable Long teamId, @RequestBody TeamUpdateRequestDto teamUpdateRequestDto) {
@@ -91,4 +98,42 @@ public class RestTeamController {
         return new ResponseEntity<>(updatedTeam, HttpStatus.OK);
     }
 
+    //하나의 팀에 소속된 전체 유저 목록 조회
+    @GetMapping("/{teamId}/members")
+    public ResponseEntity<List<UsersInTeamResponseDto>> getUsersInTeam(@PathVariable Long teamId) {
+        List<UsersInTeamResponseDto> members = teamService.getUsersInTeam(teamId);
+        return new ResponseEntity<>(members, HttpStatus.OK);
+    }
 }
+
+
+//    //파일 업로드 / 클라이언트가 파일을 업로드하면, 서버는 이 파일을 지정된 경로에 저장하고,
+//    // 해당 파일의 url 또는 파일 데이터를 팀 엔티티에 저장한다.
+//    @Value("${file.upload-dir}")
+//    private String uploadDir;
+//
+//    @PostMapping("/{teamId}/upload-image")
+//    public ResponseEntity<String> uploadImage(@PathVariable Long teamId, @RequestParam("file") MultipartFile file) {
+//        try {
+//            //파일 저장 위치 설정
+//            File uploadDirFile = new File(uploadDir);
+//            if (!uploadDirFile.exists()) {
+//                uploadDirFile.mkdirs();
+//            }
+//
+//            Path filePath = new File(uploadDir, Objects.requireNonNull(file.getOriginalFilename())).toPath();
+//            file.transferTo(filePath);
+//
+//            //파일 URL 생성
+//            String fileUrl = "/images/" + file.getOriginalFilename();
+//
+//            //팀 정보 업데이트
+//            TeamUpdateRequestDto teamUpdateRequestDto = new TeamUpdateRequestDto(null, null, fileUrl);
+//            teamService.updateTeam(teamId, teamUpdateRequestDto);
+//
+//            return new ResponseEntity<>(fileUrl, HttpStatus.OK);
+//        } catch (IOException e) {
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // 수정된 부분
+//        }
+//    }
+

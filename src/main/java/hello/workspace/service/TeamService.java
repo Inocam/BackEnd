@@ -223,8 +223,23 @@ public class TeamService {
             if(teamUpdateRequestDto.getDescription() != null) {
                 team.setDescription(teamUpdateRequestDto.getDescription());
             }
+
             Team updateTeam = teamRepository.save(team);
-            return new TeamUpdateResponseDto(updateTeam.getTeam_id(), updateTeam.getName(), updateTeam.getDescription());
+            return new TeamUpdateResponseDto(updateTeam.getTeam_id(), updateTeam.getName(), updateTeam.getDescription()); //응답 dto를 반환하여 클라이언트에게 업데이트 된 팀 정보 전달
+
+    }
+
+    //하나의 팀에 소속된 전체 유저 목록 조회 메서드(+)
+    public List<UsersInTeamResponseDto> getUsersInTeam(Long teamId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 ID 입니다."));
+        //List<TeamUser> teamUsers = teamUserRepository.findByTeam(team);
+        return teamUserRepository.findByTeam(team).stream()
+                .map(teamUser -> new UsersInTeamResponseDto(
+                        team.getTeam_id(),  //팀 id
+                        teamUser.getUser().getId(), //유저 id
+                        teamUser.getUser().getUsername()))  //유저 이름
+                .collect(Collectors.toList());  //스트림 결과를 리스트로 변환하여 반환
 
     }
 }

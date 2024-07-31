@@ -6,6 +6,7 @@ import hello.workspace.entity.User;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TeamUserRepository extends JpaRepository<TeamUser, Long> {
@@ -18,6 +19,8 @@ public interface TeamUserRepository extends JpaRepository<TeamUser, Long> {
     boolean existsByTeamAndUser(Team team, User user);
 
     Optional<TeamUser> findByTeamAndRole(Team team, String role); // 역할에 따라 팀 유저를 찾는 메서드 추가
+
+    List<TeamUser> findByTeam(Team team);
 
     @Transactional
     void deleteByTeam(Team team);

@@ -25,15 +25,19 @@ public class Team {
     @Column(name = "creator_id", nullable = false)
     private Long creatorId;
 
+    @Column
+    private String imageUrl;
+
     public Team(RequestTeamDto requestTeamDto) {
         this.name = requestTeamDto.getName();
         this.description = requestTeamDto.getDescription();
         this.creatorId = requestTeamDto.getCreatorId();
 
     }
-    public Team(String name, String description, Long creatorId) {
+    public Team(String name, String description, Long creatorId, String imageUrl) {
         this.name = name;
         this.description = description;
         this.creatorId = creatorId;
+        this.imageUrl = imageUrl;
     }
 }
