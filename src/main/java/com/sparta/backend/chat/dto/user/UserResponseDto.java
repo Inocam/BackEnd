@@ -10,7 +10,8 @@ public class UserResponseDto {
     private String userName;
 
     public UserResponseDto(User user) {
-        this.id = user.getId();
+        this.id = user.getUserId();
         this.userName = user.getUserName();
     }
 }
+

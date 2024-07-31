@@ -4,17 +4,15 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "chat_messages")
-public class ChatMessage {
+@Table(name = "user_rooms")
+public class UserRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long messageId;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "roomId", nullable = false)
@@ -24,16 +22,9 @@ public class ChatMessage {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @Column(name="message", nullable = false)
-    private String message;
-
-    @Column(name="send_Date", nullable = false)
-    private LocalDateTime sendDate;
-
-    public ChatMessage(User user, ChatRoom chatRoom, String message) {
-        this.user = user;
+    public UserRoom(ChatRoom chatRoom, User user) {
         this.chatRoom = chatRoom;
-        this.message = message;
-        this.sendDate = LocalDateTime.now();
+        this.user = user;
     }
+
 }

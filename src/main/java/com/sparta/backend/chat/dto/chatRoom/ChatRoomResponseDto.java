@@ -10,15 +10,14 @@ public class ChatRoomResponseDto {
 
     private Long roomId;
     private Long userId;
-    private Long senderId;
     private String roomName;
-    private LocalDateTime createDate;
+    private LocalDateTime createdDate;
 
-    public ChatRoomResponseDto(ChatRoom  chatRoom) {
+    public ChatRoomResponseDto(ChatRoom chatRoom) {
         this.roomId = chatRoom.getRoomId();
-        this.userId = chatRoom.getUser().getId();
-        this.senderId = chatRoom.getSender().getId();
+        this.userId = chatRoom.getUser().getUserId();
         this.roomName = chatRoom.getRoomName();
-        this.createDate = LocalDateTime.now();
+        this.createdDate = LocalDateTime.now();
     }
 }
+

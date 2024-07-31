@@ -10,15 +10,14 @@ public class ReadMessageResponseDto {
 
     private Long messageId;
     private Long userId;
-    private Long senderId;
     private String message;
     private LocalDateTime sendDate;
 
     public ReadMessageResponseDto(ChatMessage chatMessage) {
         this.messageId = chatMessage.getMessageId();
-        this.userId = chatMessage.getUser().getId();
-        this.senderId = chatMessage.getSender().getId();
+        this.userId = chatMessage.getUser().getUserId();
         this.message = chatMessage.getMessage();
         this.sendDate = chatMessage.getSendDate();
     }
 }
+

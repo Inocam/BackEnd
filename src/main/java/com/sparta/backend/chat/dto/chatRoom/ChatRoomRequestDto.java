@@ -6,6 +6,5 @@ import lombok.Getter;
 public class ChatRoomRequestDto {
 
     private Long userId;
-    private Long senderId;
     private String roomName;
 }

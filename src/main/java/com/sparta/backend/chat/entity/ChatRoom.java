@@ -6,11 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "chatRooms")
+@Table(name = "chat_rooms")
 public class ChatRoom {
 
     @Id
@@ -24,18 +26,17 @@ public class ChatRoom {
     private LocalDateTime createdDate;
 
     @ManyToOne
-    @JoinColumn(name="userId", nullable = false)
+    @JoinColumn(name = "userId", nullable = false) // userId 추가
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "senderId", nullable = false)
-    private User sender;
+    @OneToMany(mappedBy = "chatRoom")
+    private List<UserRoom> userRooms = new ArrayList<>();
 
-    public ChatRoom(ChatRoomRequestDto chatRoomRequestDto, User user, User sender) {
+    public ChatRoom(ChatRoomRequestDto chatRoomRequestDto, User user) {
         this.roomName = chatRoomRequestDto.getRoomName();
-        this.createdDate = LocalDateTime.now();
         this.user = user;
-        this.sender = sender;
+        this.createdDate = LocalDateTime.now();
     }
+
 }
 
