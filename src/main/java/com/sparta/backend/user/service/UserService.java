@@ -1,6 +1,7 @@
 package com.sparta.backend.user.service;
 
 import com.sparta.backend.user.dto.SignupRequestDto;
+import com.sparta.backend.user.dto.UserResponseDto;
 import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.model.UserRoleEnum;
 import com.sparta.backend.user.repository.UserRepository;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,5 +51,9 @@ public class UserService {
         // 사용자 등록
         User user = new User(username, password, email, role);
         userRepository.save(user);
+    }
+
+    public List<UserResponseDto> getUsersByUsernamePrefix(String prefix) {
+        return userRepository.findByUsernameStartingWith(prefix).stream().map(UserResponseDto::new).toList();
     }
 }

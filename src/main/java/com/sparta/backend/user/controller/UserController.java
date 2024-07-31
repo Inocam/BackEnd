@@ -1,6 +1,8 @@
 package com.sparta.backend.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.backend.user.dto.UserResponseDto;
+import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.security.JwtUtil;
 import com.sparta.backend.user.security.UserDetailsImpl;
 import com.sparta.backend.user.service.KakaoService;
@@ -66,10 +68,10 @@ public class UserController {
     @ResponseBody
     public UserInfoDto getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         String username = userDetails.getUser().getUsername();
-        UserRoleEnum role = userDetails.getUser().getRole();
-        boolean isAdmin = (role == UserRoleEnum.ADMIN);
+        String email = userDetails.getUser().getEmail();
+        Long userId = userDetails.getUser().getId();
 
-        return new UserInfoDto(username, isAdmin);
+        return new UserInfoDto(userId, username, email);
     }
 
     @GetMapping("/user/kakao/callback")
@@ -81,5 +83,10 @@ public class UserController {
         response.addCookie(cookie);
 
         return "redirect:/";
+    }
+
+    @GetMapping("/users")
+    public List<UserResponseDto> getUsersByUsernamePrefix(@RequestParam String prefix) {
+        return userService.getUsersByUsernamePrefix(prefix);
     }
 }
