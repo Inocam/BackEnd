@@ -1,5 +1,6 @@
 package com.sparta.backend.chat.entity;
 
+import com.sparta.backend.user.model.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

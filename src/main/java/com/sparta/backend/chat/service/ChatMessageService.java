@@ -5,11 +5,11 @@ import com.sparta.backend.chat.dto.chatMessage.ChatMessageResponseDto;
 import com.sparta.backend.chat.dto.chatMessage.ReadMessageResponseDto;
 import com.sparta.backend.chat.entity.ChatMessage;
 import com.sparta.backend.chat.entity.ChatRoom;
-import com.sparta.backend.chat.entity.User;
 import com.sparta.backend.chat.global.CustomException;
 import com.sparta.backend.chat.repository.ChatMessageRepository;
 import com.sparta.backend.chat.repository.ChatRoomRepository;
-import com.sparta.backend.chat.repository.UserRepository;
+import com.sparta.backend.user.model.User;
+import com.sparta.backend.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import static com.sparta.backend.chat.global.ErrorCode.*;
 

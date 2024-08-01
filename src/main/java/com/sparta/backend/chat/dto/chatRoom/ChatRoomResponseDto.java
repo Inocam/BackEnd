@@ -15,7 +15,7 @@ public class ChatRoomResponseDto {
 
     public ChatRoomResponseDto(ChatRoom chatRoom) {
         this.roomId = chatRoom.getRoomId();
-        this.userId = chatRoom.getUser().getUserId();
+        this.userId = chatRoom.getUser().getId();
         this.roomName = chatRoom.getRoomName();
         this.createdDate = LocalDateTime.now();
     }

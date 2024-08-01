@@ -6,12 +6,12 @@ import com.sparta.backend.chat.dto.chatRoom.RoomListResponseDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomRequestDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomResponseDto;
 import com.sparta.backend.chat.entity.ChatRoom;
-import com.sparta.backend.chat.entity.User;
 import com.sparta.backend.chat.entity.UserRoom;
 import com.sparta.backend.chat.global.CustomException;
 import com.sparta.backend.chat.repository.ChatRoomRepository;
-import com.sparta.backend.chat.repository.UserRepository;
 import com.sparta.backend.chat.repository.UserRoomRepository;
+import com.sparta.backend.user.model.User;
+import com.sparta.backend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import static com.sparta.backend.chat.global.ErrorCode.*;
@@ -89,7 +89,7 @@ public class ChatRoomService {
         // 사용자가 채팅방에 속해 있는지 확인
         boolean userInRoom = false;
         for (UserRoom userRoom : chatRoom.getUserRooms()) {
-            if (userRoom.getUser().getUserId().equals(userId)) {
+            if (userRoom.getUser().getId().equals(userId)) {
                 userInRoom = true;
                 break;
             }
