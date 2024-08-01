@@ -2,14 +2,14 @@ package hello.workspace.exception;
 
 public class S3Exception extends RuntimeException {
 
-    private final ErrorCode errorCode;
+    private final S3ErrorCode errorCode;
 
-    public S3Exception(ErrorCode errorCode) {
+    public S3Exception(S3ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
 
-    public ErrorCode getErrorCode() {
+    public S3ErrorCode getErrorCode() {
         return errorCode;
     }
 }

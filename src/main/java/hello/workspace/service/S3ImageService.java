@@ -1,12 +1,11 @@
 package hello.workspace.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
-import hello.workspace.exception.ErrorCode;
+import hello.workspace.exception.S3ErrorCode;
 import hello.workspace.exception.S3Exception;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +39,7 @@ public class S3ImageService {
     public String upload(MultipartFile image) {
         //입력받은 이미지 파일이 빈 파일인지 검증
         if(image.isEmpty() || Objects.isNull(image.getOriginalFilename())){
-            throw new S3Exception(ErrorCode.EMPTY_FILE_EXCEPTION);
+            throw new S3Exception(S3ErrorCode.EMPTY_FILE_EXCEPTION);
         }
         //uploadImage를 호출하여 S3에 저장된 이미지의 public url을 반환한다.
         return this.uploadImage(image);
@@ -51,21 +50,21 @@ public class S3ImageService {
         try {
             return this.uploadImageToS3(image); //uploadImageToS3() 호출하여 이미지를 S3에 업로드하고, S3에 저장된 이미지의 public url을 받아서 서비스 로직에 반환한다.
         } catch (IOException e) {
-            throw new S3Exception(ErrorCode.IO_EXCEPTION_ON_IMAGE_UPLOAD);
+            throw new S3Exception(S3ErrorCode.IO_EXCEPTION_ON_IMAGE_UPLOAD);
         }
     }
     //filename을 받아서 파일 확장자가 jpg, jpeg, png, gif 중에 속하는지 검증한다.
     private void validateImageFileExtention(String filename) {
         int lastDotIndex = filename.lastIndexOf(".");
         if (lastDotIndex == -1) {
-            throw new S3Exception(ErrorCode.NO_FILE_EXTENTION);
+            throw new S3Exception(S3ErrorCode.NO_FILE_EXTENTION);
         }
 
         String extention = filename.substring(lastDotIndex + 1).toLowerCase();
         List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif");
 
         if (!allowedExtentionList.contains(extention)) {
-            throw new S3Exception(ErrorCode.INVALID_FILE_EXTENTION);
+            throw new S3Exception(S3ErrorCode.INVALID_FILE_EXTENTION);
         }
     }
     //직접적으로 S3에 업로드하는 메서드
@@ -103,7 +102,7 @@ public class S3ImageService {
         }catch (Exception e){
             // 추가된 로그
             log.error("Error uploading to S3", e);
-            throw new S3Exception(ErrorCode.PUT_OBJECT_EXCEPTION);
+            throw new S3Exception(S3ErrorCode.PUT_OBJECT_EXCEPTION);
         }finally {
             byteArrayInputStream.close();
             is.close();
@@ -117,7 +116,7 @@ public class S3ImageService {
         try{
             amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
         }catch (Exception e){
-            throw new S3Exception(ErrorCode.IO_EXCEPTION_ON_IMAGE_DELETE);
+            throw new S3Exception(S3ErrorCode.IO_EXCEPTION_ON_IMAGE_DELETE);
         }
     }
 
@@ -127,7 +126,7 @@ public class S3ImageService {
             String decodingKey = URLDecoder.decode(url.getPath(), "UTF-8");
             return decodingKey.substring(1); // 맨 앞의 '/' 제거
         }catch (MalformedURLException | UnsupportedEncodingException e){
-            throw new S3Exception(ErrorCode.IO_EXCEPTION_ON_IMAGE_DELETE);
+            throw new S3Exception(S3ErrorCode.IO_EXCEPTION_ON_IMAGE_DELETE);
         }
     }
 }

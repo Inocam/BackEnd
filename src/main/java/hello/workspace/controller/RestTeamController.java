@@ -63,17 +63,12 @@ public class RestTeamController {
         return ResponseEntity.ok(teams);
     }
 
-    //사용자가 초대받은 팀 목록 조회 엔드포인트
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<ResponseTeamDto>> getTeamsByUserId(@PathVariable Long userId) {
-        List<ResponseTeamDto> teams = teamService.getTeamsByUserId(userId);
-        return ResponseEntity.ok(teams);
-    }
 
     //팀원 삭제 엔드포인트 // -> temaid와 userid를 사용하여 해당 팀과 사용자 간의 관계를 삭제하는 방식 -> 팀에서 특정 사용자 삭제
     @DeleteMapping("/{teamId}/members/{userId}")
     public ResponseEntity<Void> removeTeamMember(@PathVariable Long teamId, @PathVariable Long userId) {
-        teamService.removeTeamMember(teamId, userId);
+        String message = teamService.removeTeamMember(teamId, userId);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); //응답 본문 없이 204 상태 코드 반환
     }
 
