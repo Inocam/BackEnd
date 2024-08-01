@@ -167,24 +167,26 @@ public class TeamService {
     }
 
     //팀 삭제 메서드 /팀장만 가능??(-)
-    public void removeTeam(Long teamId) { //teamId -> 삭제할 팀을 고유하게 식별하는 값
+    public String removeTeam(Long teamId) { //teamId -> 삭제할 팀을 고유하게 식별하는 값
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 Id 입니다."));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "TeamId is incorrect", "팀 삭제에 실패 했습니다."));
         //팀 삭제 전에 해당 팀과 관련된 모든 teamUser 관계 삭제
         teamUserRepository.deleteByTeam(team);
         //팀 삭제
         teamRepository.delete(team);
+        return "팀이 삭제 되었습니다.";
     }
     //팀장 권한을 다른 팀원에게 물려주는 메서드
-    public void transferTeamLeader(Long teamId, Long newLeaderId) {
+    public String transferTeamLeader(Long teamId, Long newLeaderId) {
 
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 ID 입니다."));
+                        .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "TeamId is incorrect", "잘못된 팀 ID 입니다."));
+
         User newLeader = userRepository.findById(newLeaderId)
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 사용자 ID 입니다."));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "UserId is incorrect", "잘못된 사용자 ID 입니다."));
         //기존 팀장을 찾아서 역할을 변경
         TeamUser currentLeader = teamUserRepository.findByTeamAndRole(team, "팀장") //현재 팀장 조회 -> 특정 팀의 역할이 "팀장"인 TeamUser 객체 반환
-                .orElseThrow(() -> new IllegalArgumentException("현재 팀장을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Current team leader not found","현재 팀장을 찾을 수 없습니다."));
         currentLeader.setRole("팀원");    //역할 변경 / 조회된 TeamUser 객체의 role 필드를 팀장 -> 팀원으로 변경
         teamUserRepository.save(currentLeader); //변경된 TeamUser 객체를 db에 저장 // 변경된 역할 정보가 반영
 
@@ -198,6 +200,7 @@ public class TeamService {
             newTeamLeader.setRole("팀장");
         }
         teamUserRepository.save(newTeamLeader); //변경된 역할 정보 저장
+        return "팀장 권한을 이전했습니다.";
     }
         @Transactional //성공적으로 완료  or 하나라도 실패 시 전체 작업 롤백 -> 수정 도중 예외 발생 시 변경 하기전으로 복원 필요
         public TeamUpdateResponseDto updateTeam(Long teamId, TeamUpdateRequestDto teamUpdateRequestDto) {

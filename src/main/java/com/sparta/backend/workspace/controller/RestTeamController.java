@@ -1,6 +1,7 @@
 package com.sparta.backend.workspace.controller;
 
 import com.sparta.backend.workspace.dto.*;
+import com.sparta.backend.workspace.exception.ErrorResponse;
 import com.sparta.backend.workspace.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,24 +60,26 @@ public class RestTeamController {
 
     //팀원 삭제 엔드포인트 // -> temaid와 userid를 사용하여 해당 팀과 사용자 간의 관계를 삭제하는 방식 -> 팀에서 특정 사용자 삭제
     @DeleteMapping("/{teamId}/members/{userId}")
-    public ResponseEntity<Void> removeTeamMember(@PathVariable Long teamId, @PathVariable Long userId) {
+    public ResponseEntity<ErrorResponse> removeTeamMember(@PathVariable Long teamId, @PathVariable Long userId) {
         String message = teamService.removeTeamMember(teamId, userId);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT); //응답 본문 없이 204 상태 코드 반환
+        ErrorResponse errorResponse = new ErrorResponse("SUCCESS", message, HttpStatus.OK.value());
+        return new ResponseEntity<>(errorResponse, HttpStatus.OK);  //응답 본문 없이 204 상태 코드 반환
     }
 
     //팀 삭제 엔드포인트(+)
     @DeleteMapping("/{teamId}")
-    public ResponseEntity<Void> removeTeam(@PathVariable Long teamId) {
-        teamService.removeTeam(teamId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ErrorResponse> removeTeam(@PathVariable Long teamId) {
+       String message = teamService.removeTeam(teamId);
+        ErrorResponse errorResponse = new ErrorResponse("SUCCESS", message, HttpStatus.OK.value());
+        return new ResponseEntity<>(errorResponse, HttpStatus.OK);
     }
 
     //팀장 권한 주기
     @PostMapping("/{teamId}/transfer-leader/{newLeaderId}")
-    public ResponseEntity<Void> transferTeamLeader(@PathVariable Long teamId, @PathVariable Long newLeaderId) {
-        teamService.transferTeamLeader(teamId, newLeaderId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ErrorResponse> transferTeamLeader(@PathVariable Long teamId, @PathVariable Long newLeaderId) {
+        String message = teamService.transferTeamLeader(teamId, newLeaderId);
+        ErrorResponse errorResponse = new ErrorResponse("SUCCESS", message, HttpStatus.OK.value());
+        return new ResponseEntity<>(errorResponse, HttpStatus.OK);
     }
 
     //팀 수정
@@ -95,33 +98,4 @@ public class RestTeamController {
 }
 
 
-//    //파일 업로드 / 클라이언트가 파일을 업로드하면, 서버는 이 파일을 지정된 경로에 저장하고,
-//    // 해당 파일의 url 또는 파일 데이터를 팀 엔티티에 저장한다.
-//    @Value("${file.upload-dir}")
-//    private String uploadDir;
-//
-//    @PostMapping("/{teamId}/upload-image")
-//    public ResponseEntity<String> uploadImage(@PathVariable Long teamId, @RequestParam("file") MultipartFile file) {
-//        try {
-//            //파일 저장 위치 설정
-//            File uploadDirFile = new File(uploadDir);
-//            if (!uploadDirFile.exists()) {
-//                uploadDirFile.mkdirs();
-//            }
-//
-//            Path filePath = new File(uploadDir, Objects.requireNonNull(file.getOriginalFilename())).toPath();
-//            file.transferTo(filePath);
-//
-//            //파일 URL 생성
-//            String fileUrl = "/images/" + file.getOriginalFilename();
-//
-//            //팀 정보 업데이트
-//            TeamUpdateRequestDto teamUpdateRequestDto = new TeamUpdateRequestDto(null, null, fileUrl);
-//            teamService.updateTeam(teamId, teamUpdateRequestDto);
-//
-//            return new ResponseEntity<>(fileUrl, HttpStatus.OK);
-//        } catch (IOException e) {
-//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // 수정된 부분
-//        }
-//    }
 
