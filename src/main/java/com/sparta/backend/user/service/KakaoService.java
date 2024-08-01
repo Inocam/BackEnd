@@ -34,7 +34,7 @@ public class KakaoService {
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
     private final JwtUtil jwtUtil;
-    private final String serverAddress = "foot.o-r.kr";
+    private final String serverAddress = "footapi.o-r.kr";
 
     public String kakaoLogin(String code) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
