@@ -1,6 +1,7 @@
 package com.sparta.backend.user.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.sparta.backend.user.dto.LoginRequestDto;
 import com.sparta.backend.user.model.RefreshToken;
 import com.sparta.backend.user.model.UserRoleEnum;
@@ -16,6 +17,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -69,17 +73,30 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // 쿠키에 액세스 토큰 추가
         Cookie accessTokenCookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, accessToken);
-        accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setPath("/"); // 필요에 따라 경로 설정
         response.addCookie(accessTokenCookie);
 
         // 쿠키에 리프레시 토큰 추가
         Cookie refreshTokenCookie = new Cookie(JwtUtil.REFRESH_HEADER, refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setPath("/"); // 필요에 따라 경로 설정
         response.addCookie(refreshTokenCookie);
 
         saveRefreshToken(email, refreshToken);
+
+        // JSON 객체 생성
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+
+        // 응답 본문에 JSON 작성
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.print(new Gson().toJson(tokens)); // Gson 라이브러리를 사용하여 JSON 변환
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
