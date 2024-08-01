@@ -34,6 +34,7 @@ public class KakaoService {
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
     private final JwtUtil jwtUtil;
+    private final String serverAddress = "foot.o-r.kr";
 
     public String kakaoLogin(String code) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -67,14 +68,11 @@ public class KakaoService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        //final String server = "3.27.106.118";
-        final String server = "localhost";
-
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "7b763bccc220b29e4d4af23e000de57b");
-        body.add("redirect_uri", "http://" + server + "/api/user/kakao/callback");
+        body.add("redirect_uri", "https://" + serverAddress + "/api/user/kakao/callback");
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
