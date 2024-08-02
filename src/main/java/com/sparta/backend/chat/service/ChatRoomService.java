@@ -39,7 +39,7 @@ public class ChatRoomService {
     //채팅방 생성
     public ChatRoomResponseDto createRoom(ChatRoomRequestDto chatRoomRequestDto) {
 
-        //  같은 이름의 채팅방 존재 여부
+        //  중복된 채팅방 존재 여부
         if (chatRoomRepository.existsByRoomName(chatRoomRequestDto.getRoomName())) {
             throw new CustomException(400, CHATROOM_ALREADY_EXISTS, "이미 존재하는 채팅방 이름입니다.");
         }
@@ -88,7 +88,7 @@ public class ChatRoomService {
 
         // 사용자가 속한 채팅방 존재 여부
         if (userRooms.isEmpty()) {
-            throw new CustomException(404, CHATROOM_NOT_FOUND, "사용자가 속한 채팅방이 없습니다.");
+            throw new CustomException(400, USER_NOT_IN_ROOM, "사용자는 이 채팅방에 속해 있지 않습니다.");
         }
 
         // 사용자가 속한 채팅방 정보 List 생성
@@ -120,7 +120,7 @@ public class ChatRoomService {
         }
 
         if (!userInRoom) {
-            throw new CustomException(400, USER_NOT_IN_ROOM, "해당 사용자는 이 채팅방에 속해 있지 않아 삭제할 수 없습니다.");
+            throw new CustomException(400, USER_NOT_IN_ROOM, "사용자는 이 채팅방에 속해 있지 않아 삭제할 수 없습니다.");
         }
 
         // 채팅방과 관련된 UserRoom 엔티티들 삭제
