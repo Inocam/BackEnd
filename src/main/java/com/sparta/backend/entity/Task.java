@@ -29,4 +29,15 @@ public class Task {
         this.dueDate = requestDto.getDueDate();
         this.parentTask = requestDto.getParentTask();
     }
+
+    public void updateTask(TaskRequestDto requestDto) {
+        this.teamId = requestDto.getTeamId(); // ????? 이부분을 어떻게 받아오지?
+        this.title = requestDto.getTitle();
+        this.description = requestDto.getDescription();
+        this.status = requestDto.getStatus();
+        this.startDate = requestDto.getStartDate();
+        this.dueDate = requestDto.getDueDate();
+        this.parentTask = requestDto.getParentTask();
+    }
+
 }
