@@ -1,6 +1,6 @@
 package com.sparta.backend.workspace.repository;
 
-import com.sparta.backend.workspace.entity.User;
+import com.sparta.backend.user.model.User;
 import com.sparta.backend.workspace.entity.Invitation;
 import com.sparta.backend.workspace.entity.Team;
 import org.springframework.data.jpa.repository.JpaRepository;

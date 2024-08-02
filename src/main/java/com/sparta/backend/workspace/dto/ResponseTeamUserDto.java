@@ -1,6 +1,6 @@
 package com.sparta.backend.workspace.dto;
 
-import com.sparta.backend.workspace.entity.User;
+import com.sparta.backend.user.model.User;
 import com.sparta.backend.workspace.entity.Team;
 import com.sparta.backend.workspace.entity.TeamUser;
 import lombok.Getter;

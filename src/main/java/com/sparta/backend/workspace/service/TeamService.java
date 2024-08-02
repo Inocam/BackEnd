@@ -1,7 +1,8 @@
 package com.sparta.backend.workspace.service;
 
+import com.sparta.backend.user.model.User;
+import com.sparta.backend.user.repository.UserRepository;
 import com.sparta.backend.workspace.dto.*;
-import com.sparta.backend.workspace.entity.User;
 import com.sparta.backend.workspace.exception.CustomException;
 import com.sparta.backend.workspace.repository.TeamRepository;
 import com.sparta.backend.workspace.entity.Invitation;
@@ -9,7 +10,6 @@ import com.sparta.backend.workspace.entity.Team;
 import com.sparta.backend.workspace.entity.TeamUser;
 import com.sparta.backend.workspace.repository.InvitationRepository;
 import com.sparta.backend.workspace.repository.TeamUserRepository;
-import com.sparta.backend.workspace.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

@@ -24,6 +24,12 @@ repositories {
 }
 
 dependencies {
+	//swagger
+	implementation 'io.swagger.core.v3:swagger-models:2.2.8'
+
+	//S3
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.526'
+
 	//Gson
 	implementation 'com.google.code.gson:gson:2.8.9'
 
