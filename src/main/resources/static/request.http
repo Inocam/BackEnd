@@ -1,0 +1,82 @@
+### GET request to example server
+GET http://127.0.0.1:8080/foot/teams/user/
+    ?generated-in=IntelliJ IDEA
+
+### 팀 생성 요청
+POST http://127.0.0.1:8080/foot/teams
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "잘못된 팀",
+  "description": "오류 발생시 response 확인",
+  "creatorId": 999
+}
+
+### 팀원 초대 요청 (+) / 테스트 중 - 4번은 없는 유저임(오류 메시지 잘 나옴(+))
+POST http://127.0.0.1:8080/foot/teams/invite
+Content-Type: application/json
+Accept: application/json
+
+{
+  "teamId": 23,
+  "userId":2,
+  "requesterId": 3,
+  "status": "pending"
+}
+
+### 팀 삭제 요청(+)
+DELETE http://127.0.0.1:8080/foot/teams/2
+Content-Type: application/json
+Accept: application/json
+
+### 팀원 삭제 요청(+)
+DELETE http://127.0.0.1:8080/foot/teams/23/members/5
+Content-Type: application/json
+Accept: application/json
+
+### 초대 받은 팀 목록 조회
+GET http://127.0.0.1:8080/foot/teams/user/2/all
+Content-Type: application/json
+Accept: application/json
+
+### 초대 처리
+DELETE http://127.0.0.1:8080/foot/teams/invite
+Content-Type: application/json
+Accept: application/json
+
+{
+  "invitationId": 23,
+  "isAccept":true
+}
+
+### 팀장 권한 주기
+POST http://127.0.0.1:8080/foot/teams/23/transfer-leader/4
+Content-Type: application/json
+Accept: application/json
+
+### 팀 수정
+PUT http://127.0.0.1:8080/foot/teams/3
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name" : "업데이트 팀 이름",
+  "description": "업데이트 팀 내용"
+}
+
+### 하나의 팀에 소속된 전체 유저 목록
+GET http://127.0.0.1:8080/foot/teams/45/members
+Content-Type: application/json
+Accept: application/json
+
+### 이미지 업로드 요청
+POST http://localhost:8080/foot/teams/s3/upload
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="images123.jpg"
+Content-Type: image/png
+
+< C:/inflearn/workspace/src/main/resources/static/images123.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
