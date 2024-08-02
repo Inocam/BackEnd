@@ -19,7 +19,7 @@ public class TaskController {
 
     /* 생성 */
     @PostMapping("/task")
-    public TaskResponseDto createMemo(@RequestBody TaskRequestDto requestDto) {
+    public TaskResponseDto createTask(@RequestBody TaskRequestDto requestDto) {
 
         // 요청 requestDto -> 저장 entity
         Task task = new Task(requestDto); // 데이터가 들어있는 requestDto 객체를 바로 입력
@@ -38,7 +38,7 @@ public class TaskController {
     }
     /* 조회 */
     @GetMapping("/task")
-    public List<TaskResponseDto> getMemo() {
+    public List<TaskResponseDto> getTask() {
         // map 형식을 list 형식으로 바꾸기
         List<TaskResponseDto> responseList = taskList.values().stream().map(TaskResponseDto::new).toList(); //map의 모든 내용을 가지고 와서 list로 변환
         return responseList;
