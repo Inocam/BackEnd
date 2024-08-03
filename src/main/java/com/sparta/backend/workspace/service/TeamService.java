@@ -109,7 +109,7 @@ public class TeamService {
         return teamUserRepository.existsByTeamAndUser(team, user);
     }
 
-    //초대장이 이미 존재하는지 확인하는 메서드 // (userId, teamId) 로 하는게 맞는건지..?
+    //초대장이 이미 존재하는지 확인하는 메서드 //
     private boolean isInvitationExist(Long userId, Long teamId) {
         User user = userRepository.findById(userId)
 // userId에 해당하는 user 객체를 데이터베이스에서 조회한다 -> 만약 해당 userId에 해당하는 user 객체가 없으면 예외를 발생시킴 -> 조회 된 User 객체는 user 변수에 할당함.
@@ -156,8 +156,12 @@ public class TeamService {
         return responseString;
     }
 
-    //팀원 삭제 메서드 // 팀장만 가능??(-)
-    public String removeTeamMember(Long teamId, Long userId) {
+    //팀원 삭제 메서드 // 팀장만 가능(+)
+    public String removeTeamMember(Long teamId, Long userId, Long requesterId) {
+        //요청자가 팀장인지 확인
+        if (!isRequesterTeamLeader(requesterId, teamId)) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Unauthorized", "팀장만 팀원을 삭제할 수 있습니다.");
+        }
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "TeamId is incorrect", "잘못된 팀 ID 입니다."));
         User user = userRepository.findById(userId)
@@ -167,7 +171,10 @@ public class TeamService {
     }
 
     //팀 삭제 메서드 /팀장만 가능??(-)
-    public String removeTeam(Long teamId) { //teamId -> 삭제할 팀을 고유하게 식별하는 값
+    public String removeTeam(Long teamId, Long requesterId) { //teamId -> 삭제할 팀을 고유하게 식별하는 값
+        if (!isRequesterTeamLeader(requesterId, teamId)) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Unauthorized", "팀장만 팀원을 삭제할 수 있습니다.");
+        }
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "TeamId is incorrect", "팀 삭제에 실패 했습니다."));
         //팀 삭제 전에 해당 팀과 관련된 모든 teamUser 관계 삭제

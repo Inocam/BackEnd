@@ -58,18 +58,20 @@ public class RestTeamController {
     }
 
 
-    //팀원 삭제 엔드포인트 // -> temaid와 userid를 사용하여 해당 팀과 사용자 간의 관계를 삭제하는 방식 -> 팀에서 특정 사용자 삭제
-    @DeleteMapping("/{teamId}/members/{userId}")
-    public ResponseEntity<ErrorResponse> removeTeamMember(@PathVariable Long teamId, @PathVariable Long userId) {
-        String message = teamService.removeTeamMember(teamId, userId);
+    //팀원 삭제 엔드포인트 (+)// -> temaid와 userid를 사용하여 해당 팀과 사용자 간의 관계를 삭제하는 방식 -> 팀에서 특정 사용자 삭제
+    @DeleteMapping("/{teamId}/members/{userId}/requester/{requesterId}")
+    public ResponseEntity<ErrorResponse> removeTeamMember(@PathVariable Long teamId, @PathVariable Long userId, @PathVariable Long requesterId) {
+        log.info("removeTeamMember called with teamId={}, userId={}, requesterId={}", teamId, userId, requesterId);
+
+        String message = teamService.removeTeamMember(teamId, userId, requesterId);
         ErrorResponse errorResponse = new ErrorResponse("SUCCESS", message, HttpStatus.OK.value());
         return new ResponseEntity<>(errorResponse, HttpStatus.OK);  //응답 본문 없이 204 상태 코드 반환
     }
 
     //팀 삭제 엔드포인트(+)
-    @DeleteMapping("/{teamId}")
-    public ResponseEntity<ErrorResponse> removeTeam(@PathVariable Long teamId) {
-       String message = teamService.removeTeam(teamId);
+    @DeleteMapping("/{teamId}/requester/{requesterId}")
+    public ResponseEntity<ErrorResponse> removeTeam(@PathVariable Long teamId, @PathVariable Long requesterId) {
+       String message = teamService.removeTeam(teamId, requesterId);
         ErrorResponse errorResponse = new ErrorResponse("SUCCESS", message, HttpStatus.OK.value());
         return new ResponseEntity<>(errorResponse, HttpStatus.OK);
     }
