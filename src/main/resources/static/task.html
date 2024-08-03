@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task API 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 15px;
+        }
+    </style>
+</head>
+<body>
+<h1>Task API 테스트</h1>
+<form id="taskForm">
+    <label for="teamId">팀 ID</label>
+    <input type="number" id="teamId" name="teamId" required>
+
+    <label for="title">제목</label>
+    <input type="text" id="title" name="title" maxlength="255" required>
+
+    <label for="description">설명</label>
+    <textarea id="description" name="description"></textarea>
+
+    <label for="status">상태</label>
+    <select id="status" name="status">
+        <option value="todo">진행 전</option>
+        <option value="ongoing">진행 중</option>
+        <option value="done">완료</option>
+        <option value="delay">지연</option>
+    </select>
+
+    <label for="startDate">시작일자</label>
+    <input type="date" id="startDate" name="startDate" required>
+
+    <label for="dueDate">마감일자</label>
+    <input type="date" id="dueDate" name="dueDate" required>
+
+    <label for="parentTask">상위 일정 ID</label>
+    <input type="number" id="parentTask" name="parentTask">
+
+    <button type="submit">일정 제출</button>
+</form>
+
+<script>
+    document.getElementById('taskForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 기본 폼 제출 방지
+
+        const formData = new FormData(this);
+        const jsonData = JSON.stringify(Object.fromEntries(formData));
+
+        fetch('/foot/task', { // API 엔드포인트 URL
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: jsonData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert('일정이 성공적으로 제출되었습니다!');
+                console.log('성공:', data);
+            })
+            .catch(error => {
+                alert('일정 제출 중 오류 발생');
+                console.error('오류:', error);
+            });
+    });
+</script>
+</body>
+</html>
