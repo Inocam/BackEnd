@@ -40,16 +40,6 @@ public class UserController {
     private final KakaoService kakaoService;
     private final JwtUtil jwtUtil;
 
-    @GetMapping("/user/login-page")
-    public String loginPage() {
-        return "login";
-    }
-
-    @GetMapping("/user/signup")
-    public String signupPage() {
-        return "signup";
-    }
-
     @PostMapping("/user/signup")
     public ResponseEntity<String> signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외처리

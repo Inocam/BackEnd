@@ -6,6 +6,7 @@ import com.sparta.backend.user.dto.LoginRequestDto;
 import com.sparta.backend.user.model.RefreshToken;
 import com.sparta.backend.user.model.UserRoleEnum;
 import com.sparta.backend.user.repository.RefreshTokenRepository;
+import com.sparta.backend.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,9 +28,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository) {
+    private final UserRepository userRepository;
+
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
         this.refreshTokenRepository = refreshTokenRepository;
+        this.userRepository = userRepository;
         setFilterProcessesUrl("/api/user/login");
     }
 
@@ -74,15 +78,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         saveRefreshToken(email, refreshToken);
 
         // JSON 객체 생성
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
+        Map<String, String> userInfo = new HashMap<>();
+        userInfo.put("accessToken", accessToken);
+        userInfo.put("refreshToken", refreshToken);
+        userInfo.put("id", userRepository.findByEmail(email).get().getId().toString());
+        userInfo.put("username", userRepository.findByEmail(email).get().getUsername().toString());
+        userInfo.put("email", email);
+
 
         // 응답 본문에 JSON 작성
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            out.print(new Gson().toJson(tokens)); // Gson 라이브러리를 사용하여 JSON 변환
+            out.print(new Gson().toJson(userInfo)); // Gson 라이브러리를 사용하여 JSON 변환
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
