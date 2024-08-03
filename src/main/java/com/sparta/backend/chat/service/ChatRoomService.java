@@ -3,6 +3,7 @@ package com.sparta.backend.chat.service;
 import com.sparta.backend.chat.dto.chatRoom.ChatRoomRequestDto;
 import com.sparta.backend.chat.dto.chatRoom.ChatRoomResponseDto;
 import com.sparta.backend.chat.dto.chatRoom.RoomListResponseDto;
+import com.sparta.backend.chat.dto.userRoom.UserRoomListResponseDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomRequestDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomResponseDto;
 import com.sparta.backend.chat.entity.ChatRoom;
@@ -78,6 +79,29 @@ public class ChatRoomService {
 
         return chatRoomResponseDto;
     }
+
+    // 사용자가 속한 채팅방 조회
+    public List<UserRoomListResponseDto> getRoom(Long userId) {
+
+        // 사용자가 속한 채팅방 정보 확인
+        List<UserRoom> userRooms = userRoomRepository.findAllByUserId(userId);
+
+        // 사용자가 속한 채팅방 존재 여부
+        if (userRooms.isEmpty()) {
+            throw new CustomException(404, CHATROOM_NOT_FOUND, "사용자가 속한 채팅방이 없습니다.");
+        }
+
+        // 사용자가 속한 채팅방 정보 List 생성
+        List<UserRoomListResponseDto> UserRoomListResponseDto = new ArrayList<>();
+
+        // UserRoom 객체를 dto로 변환하여 List에 추가
+        for (UserRoom userRoom : userRooms) {
+            UserRoomListResponseDto.add(new UserRoomListResponseDto(userRoom));
+        }
+
+        return UserRoomListResponseDto;
+    }
+
 
     // 채팅방 삭제
     @Transactional

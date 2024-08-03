@@ -6,6 +6,7 @@ import com.sparta.backend.chat.dto.chatMessage.ReadMessageResponseDto;
 import com.sparta.backend.chat.dto.chatRoom.ChatRoomRequestDto;
 import com.sparta.backend.chat.dto.chatRoom.ChatRoomResponseDto;
 import com.sparta.backend.chat.dto.chatRoom.RoomListResponseDto;
+import com.sparta.backend.chat.dto.userRoom.UserRoomListResponseDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomRequestDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomResponseDto;
 import com.sparta.backend.chat.service.ChatMessageService;
@@ -36,6 +37,12 @@ public class  ChatController {
     @GetMapping()
     public List<RoomListResponseDto> getListRoom() {
         return chatRoomService.getListRoom();
+    }
+
+    // 사용자가 속한 채팅방 조회
+    @GetMapping("/{userId}")
+    public List<UserRoomListResponseDto> getRoom(@PathVariable Long userId) {
+        return chatRoomService.getRoom(userId);
     }
 
     // 채팅방 삭제

@@ -1,5 +1,6 @@
 package com.sparta.backend.user.repository;
 
+import com.sparta.backend.chat.entity.UserRoom;
 import com.sparta.backend.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
