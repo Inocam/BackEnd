@@ -1,6 +1,7 @@
 package com.sparta.backend.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.Gson;
 import com.sparta.backend.user.dto.UserResponseDto;
 import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.security.JwtUtil;
@@ -23,7 +24,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -33,6 +38,7 @@ public class UserController {
 
     private final UserService userService;
     private final KakaoService kakaoService;
+    private final JwtUtil jwtUtil;
 
     @GetMapping("/user/login-page")
     public String loginPage() {
@@ -76,11 +82,7 @@ public class UserController {
 
     @GetMapping("/user/kakao/callback")
     public String kakaoCallback(@RequestParam String code, HttpServletResponse response, @AuthenticationPrincipal UserDetailsImpl userDetails) throws JsonProcessingException {
-        String token = kakaoService.kakaoLogin(code);
-
-        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        kakaoService.kakaoLogin(code, response);
 
         return "redirect:/";
     }

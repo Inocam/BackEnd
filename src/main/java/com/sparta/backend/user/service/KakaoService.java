@@ -3,11 +3,13 @@ package com.sparta.backend.user.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.sparta.backend.user.dto.KakaoUserInfoDto;
 import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.model.UserRoleEnum;
 import com.sparta.backend.user.security.JwtUtil;
 import com.sparta.backend.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -20,9 +22,13 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j(topic = "KAKAO Login")
@@ -36,7 +42,7 @@ public class KakaoService {
     private final JwtUtil jwtUtil;
     private final String serverAddress = "footapi.o-r.kr";
 
-    public String kakaoLogin(String code) throws JsonProcessingException {
+    public void kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getToken(code);
 
@@ -51,8 +57,23 @@ public class KakaoService {
 
         log.info(encodedValue);
 
-        // 4. Jwt 토큰 반환
-        return encodedValue;
+
+        String refreshToken = jwtUtil.createRefreshToken(kakaoUser.getEmail());
+
+        // JSON 객체 생성
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", encodedValue);
+        tokens.put("refreshToken", refreshToken);
+
+        // 응답 본문에 JSON 작성
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.print(new Gson().toJson(tokens)); // Gson 라이브러리를 사용하여 JSON 변환
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String getToken(String code) throws JsonProcessingException {
