@@ -1,4 +1,4 @@
-package com.sparta.backend.dto;
+package com.sparta.backend.task.dto;
 // 클라이언트에서 들어오는 요청
 
 import lombok.Getter;

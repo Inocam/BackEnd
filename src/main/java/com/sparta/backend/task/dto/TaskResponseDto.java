@@ -1,7 +1,7 @@
-package com.sparta.backend.dto;
+package com.sparta.backend.task.dto;
 // 클라이언트로 나가는 요청
 
-import com.sparta.backend.entity.Task;
+import com.sparta.backend.task.entity.Task;
 import lombok.Getter;
 
 @Getter

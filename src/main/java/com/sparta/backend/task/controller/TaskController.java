@@ -1,9 +1,9 @@
-package com.sparta.backend.controller;
+package com.sparta.backend.task.controller;
 // 클라이언트에서 받은 요청을 서비스에게 전달하는 방법
 
-import com.sparta.backend.dto.TaskRequestDto;
-import com.sparta.backend.dto.TaskResponseDto;
-import com.sparta.backend.service.TaskService;
+import com.sparta.backend.task.dto.TaskRequestDto;
+import com.sparta.backend.task.dto.TaskResponseDto;
+import com.sparta.backend.task.service.TaskService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

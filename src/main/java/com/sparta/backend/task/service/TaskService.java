@@ -1,10 +1,10 @@
-package com.sparta.backend.service;
+package com.sparta.backend.task.service;
 // 컨트롤러에서 전달된 데이터를 처리하는 방법
 
-import com.sparta.backend.dto.TaskRequestDto;
-import com.sparta.backend.dto.TaskResponseDto;
-import com.sparta.backend.entity.Task;
-import com.sparta.backend.repository.TaskRepository;
+import com.sparta.backend.task.dto.TaskRequestDto;
+import com.sparta.backend.task.dto.TaskResponseDto;
+import com.sparta.backend.task.entity.Task;
+import com.sparta.backend.task.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,6 +1,6 @@
-package com.sparta.backend.entity;
+package com.sparta.backend.task.entity;
 
-import com.sparta.backend.dto.TaskRequestDto;
+import com.sparta.backend.task.dto.TaskRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
