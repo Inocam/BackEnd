@@ -57,7 +57,6 @@ public class RestTeamController {
         return ResponseEntity.ok(teams);
     }
 
-
     //팀원 삭제 엔드포인트 (+)// -> temaid와 userid를 사용하여 해당 팀과 사용자 간의 관계를 삭제하는 방식 -> 팀에서 특정 사용자 삭제
     @DeleteMapping("/{teamId}/members/{userId}/requester/{requesterId}")
     public ResponseEntity<ErrorResponse> removeTeamMember(@PathVariable Long teamId, @PathVariable Long userId, @PathVariable Long requesterId) {
@@ -96,6 +95,12 @@ public class RestTeamController {
     public ResponseEntity<List<UsersInTeamResponseDto>> getUsersInTeam(@PathVariable Long teamId) {
         List<UsersInTeamResponseDto> members = teamService.getUsersInTeam(teamId);
         return new ResponseEntity<>(members, HttpStatus.OK);
+    }
+    //한 유저가 속한 전체 팀 목록 조회
+    @GetMapping("/user/{userId}/teams")
+    public ResponseEntity<List<ResponseTeamDto>> getTeamsByUserId(@PathVariable Long userId) {
+        List<ResponseTeamDto> teams = teamService.getTeamsByUserId(userId);
+        return new ResponseEntity<>(teams, HttpStatus.OK);
     }
 }
 

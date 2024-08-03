@@ -240,5 +240,15 @@ public class TeamService {
                 .collect(Collectors.toList());  //스트림 결과를 리스트로 변환하여 반환
 
     }
+    // 사용자가 속한 팀 전체 목록 조회 메서드
+    public List<ResponseTeamDto> getTeamsByUserId(Long userId) {
+        List<TeamUser> teamUsers = teamUserRepository.findByUserId(userId);
+        if (teamUsers.isEmpty()) {
+            throw new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "속해있는 팀이 없습니다.");
+        }
+        return teamUsers.stream()
+                .map(teamUser -> new ResponseTeamDto(teamUser.getTeam()))
+                .collect(Collectors.toList());
+    }
 }
 
