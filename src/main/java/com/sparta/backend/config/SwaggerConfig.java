@@ -1,4 +1,4 @@
-package com.sparta.backend.workspace.config;
+package com.sparta.backend.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;

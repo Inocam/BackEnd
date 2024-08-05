@@ -1,4 +1,4 @@
-package com.sparta.backend.chat.config;
+package com.sparta.backend.config;
 
 
 public class WebSocketConfig {
