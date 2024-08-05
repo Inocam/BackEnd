@@ -15,6 +15,7 @@ public class ResponseTeamDto {
     private String description;
     private Long creatorId;
     private String creatorName;
+    private String imageUrl;
 
     public ResponseTeamDto(Team team, String creatorName) {
         this.team_id = team.getTeam_id();
@@ -22,6 +23,7 @@ public class ResponseTeamDto {
         this.description = team.getDescription();
         this.creatorId = team.getCreatorId();
         this.creatorName = creatorName;
+        this.imageUrl = team.getImageUrl();
     }
 
     public ResponseTeamDto(Team team) {

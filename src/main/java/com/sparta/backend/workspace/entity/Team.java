@@ -32,6 +32,7 @@ public class Team {
         this.name = requestTeamDto.getName();
         this.description = requestTeamDto.getDescription();
         this.creatorId = requestTeamDto.getCreatorId();
+        this.imageUrl = requestTeamDto.getImageUrl();
 
     }
     public Team(String name, String description, Long creatorId, String imageUrl) {
