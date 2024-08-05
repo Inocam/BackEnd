@@ -40,8 +40,9 @@ public class UserController {
     private final KakaoService kakaoService;
     private final JwtUtil jwtUtil;
 
+
     @PostMapping("/user/signup")
-    public ResponseEntity<String> signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
+    public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         if (fieldErrors.size() > 0) {
