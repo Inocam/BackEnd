@@ -31,9 +31,10 @@ public class TeamService {
 
     //팀 생성 메서드
     public ResponseTeamDto createTeam(RequestTeamDto requestTeamDto) {  //RequestTeamDto 객체를 받고,ResponseTeamDto 객체를 반환함, requestTeamDto의 정보를 이용하여 team 객체를 생성하고, 생성된 team 객체를 teamRepository의 save 메서드를 사용해서 저장해서 saveteam 객체를 만든다. 그리고 ResponseTeamDto로 감싸서 반환한다.
-        Team team = new Team(requestTeamDto); // 팀 객체 생성
         User creator = userRepository.findById(requestTeamDto.getCreatorId())
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "User Not Found", "잘못된 팀 생성 입니다."));
+
+        Team team = new Team(requestTeamDto); // 팀 객체 생성
 
         Team saveTeam = teamRepository.save(team); // 팀 객체 데베에 저장
 
@@ -41,7 +42,7 @@ public class TeamService {
         teamUserRepository.save(teamUser);
         // 변경 사항 저장 하는
         //userRepository.save(creator);
-        return new ResponseTeamDto(saveTeam);
+        return new ResponseTeamDto(saveTeam, creator.getUsername());
     }
 
     //controller 팀원 초대할 때 요청자가 팀장인지, 대상이 팀에 이미 속해 있는지, 초대장이 이미 있는지 확인
