@@ -1,4 +1,4 @@
-package com.sparta.backend.workspace.config;
+package com.sparta.backend.config;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
