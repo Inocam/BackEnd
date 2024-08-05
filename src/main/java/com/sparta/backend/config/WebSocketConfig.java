@@ -1,4 +1,4 @@
-package com.sparta.backend.chat.config;
+package com.sparta.backend.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

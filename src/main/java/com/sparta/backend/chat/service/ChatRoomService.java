@@ -2,13 +2,16 @@ package com.sparta.backend.chat.service;
 
 import com.sparta.backend.chat.dto.chatRoom.ChatRoomRequestDto;
 import com.sparta.backend.chat.dto.chatRoom.ChatRoomResponseDto;
+import com.sparta.backend.chat.dto.chatRoom.LastMessageResponseDto;
 import com.sparta.backend.chat.dto.chatRoom.RoomListResponseDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomListResponseDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomRequestDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomResponseDto;
+import com.sparta.backend.chat.entity.ChatMessage;
 import com.sparta.backend.chat.entity.ChatRoom;
 import com.sparta.backend.chat.entity.UserRoom;
 import com.sparta.backend.chat.global.CustomException;
+import com.sparta.backend.chat.repository.ChatMessageRepository;
 import com.sparta.backend.chat.repository.ChatRoomRepository;
 import com.sparta.backend.chat.repository.UserRoomRepository;
 import com.sparta.backend.user.model.User;
@@ -19,6 +22,7 @@ import static com.sparta.backend.chat.global.ErrorCode.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 @Service
 public class ChatRoomService {
@@ -26,14 +30,17 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRoomRepository userRoomRepository;
     private final UserRepository userRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     public ChatRoomService(ChatRoomRepository chatRoomRepository,
                            UserRoomRepository userRoomRepository,
-                           UserRepository userRepository) {
+                           UserRepository userRepository,
+                           ChatMessageRepository chatMessageRepository) {
 
         this.chatRoomRepository = chatRoomRepository;
         this.userRoomRepository = userRoomRepository;
         this.userRepository = userRepository;
+        this.chatMessageRepository = chatMessageRepository;
     }
 
     //채팅방 생성
@@ -66,18 +73,41 @@ public class ChatRoomService {
     // 채팅방 전체 조회
     public List<RoomListResponseDto> getListRoom() {
 
-        // 채팅방 정보 List 생성
-        List<RoomListResponseDto> chatRoomResponseDto = new ArrayList<>();
+        List<RoomListResponseDto> roomList = new ArrayList<>();
 
-        // 생성일 기준 오름차순
+        // 모든 채팅방을 생성일 기준으로 오름차순으로 가져옴
         List<ChatRoom> chatRooms = chatRoomRepository.findAllByOrderByCreatedDateAsc();
 
-        // ChatRoom 객체를 dto로 변환하여 List에 추가
+        // 각 채팅방에 대해 마지막 메시지를 스택으로 가져와서 RoomListResponseDto 객체를 생성
         for(ChatRoom chatRoom : chatRooms) {
-            chatRoomResponseDto.add(new RoomListResponseDto(chatRoom));
-        }
+            // 각 채팅방의 모든 메시지를 보낸 시간 기준으로 오름차순으로 가져옴
+            List<ChatMessage> messageList = chatMessageRepository.findAllByChatRoomOrderBySendDateAsc(chatRoom);
 
-        return chatRoomResponseDto;
+            // 스택으로 메시지를 처리
+            Stack<ChatMessage> messageStack = new Stack<>();
+            messageStack.addAll(messageList);
+
+            // 가장 최신 메시지
+            ChatMessage lastMessage = null;
+            if (!messageStack.isEmpty()) {
+                lastMessage = messageStack.pop();
+            }
+
+            // 메세지가 있다면
+            if (lastMessage != null) {
+                LastMessageResponseDto lastMessageDto = new LastMessageResponseDto();
+                lastMessageDto.setUserId(lastMessage.getUser().getId());
+                lastMessageDto.setMessage(lastMessage.getMessage());
+
+                RoomListResponseDto roomListResponseDto = new RoomListResponseDto(chatRoom, lastMessageDto);
+                roomList.add(roomListResponseDto);
+            } else {
+                // 없다면 null 반환
+                RoomListResponseDto roomListResponseDto = new RoomListResponseDto(chatRoom, null);
+                roomList.add(roomListResponseDto);
+            }
+        }
+        return roomList;
     }
 
     // 사용자가 속한 채팅방 조회
@@ -98,14 +128,13 @@ public class ChatRoomService {
         for (UserRoom userRoom : userRooms) {
             UserRoomListResponseDto.add(new UserRoomListResponseDto(userRoom));
         }
-
         return UserRoomListResponseDto;
     }
-
 
     // 채팅방 삭제
     @Transactional
     public String deleteRoom(Long roomId, Long userId) {
+
         // 채팅방 존재 여부 확인
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(404, CHATROOM_NOT_FOUND, "채팅방이 존재하지 않습니다."));

@@ -1,4 +1,4 @@
-package com.sparta.backend.user.config;
+package com.sparta.backend.config;
 
 import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.security.JwtAuthenticationFilter;

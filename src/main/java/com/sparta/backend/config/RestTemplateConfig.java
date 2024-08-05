@@ -1,4 +1,4 @@
-package com.sparta.backend.user.config;
+package com.sparta.backend.config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;

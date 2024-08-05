@@ -69,7 +69,7 @@ public class  ChatController {
         return chatMessageService.sendMessage(roomId, chatMessageRequestDto);
     }
 
-    // 채팅 조회x
+    // 채팅 조회
     @GetMapping("/{roomId}/messages")
     public List<ReadMessageResponseDto> getChatMessagesList(@PathVariable Long roomId) {
         return chatMessageService.getChatMessageList(roomId);

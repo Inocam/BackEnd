@@ -70,7 +70,6 @@ public class ChatMessageService {
         for (ChatMessage chatMessage : chatMessages) {
             responseDto.add(new ReadMessageResponseDto(chatMessage));
         }
-
         return responseDto;
     }
 }
