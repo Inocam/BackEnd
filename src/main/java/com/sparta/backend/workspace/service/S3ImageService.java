@@ -74,7 +74,7 @@ public class S3ImageService {
 
         String s3FileName = UUID.randomUUID().toString().substring(0, 10) + originalFilename; //변경된 파일 명
 
-        InputStream is = image.getInputStream();
+        InputStream is = image.getInputStream(); //파일의 입력 스트림을 얻는다??
         byte[] bytes = IOUtils.toByteArray(is); //image를 byte[]로 변환
 
         ObjectMetadata metadata = new ObjectMetadata(); //metadata 생성
