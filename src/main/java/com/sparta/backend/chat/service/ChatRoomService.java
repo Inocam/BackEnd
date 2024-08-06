@@ -79,7 +79,7 @@ public class ChatRoomService {
         List<ChatRoom> chatRooms = chatRoomRepository.findAllByOrderByCreatedDateAsc();
 
         // 각 채팅방에 대해 마지막 메시지를 스택으로 가져와서 RoomListResponseDto 객체를 생성
-        for(ChatRoom chatRoom : chatRooms) {
+        for (ChatRoom chatRoom : chatRooms) {
             // 각 채팅방의 모든 메시지를 보낸 시간 기준으로 오름차순으로 가져옴
             List<ChatMessage> messageList = chatMessageRepository.findAllByChatRoomOrderBySendDateAsc(chatRoom);
 
@@ -88,24 +88,18 @@ public class ChatRoomService {
             messageStack.addAll(messageList);
 
             // 가장 최신 메시지
-            ChatMessage lastMessage = null;
-            if (!messageStack.isEmpty()) {
-                lastMessage = messageStack.pop();
-            }
+            ChatMessage lastMessage = messageStack.isEmpty() ? null : messageStack.pop();
 
-            // 메세지가 있다면
+            // LastMessageResponseDto 생성
+            LastMessageResponseDto lastMessageDto = new LastMessageResponseDto();
             if (lastMessage != null) {
-                LastMessageResponseDto lastMessageDto = new LastMessageResponseDto();
                 lastMessageDto.setUserId(lastMessage.getUser().getId());
                 lastMessageDto.setMessage(lastMessage.getMessage());
-
-                RoomListResponseDto roomListResponseDto = new RoomListResponseDto(chatRoom, lastMessageDto);
-                roomList.add(roomListResponseDto);
-            } else {
-                // 없다면 null 반환
-                RoomListResponseDto roomListResponseDto = new RoomListResponseDto(chatRoom, null);
-                roomList.add(roomListResponseDto);
             }
+
+            // RoomListResponseDto 생성
+            RoomListResponseDto roomListResponseDto = new RoomListResponseDto(chatRoom, lastMessageDto);
+            roomList.add(roomListResponseDto);
         }
         return roomList;
     }
