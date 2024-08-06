@@ -12,7 +12,9 @@ import com.sparta.backend.chat.dto.userRoom.UserRoomResponseDto;
 import com.sparta.backend.chat.service.ChatMessageService;
 import com.sparta.backend.chat.service.ChatRoomService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,10 +25,12 @@ public class  ChatController {
 
     private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public ChatController(ChatRoomService chatRoomService, ChatMessageService chatMessageService) {
+    public ChatController(ChatRoomService chatRoomService, ChatMessageService chatMessageService, SimpMessagingTemplate messagingTemplate) {
         this.chatRoomService = chatRoomService;
         this.chatMessageService = chatMessageService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     // 채팅방 생성
@@ -59,14 +63,13 @@ public class  ChatController {
         return chatRoomService.createUserRoom(userRoomRequestDto);
     }
 
-    // 채팅 전송
-    // @PostMapping("/{roomId}/messages")
-    @MessageMapping("/{roomId}/messages")
-    @SendTo("foot/chat/rooms/{roomId}")
-    public ChatMessageResponseDto sendMessage(@PathVariable Long roomId,
-                                                    @RequestBody ChatMessageRequestDto chatMessageRequestDto) {
-
-        return chatMessageService.sendMessage(roomId, chatMessageRequestDto);
+    // WebSocket을 통한 채팅 메시지 전송
+    @MessageMapping("/sendMessage")
+    public ChatMessageResponseDto sendMessage(@Payload ChatMessageRequestDto chatMessageRequestDto) {
+        Long roomId = chatMessageRequestDto.getRoomId();
+        ChatMessageResponseDto responseDto = chatMessageService.sendMessage(roomId, chatMessageRequestDto);
+        messagingTemplate.convertAndSend("/topic/room/" + roomId, responseDto);
+        return responseDto;
     }
 
     // 채팅 조회
