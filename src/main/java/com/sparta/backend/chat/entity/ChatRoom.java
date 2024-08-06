@@ -20,14 +20,14 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
 
-    @Column(name="roomName", nullable = false)
+    @Column(name="room_name", nullable = false)
     private String roomName;
 
-    @Column(name="createdDate", nullable = false)
+    @Column(name="created_Date", nullable = false)
     private LocalDateTime createdDate;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false) // userId 추가
+    @JoinColumn(name = "user_id", nullable = false) // userId 추가
     private User user;
 
     @OneToMany(mappedBy = "chatRoom")

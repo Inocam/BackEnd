@@ -33,7 +33,7 @@ public class ChatMessageService {
     }
 
     // 채팅 전송
-    public ChatMessageResponseDto createChatMessage(Long roomId, ChatMessageRequestDto chatMessageRequestDto) {
+    public ChatMessageResponseDto sendMessage(Long roomId, ChatMessageRequestDto chatMessageRequestDto) {
 
         // 사용자 존재 여부
         User user = userRepository.findById(chatMessageRequestDto.getUserId())
@@ -70,7 +70,6 @@ public class ChatMessageService {
         for (ChatMessage chatMessage : chatMessages) {
             responseDto.add(new ReadMessageResponseDto(chatMessage));
         }
-
         return responseDto;
     }
 }

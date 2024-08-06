@@ -16,11 +16,11 @@ public class UserRoom {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "roomId", nullable = false)
+    @JoinColumn(name = "room_id", nullable = false)
     private ChatRoom chatRoom;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public UserRoom(ChatRoom chatRoom, User user) {

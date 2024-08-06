@@ -18,11 +18,11 @@ public class ChatMessage {
     private Long messageId;
 
     @ManyToOne
-    @JoinColumn(name = "roomId", nullable = false)
+    @JoinColumn(name = "room_id", nullable = false)
     private ChatRoom chatRoom;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name="message", nullable = false)

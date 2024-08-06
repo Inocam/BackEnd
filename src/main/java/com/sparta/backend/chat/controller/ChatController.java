@@ -11,6 +11,8 @@ import com.sparta.backend.chat.dto.userRoom.UserRoomRequestDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomResponseDto;
 import com.sparta.backend.chat.service.ChatMessageService;
 import com.sparta.backend.chat.service.ChatRoomService;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,14 +60,16 @@ public class  ChatController {
     }
 
     // 채팅 전송
-    @PostMapping("/{roomId}/messages")
-    public ChatMessageResponseDto createChatMessage(@PathVariable Long roomId,
+    // @PostMapping("/{roomId}/messages")
+    @MessageMapping("/{roomId}/messages")
+    @SendTo("foot/chat/rooms/{roomId}")
+    public ChatMessageResponseDto sendMessage(@PathVariable Long roomId,
                                                     @RequestBody ChatMessageRequestDto chatMessageRequestDto) {
 
-        return chatMessageService.createChatMessage(roomId, chatMessageRequestDto);
+        return chatMessageService.sendMessage(roomId, chatMessageRequestDto);
     }
 
-    // 채팅 조회x
+    // 채팅 조회
     @GetMapping("/{roomId}/messages")
     public List<ReadMessageResponseDto> getChatMessagesList(@PathVariable Long roomId) {
         return chatMessageService.getChatMessageList(roomId);

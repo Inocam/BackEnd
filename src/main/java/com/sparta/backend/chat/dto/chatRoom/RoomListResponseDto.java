@@ -10,11 +10,13 @@ public class RoomListResponseDto {
 
     private Long roomId;
     private String roomName;
+    private LastMessageResponseDto lastMessage;
     private LocalDateTime createdDate;
 
-    public RoomListResponseDto(ChatRoom chatRoom) {
+    public RoomListResponseDto(ChatRoom chatRoom, LastMessageResponseDto lastMessage) {
         this.roomId = chatRoom.getRoomId();
         this.roomName = chatRoom.getRoomName();
         this.createdDate = LocalDateTime.now();
+        this.lastMessage = lastMessage;
     }
 }
