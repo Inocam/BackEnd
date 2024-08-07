@@ -24,6 +24,7 @@ public class TaskController {
     public TaskResponseDto createTask(@RequestBody TaskRequestDto requestDto) { //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
         return taskService.createTask(requestDto); //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
     }
+
     /* 조회 */
     @GetMapping("/task")
     public List<TaskResponseDto> getTask() {
