@@ -135,12 +135,16 @@ public class TeamService {
     //사용자가 초대받은 팀 목록 조회 메서드 (모든 상태)(+)
     public List<ResponseTeamDto> getAllTeamsByUserId(Long userId) {
         List<Invitation> invitations = invitationRepository.findByUserId(userId);
+        // 초대장이 없는 경우 예외를 던짐
+        if (invitations.isEmpty()) {
+            throw new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "초대장을 받은 적이 없습니다.");
+        }
         return invitations.stream()
-                .map(invitation ->{
+                .map(invitation -> {
                     Team team = invitation.getTeam();
                     User creator = userRepository.findById(team.getCreatorId())
-                            .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "초대를 받은 적 이 없습니다."));
-                return new ResponseTeamDto(team, creator.getUsername());
+                            .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "팀 생성자를 찾을 수 없습니다."));
+                    return new ResponseTeamDto(team, creator.getUsername());
                 })
                 .collect(Collectors.toList());
     }
