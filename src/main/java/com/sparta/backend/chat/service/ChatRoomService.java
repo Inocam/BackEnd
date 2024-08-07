@@ -95,6 +95,7 @@ public class ChatRoomService {
             if (lastMessage != null) {
                 lastMessageDto.setUserId(lastMessage.getUser().getId());
                 lastMessageDto.setMessage(lastMessage.getMessage());
+                lastMessageDto.setSendDate(lastMessage.getSendDate());
             }
 
             // RoomListResponseDto 생성

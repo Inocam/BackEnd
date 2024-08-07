@@ -13,7 +13,6 @@ import com.sparta.backend.chat.service.ChatMessageService;
 import com.sparta.backend.chat.service.ChatRoomService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +26,10 @@ public class  ChatController {
     private final ChatMessageService chatMessageService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    public ChatController(ChatRoomService chatRoomService, ChatMessageService chatMessageService, SimpMessagingTemplate messagingTemplate) {
+    public ChatController(ChatRoomService chatRoomService,
+                          ChatMessageService chatMessageService,
+                          SimpMessagingTemplate messagingTemplate) {
+
         this.chatRoomService = chatRoomService;
         this.chatMessageService = chatMessageService;
         this.messagingTemplate = messagingTemplate;
@@ -68,7 +70,7 @@ public class  ChatController {
     public ChatMessageResponseDto sendMessage(@Payload ChatMessageRequestDto chatMessageRequestDto) {
         Long roomId = chatMessageRequestDto.getRoomId();
         ChatMessageResponseDto responseDto = chatMessageService.sendMessage(roomId, chatMessageRequestDto);
-        messagingTemplate.convertAndSend("/topic/room/" + roomId, responseDto);
+        messagingTemplate.convertAndSend("/send/" + roomId, responseDto);
         return responseDto;
     }
 
