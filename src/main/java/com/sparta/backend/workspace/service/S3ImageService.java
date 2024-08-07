@@ -1,7 +1,9 @@
 package com.sparta.backend.workspace.service;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
@@ -19,10 +21,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import java.net.URL;    //Url,Path
 
@@ -36,11 +35,13 @@ public class S3ImageService {
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
 
+
     public String upload(MultipartFile image) {
         //입력받은 이미지 파일이 빈 파일인지 검증
         if(image.isEmpty() || Objects.isNull(image.getOriginalFilename())){
             throw new S3Exception(S3ErrorCode.EMPTY_FILE_EXCEPTION);
         }
+        log.info("Uploading image: {}", image.getOriginalFilename());
         //uploadImage를 호출하여 S3에 저장된 이미지의 public url을 반환한다.
         return this.uploadImage(image);
     }
@@ -48,6 +49,7 @@ public class S3ImageService {
     private String uploadImage(MultipartFile image) {
         this.validateImageFileExtention(image.getOriginalFilename());   //validateImageFileExtention호출해서 확장자 명이 올바른지 확인함.
         try {
+
             return this.uploadImageToS3(image); //uploadImageToS3() 호출하여 이미지를 S3에 업로드하고, S3에 저장된 이미지의 public url을 받아서 서비스 로직에 반환한다.
         } catch (IOException e) {
             throw new S3Exception(S3ErrorCode.IO_EXCEPTION_ON_IMAGE_UPLOAD);
@@ -71,7 +73,6 @@ public class S3ImageService {
     private String uploadImageToS3(MultipartFile image) throws IOException {
         String originalFilename = image.getOriginalFilename(); //원본 파일 명
         String extention = originalFilename.substring(originalFilename.lastIndexOf(".")); //확장자 명
-
         String s3FileName = UUID.randomUUID().toString().substring(0, 10) + originalFilename; //변경된 파일 명
 
         InputStream is = image.getInputStream(); //파일의 입력 스트림을 얻는다??

@@ -12,9 +12,11 @@ import com.sparta.backend.workspace.repository.InvitationRepository;
 import com.sparta.backend.workspace.repository.TeamUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,15 +29,26 @@ public class TeamService {
     private final InvitationRepository invitationRepository;
     private final UserRepository userRepository;
     private final TeamUserRepository teamUserRepository;
+    private final S3ImageService s3ImageService;
 
+    @Value("${cloud.aws.s3.default-image-url}")     //기본이미지 url은 @Value 사용해서 설정된 환경 변수에서 가져옴(-)
+    private String defaultImageUrl;
 
     //팀 생성 메서드
-    public ResponseTeamDto createTeam(RequestTeamDto requestTeamDto) {  //RequestTeamDto 객체를 받고,ResponseTeamDto 객체를 반환함, requestTeamDto의 정보를 이용하여 team 객체를 생성하고, 생성된 team 객체를 teamRepository의 save 메서드를 사용해서 저장해서 saveteam 객체를 만든다. 그리고 ResponseTeamDto로 감싸서 반환한다.
+    public ResponseTeamDto createTeam(RequestTeamDto requestTeamDto, MultipartFile image) {  //RequestTeamDto 객체를 받고,ResponseTeamDto 객체를 반환함, requestTeamDto의 정보를 이용하여 team 객체를 생성하고, 생성된 team 객체를 teamRepository의 save 메서드를 사용해서 저장해서 saveteam 객체를 만든다. 그리고 ResponseTeamDto로 감싸서 반환한다.
+
+        String imageUrl;
+        if (image != null && !image.isEmpty()) {
+            imageUrl = s3ImageService.upload(image);
+        } else {
+            imageUrl = defaultImageUrl;
+        }
+
         User creator = userRepository.findById(requestTeamDto.getCreatorId())
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "User Not Found", "잘못된 팀 생성 입니다."));
 
         Team team = new Team(requestTeamDto); // 팀 객체 생성
-
+        team.setImageUrl(imageUrl); //팀 엔티티에 이미지 url 설정
         Team saveTeam = teamRepository.save(team); // 팀 객체 데베에 저장
 
         TeamUser teamUser = new TeamUser(creator, saveTeam, "팀장"); //팀 생성자를 팀장으로 추가 //teamUser 객체 생성시 -> creator가 User 엔티티 객체, TeamUser 엔티티의 user 필드에 매핑됨,
@@ -55,7 +68,6 @@ public class TeamService {
         Long teamId = invitationRequestDto.getTeamId(); //team의 fk 초대 할 팀의 아이디
         Long userId = invitationRequestDto.getUserId(); //user의 fk 초대 할 유저의 아이디
         Long requesterId = invitationRequestDto.getRequesterId();   //초대를 생성하는 유저의 아이디
-
 
         //요청자가 팀장인지 확인
         if (!isRequesterTeamLeader(requesterId, teamId)) { //userId -> requesterId 변경
@@ -124,7 +136,12 @@ public class TeamService {
     public List<ResponseTeamDto> getAllTeamsByUserId(Long userId) {
         List<Invitation> invitations = invitationRepository.findByUserId(userId);
         return invitations.stream()
-                .map(invitation -> new ResponseTeamDto(invitation.getTeam()))
+                .map(invitation ->{
+                    Team team = invitation.getTeam();
+                    User creator = userRepository.findById(team.getCreatorId())
+                            .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "초대를 받은 적 이 없습니다."));
+                return new ResponseTeamDto(team, creator.getUsername());
+                })
                 .collect(Collectors.toList());
     }
 
@@ -237,18 +254,24 @@ public class TeamService {
                 .map(teamUser -> new UsersInTeamResponseDto(
                         team.getTeam_id(),  //팀 id
                         teamUser.getUser().getId(), //유저 id
-                        teamUser.getUser().getUsername()))  //유저 이름
+                        teamUser.getUser().getUsername(),  //유저 이름
+                teamUser.getUser().getEmail()))
                 .collect(Collectors.toList());  //스트림 결과를 리스트로 변환하여 반환
 
     }
     // 사용자가 속한 팀 전체 목록 조회 메서드
-    public List<ResponseTeamDto> getTeamsByUserId(Long userId) {
+    public List<CustomResponseTeamDto> getTeamsByUserId(Long userId) {
         List<TeamUser> teamUsers = teamUserRepository.findByUserId(userId);
         if (teamUsers.isEmpty()) {
             throw new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "속해있는 팀이 없습니다.");
         }
         return teamUsers.stream()
-                .map(teamUser -> new ResponseTeamDto(teamUser.getTeam()))
+                .map(teamUser -> {
+                    Team team = teamUser.getTeam();
+                    User creator = userRepository.findById(team.getCreatorId())
+                            .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "팀 생성자를 찾을 수 없습니다."));
+                    return new CustomResponseTeamDto(team, creator.getUsername());
+                })
                 .collect(Collectors.toList());
     }
 }

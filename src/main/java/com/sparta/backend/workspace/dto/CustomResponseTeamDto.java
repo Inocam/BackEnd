@@ -8,21 +8,18 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class ResponseTeamDto {
+public class CustomResponseTeamDto {
     private Long team_id;
     private String name;
     private String description;
     private Long creatorId;
     private String creatorName;
-    private String imageUrl;
 
-    public ResponseTeamDto(Team team, String creatorName) {
+    public CustomResponseTeamDto(Team team, String creatorName) {
         this.team_id = team.getTeam_id();
         this.name = team.getName();
         this.description = team.getDescription();
         this.creatorId = team.getCreatorId();
         this.creatorName = creatorName;
-        this.imageUrl = team.getImageUrl();
     }
-
 }
