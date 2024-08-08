@@ -18,7 +18,7 @@ public class InvitationResponseDto {
         this.id = invitation.getId();
         this.status = invitation.getStatus();
         this.userId = invitation.getUser().getId();
-        this.teamId = invitation.getTeam().getTeam_id();
+        this.teamId = invitation.getTeam().getTeamId();
 
     }
 }

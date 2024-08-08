@@ -1,7 +1,9 @@
 package com.sparta.backend.workspace.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 
+@Setter
 @Getter
 public class TeamUpdateRequestDto {
     private String name;

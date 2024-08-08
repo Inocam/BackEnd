@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class ResponseTeamDto {
-    private Long team_id;
+    private Long teamId;
     private String name;
     private String description;
     private Long creatorId;
@@ -17,7 +17,7 @@ public class ResponseTeamDto {
     private String imageUrl;
 
     public ResponseTeamDto(Team team, String creatorName) {
-        this.team_id = team.getTeam_id();
+        this.teamId = team.getTeamId();
         this.name = team.getName();
         this.description = team.getDescription();
         this.creatorId = team.getCreatorId();
