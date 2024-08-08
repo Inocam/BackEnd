@@ -18,10 +18,11 @@ import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import static com.sparta.backend.chat.global.ErrorCode.*;
 
-import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.sparta.backend.chat.global.ErrorCode.*;
 
 @Service
 public class ChatRoomService {
@@ -74,7 +75,7 @@ public class ChatRoomService {
 
         List<RoomListResponseDto> roomList = new ArrayList<>();
 
-        List<ChatRoom> chatRooms = chatRoomRepository.findAll();
+        List<ChatRoom> chatRooms = chatRoomRepository.findAllByIsDeletedFalse();
 
         // 각 채팅방에 대해 마지막 메시지를 가져와서 RoomListResponseDto 객체를 생성
         for (ChatRoom chatRoom : chatRooms) {
@@ -158,10 +159,10 @@ public class ChatRoomService {
         }
 
         // 채팅방과 관련된 UserRoom 엔티티들 삭제
-        userRoomRepository.deleteByChatRoom(chatRoom);
+        chatRoom.setDeleted(true);
 
         // 채팅방 삭제
-        chatRoomRepository.delete(chatRoom);
+        chatRoomRepository.save(chatRoom);
 
         return "채팅방이 삭제되었습니다.";
     }
