@@ -142,7 +142,7 @@ public class ChatRoomService {
     public String deleteRoom(Long roomId, Long userId) {
 
         // 채팅방 존재 여부 확인
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+        ChatRoom chatRoom = chatRoomRepository.findByRoomIdAndIsDeletedFalse(roomId)
                 .orElseThrow(() -> new CustomException(404, CHATROOM_NOT_FOUND, "채팅방이 존재하지 않습니다."));
 
         // 사용자가 채팅방에 속해 있는지 확인
@@ -158,11 +158,8 @@ public class ChatRoomService {
             throw new CustomException(400, USER_NOT_IN_ROOM, "사용자는 이 채팅방에 속해 있지 않아 삭제할 수 없습니다.");
         }
 
-        // 채팅방과 관련된 UserRoom 엔티티들 삭제
+        // softDelete 삭제
         chatRoom.setDeleted(true);
-
-        // 채팅방 삭제
-        chatRoomRepository.save(chatRoom);
 
         return "채팅방이 삭제되었습니다.";
     }
@@ -171,7 +168,7 @@ public class ChatRoomService {
     public UserRoomResponseDto createUserRoom(UserRoomRequestDto userRoomRequestDto) {
 
         // 채팅방 존재 여부
-        ChatRoom chatRoom = chatRoomRepository.findById(userRoomRequestDto.getRoomId())
+        ChatRoom chatRoom = chatRoomRepository.findByRoomIdAndIsDeletedFalse(userRoomRequestDto.getRoomId())
                 .orElseThrow(() -> new CustomException(404, CHATROOM_NOT_FOUND, "채팅방이 존재하지 않습니다."));
 
         // 사용자 존재 여부
