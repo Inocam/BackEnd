@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,9 +84,9 @@ public class TeamService {
         }
 
         //팀과 사용자를 조회 // -> 팀,유저,초대상태 정보를 dto객체로 변환 ->그 결과로 반환된 invitation 객체를 db에 저장-> 저장된 결과를 saveInvitation 변수에 할당함. -> saveInvitation를 responseDto로 감싸서 반환함.
-        Team team = teamRepository.findById(invitationRequestDto.getTeamId())
+        Team team = teamRepository.findByTeamIdAndIsDeleteFalse(invitationRequestDto.getTeamId())
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 이름 입니다."));
-        User user = userRepository.findById(invitationRequestDto.getUserId())
+        User user = userRepository.findByIdAndIsDeleteFalse(invitationRequestDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 사용자 이름 입니다."));
 
         Invitation invitation = new Invitation(invitationRequestDto.getStatus(), team, user, requesterId);
@@ -98,10 +99,10 @@ public class TeamService {
     public boolean isRequesterTeamLeader(Long requesterId, Long teamId) {
         //요청자 id로 user 객체를 조회
 
-        User requester = userRepository.findById(requesterId)
+        User requester = userRepository.findByIdAndIsDeleteFalse(requesterId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "User Not Found", "잘못된 사용자 ID 입니다."));
         //팀 ID로 Team 객체를 조회
-        Team team = teamRepository.findById(teamId)
+        Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId)
                 .orElseThrow(() ->  new CustomException(HttpStatus.NOT_FOUND, "Team Not Found", "잘못된 팀 ID 입니다."));
         //User와 Team 객체를 사용하여 TeamUser를 조회 -> TeamUser 객체는 특정 팀에 속한 사용자의 역할을 정의
         TeamUser teamUser = teamUserRepository.findByTeamAndUser(team, requester);  // //정의된 순서에 따라 호출 -> teamUserRepository에 정의 된 순서에 따라서 호출!
@@ -115,19 +116,19 @@ public class TeamService {
 
     //대상 사용자가 이미 팀에 속해 있는지 확인하는 메서드
     private boolean isUserInTeam(Long userId, Long teamId) {
-        User user = userRepository.findById(userId) //주어진 userId로 사용자를 조회한다. 존재하지 않는 사용자이면 예외 던짐.
+        User user = userRepository.findByIdAndIsDeleteFalse(userId) //주어진 userId로 사용자를 조회한다. 존재하지 않는 사용자이면 예외 던짐.
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "User Not Found", "잘못된 사용자 입니다."));
-        Team team = teamRepository.findById(teamId)
+        Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Team Not Found", "잘못된 팀 입니다."));
         return teamUserRepository.existsByTeamAndUser(team, user);
     }
 
     //초대장이 이미 존재하는지 확인하는 메서드 //
     private boolean isInvitationExist(Long userId, Long teamId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndIsDeleteFalse(userId)
 // userId에 해당하는 user 객체를 데이터베이스에서 조회한다 -> 만약 해당 userId에 해당하는 user 객체가 없으면 예외를 발생시킴 -> 조회 된 User 객체는 user 변수에 할당함.
                 .orElseThrow(() ->  new CustomException(HttpStatus.NOT_FOUND, "User Not Found", "잘못된 사용자 입니다."));
-        Team team = teamRepository.findById(teamId)
+        Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Team Not Found", "잘못된 팀 입니다."));
         return invitationRepository.existsByUserAndTeam(user, team);
     }
@@ -184,9 +185,9 @@ public class TeamService {
         if (!isRequesterTeamLeader(requesterId, teamId)) {
             throw new CustomException(HttpStatus.BAD_REQUEST, "Unauthorized", "팀장만 팀원을 삭제할 수 있습니다.");
         }
-        Team team = teamRepository.findById(teamId)
+        Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "TeamId is incorrect", "잘못된 팀 ID 입니다."));
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndIsDeleteFalse(userId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "UserId is incorrect", "잘못된 사용자 ID 입니다."));
         teamUserRepository.deleteByTeamAndUser(team, user); //** deleteByTeamAndUser이게 팀유저레포지토리에 있는 이유는,.(+) -> 해당 관계를 삭제하는 거기 때문에
         return "팀원이 삭제되었습니다.";
@@ -197,7 +198,7 @@ public class TeamService {
         if (!isRequesterTeamLeader(requesterId, teamId)) {
             throw new CustomException(HttpStatus.BAD_REQUEST, "Unauthorized", "팀장만 팀원을 삭제할 수 있습니다.");
         }
-        Team team = teamRepository.findById(teamId)
+        Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "TeamId is incorrect", "팀 삭제에 실패 했습니다."));
         //팀 삭제 전에 해당 팀과 관련된 모든 teamUser 관계 삭제
         teamUserRepository.deleteByTeam(team);
@@ -208,10 +209,10 @@ public class TeamService {
     //팀장 권한을 다른 팀원에게 물려주는 메서드
     public String transferTeamLeader(Long teamId, Long newLeaderId) {
 
-        Team team = teamRepository.findById(teamId)
+        Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId)
                         .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "TeamId is incorrect", "잘못된 팀 ID 입니다."));
 
-        User newLeader = userRepository.findById(newLeaderId)
+        User newLeader = userRepository.findByIdAndIsDeleteFalse(newLeaderId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "UserId is incorrect", "잘못된 사용자 ID 입니다."));
         //기존 팀장을 찾아서 역할을 변경
         TeamUser currentLeader = teamUserRepository.findByTeamAndRole(team, "팀장") //현재 팀장 조회 -> 특정 팀의 역할이 "팀장"인 TeamUser 객체 반환
@@ -233,7 +234,7 @@ public class TeamService {
     }
         @Transactional //성공적으로 완료  or 하나라도 실패 시 전체 작업 롤백 -> 수정 도중 예외 발생 시 변경 하기전으로 복원 필요
         public TeamUpdateResponseDto updateTeam(Long teamId, TeamUpdateRequestDto teamUpdateRequestDto) {
-            Team team = teamRepository.findById(teamId) //팀 id로 팀을 조회, 존재하지 않으면 예외를 던짐.
+            Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId) //팀 id로 팀을 조회, 존재하지 않으면 예외를 던짐.
                     .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 ID 입니다."));
             //요청 dto에서 팀 이름이 null이 아닌경우 팀 이름을 업데이트 한다.
             if (teamUpdateRequestDto.getName() != null) {
@@ -242,41 +243,48 @@ public class TeamService {
             if(teamUpdateRequestDto.getDescription() != null) {
                 team.setDescription(teamUpdateRequestDto.getDescription());
             }
-
+            if (teamUpdateRequestDto.getImageUrl() != null) {
+                team.setImageUrl(teamUpdateRequestDto.getImageUrl());
+            }
             Team updateTeam = teamRepository.save(team);
-            return new TeamUpdateResponseDto(updateTeam.getTeam_id(), updateTeam.getName(), updateTeam.getDescription()); //응답 dto를 반환하여 클라이언트에게 업데이트 된 팀 정보 전달
-
+            return new TeamUpdateResponseDto(updateTeam.getTeamId(), updateTeam.getName(), updateTeam.getDescription(), updateTeam.getImageUrl()); //응답 dto를 반환하여 클라이언트에게 업데이트 된 팀 정보 전달
     }
 
     //하나의 팀에 소속된 전체 유저 목록 조회 메서드(+)
     public List<UsersInTeamResponseDto> getUsersInTeam(Long teamId) {
-        Team team = teamRepository.findById(teamId)
+        Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId)
                        .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "잘못된 팀 ID 입니다."));
 
         //List<TeamUser> teamUsers = teamUserRepository.findByTeam(team);
         return teamUserRepository.findByTeam(team).stream()
                 .map(teamUser -> new UsersInTeamResponseDto(
-                        team.getTeam_id(),  //팀 id
+                        team.getTeamId(),  //팀 id
                         teamUser.getUser().getId(), //유저 id
                         teamUser.getUser().getUsername(),  //유저 이름
                 teamUser.getUser().getEmail()))
                 .collect(Collectors.toList());  //스트림 결과를 리스트로 변환하여 반환
 
     }
-    // 사용자가 속한 팀 전체 목록 조회 메서드
-    public List<CustomResponseTeamDto> getTeamsByUserId(Long userId) {
-        List<TeamUser> teamUsers = teamUserRepository.findByUserId(userId);
-        if (teamUsers.isEmpty()) {
-            throw new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "속해있는 팀이 없습니다.");
-        }
-        return teamUsers.stream()
-                .map(teamUser -> {
-                    Team team = teamUser.getTeam();
-                    User creator = userRepository.findById(team.getCreatorId())
-                            .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "팀 생성자를 찾을 수 없습니다."));
-                    return new CustomResponseTeamDto(team, creator.getUsername());
-                })
-                .collect(Collectors.toList());
+      // 사용자가 속한 팀 전체 목록 조회 메서드
+        public List<CustomResponseTeamDto> getTeamsByUserId(Long userId) {
+            //찾고자 하는 사용자가 속한 TeamUser 리스트
+            List<TeamUser> teamUsers = teamUserRepository.findAllByUserId(userId);
+            //return을 위한 빈 리스트 생성
+            List<CustomResponseTeamDto> teamDtos = new ArrayList<>();
+            //사용자가 속한 TeamUser 리스트 갯수만큼 loop
+            for(int i = 0; i < teamUsers.size(); i++){
+                TeamUser teamUser = teamUsers.get(i);
+                Team team = teamUser.getTeam();
+                User user = teamUser.getUser();
+                String username = user.getUsername();
+                //삭제되지 않은 팀이면
+                if (team.getIsDelete() == false) {
+                    //response객체 list에 add
+                    CustomResponseTeamDto customResponseTeamDto = new CustomResponseTeamDto(team, username);
+                    teamDtos.add(customResponseTeamDto);
+                }
+            }
+            return teamDtos;
     }
 }
 
