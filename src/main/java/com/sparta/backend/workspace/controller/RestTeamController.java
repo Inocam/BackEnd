@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,14 +23,22 @@ public class RestTeamController {
 
 
     /* ______________________________Team___________________________________________________ */
+
     //팀 생성 엔드포인트(+) 팀장 추가(+)
     //creatorId 추가함 -> 팀 생성 요청 시 팀의 생성자를 추가하기 위해서, 누가 팀을 생성했는지를 설정!
-    @PostMapping
-    public ResponseEntity<ResponseTeamDto> createTeam(@RequestBody RequestTeamDto requestTeamDto) {
-        ResponseTeamDto responseTeamDto = teamService.createTeam(requestTeamDto);
+//    @PostMapping    //클라이언트가 json 데이터를 application/json 형식으로 전송할 수 있어, 코드가 간단해짐
+//    public ResponseEntity<ResponseTeamDto> createTeam(@RequestBody RequestTeamDto requestTeamDto) {
+//        ResponseTeamDto responseTeamDto = teamService.createTeam(requestTeamDto);
+//        return new ResponseEntity<>(responseTeamDto, HttpStatus.CREATED);
+//    }
+
+    @PostMapping    //클라이언트가  JSON 데이터를 포함하는 하나의 multipart/form-data 요청을 보내야함 -> json 데이터를 파일과 함께 전송해야하기 때문에 코드가 복잡해짐
+    public ResponseEntity<ResponseTeamDto> createTeam(@RequestPart("team") RequestTeamDto requestTeamDto,
+                                                      @RequestPart(value = "image", required = false) MultipartFile image) {
+        ResponseTeamDto responseTeamDto = teamService.createTeam(requestTeamDto, image);
         return new ResponseEntity<>(responseTeamDto, HttpStatus.CREATED);
     }
-
+//        이 방식은 파일이 없는 경우에도 multipart/form-data 형식을 사용해야함 -> 파일 처리와 json 데이터 처리가 혼합 -> 복잡
 
     /* ______________________________Invitation___________________________________________________ */
 
@@ -50,7 +59,7 @@ public class RestTeamController {
         return ResponseEntity.ok(responseString);
     }
 
-    //사용자가 초대받은 모든 팀 목록 조회 엔드포인트
+    //초대받은 모든 팀 목록 조회 엔드포인트
     @GetMapping("/user/{userId}/all")
     public ResponseEntity<List<ResponseTeamDto>> getAllTeamsByUserId(@PathVariable Long userId) {
         List<ResponseTeamDto> teams = teamService.getAllTeamsByUserId(userId);
@@ -98,8 +107,9 @@ public class RestTeamController {
     }
     //한 유저가 속한 전체 팀 목록 조회
     @GetMapping("/user/{userId}/teams")
-    public ResponseEntity<List<ResponseTeamDto>> getTeamsByUserId(@PathVariable Long userId) {
-        List<ResponseTeamDto> teams = teamService.getTeamsByUserId(userId);
+    public ResponseEntity<List<CustomResponseTeamDto>> getTeamsByUserId(@PathVariable Long userId) {
+        log.info("API /user/{}/all called", userId);
+        List<CustomResponseTeamDto> teams = teamService.getTeamsByUserId(userId);
         return new ResponseEntity<>(teams, HttpStatus.OK);
     }
 }
