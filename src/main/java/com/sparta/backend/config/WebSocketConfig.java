@@ -26,7 +26,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // topic : 일반적으로 메시지를 구독하는 클라이언트에게 전달되는 주제(prefix).
         // /foot/chat/rooms: 특정 채팅방에 대한 메시지를 구독하는 클라이언트에게 전달되는 주제(prefix).
         // to subscriber
-        registry.enableSimpleBroker("/send");
+        registry.enableSimpleBroker("/topic", "foot/chat/rooms");
 
         // 클라이언트로부터 메시지를 받을 api의 prefix를 설정.
         // /foot/chat/rooms: 클라이언트에서 메시지를 송신할 때 사용하는 주제(prefix).

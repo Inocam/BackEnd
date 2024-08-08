@@ -20,9 +20,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import static com.sparta.backend.chat.global.ErrorCode.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.time.Instant;
+import java.util.*;
 
 @Service
 public class ChatRoomService {
@@ -75,20 +74,16 @@ public class ChatRoomService {
 
         List<RoomListResponseDto> roomList = new ArrayList<>();
 
-        // 모든 채팅방을 생성일 기준으로 오름차순으로 가져옴
-        List<ChatRoom> chatRooms = chatRoomRepository.findAllByOrderByCreatedDateAsc();
+        List<ChatRoom> chatRooms = chatRoomRepository.findAll();
 
-        // 각 채팅방에 대해 마지막 메시지를 스택으로 가져와서 RoomListResponseDto 객체를 생성
+        // 각 채팅방에 대해 마지막 메시지를 가져와서 RoomListResponseDto 객체를 생성
         for (ChatRoom chatRoom : chatRooms) {
+
             // 각 채팅방의 모든 메시지를 보낸 시간 기준으로 오름차순으로 가져옴
             List<ChatMessage> messageList = chatMessageRepository.findAllByChatRoomOrderBySendDateAsc(chatRoom);
 
-            // 스택으로 메시지를 처리
-            Stack<ChatMessage> messageStack = new Stack<>();
-            messageStack.addAll(messageList);
-
             // 가장 최신 메시지
-            ChatMessage lastMessage = messageStack.isEmpty() ? null : messageStack.pop();
+            ChatMessage lastMessage = messageList.isEmpty() ? null : messageList.get(messageList.size() - 1);
 
             // LastMessageResponseDto 생성
             LastMessageResponseDto lastMessageDto = new LastMessageResponseDto();
@@ -102,6 +97,21 @@ public class ChatRoomService {
             RoomListResponseDto roomListResponseDto = new RoomListResponseDto(chatRoom, lastMessageDto);
             roomList.add(roomListResponseDto);
         }
+
+        // sendDate 기준으로 정렬, null 값은 가장 뒤로 이동
+        roomList.sort((room1, room2) -> {
+            // room1의 마지막 메시지가 null이거나 sendDate가 null인 경우
+            if (room1.getLastMessage() == null || room1.getLastMessage().getSendDate() == null) {
+                return 1; // room1이 room2보다 뒤로 가게 함
+            }
+            // room2의 마지막 메시지가 null이거나 sendDate가 null인 경우
+            if (room2.getLastMessage() == null || room2.getLastMessage().getSendDate() == null) {
+                return -1; // room2가 room1보다 뒤로 가게 함
+            }
+            // sendDate가 null이 아닌 경우 정렬
+            return room1.getLastMessage().getSendDate().compareTo(room2.getLastMessage().getSendDate());
+        });
+
         return roomList;
     }
 
