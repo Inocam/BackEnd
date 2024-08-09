@@ -40,6 +40,11 @@ public class UserController {
     private final KakaoService kakaoService;
     private final JwtUtil jwtUtil;
 
+    //테스트용
+    @GetMapping("/user/login-page")
+    public String loginPage() {
+        return "login";
+    }
 
     @PostMapping("/user/signup")
     public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto, BindingResult bindingResult) {
