@@ -3,8 +3,10 @@ package com.sparta.backend.task.dto;
 
 import com.sparta.backend.task.entity.Task;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 
 public class TaskResponseDto {
     private Long taskId;        //일정 key -자동생성

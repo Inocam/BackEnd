@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
 //    List<Task> findAllByOrderByTaskId(); //이름패턴으로 매서드선언하면 SQL문법 안쓰고 바로 이용가능
-
-//    List<Memo> findAllByUsername(String username); //sql을 동적으로 이용 가능
+//    List<Task> findByDueDate(String dueDate); //sql을 동적으로 이용 가능
 
 }

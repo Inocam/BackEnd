@@ -4,8 +4,9 @@ package com.sparta.backend.task.dto;
 import lombok.Getter;
 
 @Getter
+
 public class TaskRequestDto {
-//    private Long taskId;      //일정 key -자동생성
+    private Long taskId;      //일정 key -자동생성
     private Long teamId;        //팀 key
     private Long userId;        //작성자 key
     private String title;       //일정제목  -varchar(255)

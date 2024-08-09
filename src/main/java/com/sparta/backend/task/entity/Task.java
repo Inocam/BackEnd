@@ -1,7 +1,9 @@
 package com.sparta.backend.task.entity;
+// DB를 구성하고, 데이터를 주고받는 방법을 정희
 
 /* 포함 라이브러리, 패키지,  */
 
+import com.sparta.backend.task.dto.MainviewRequestDto;
 import com.sparta.backend.task.dto.TaskRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -22,6 +24,8 @@ import lombok.Setter;
 //    delay
 //} enum 사용방법은 일단 crud 하고나서!!
 
+
+/* task 라는 테이블을 정의하는 클래스 */
 public class Task {
     /* 일정 key */
     @Id
@@ -60,7 +64,7 @@ public class Task {
     private String dueDate;
 
     /* 완료일자 -date */
-    @Column(name = "endDate", nullable = false, length = 100, columnDefinition = "VARCHAR(100)")
+    @Column(name = "endDate", nullable = true, length = 100, columnDefinition = "VARCHAR(100)")
     private String endDate;
 
     /* 상위일정 key */
@@ -78,6 +82,18 @@ public class Task {
         this.dueDate = requestDto.getDueDate();
         this.endDate = requestDto.getEndDate();
         this.parentTask = requestDto.getParentTask();
+    }
+
+    public void View(MainviewRequestDto mainviewRequestDto) { // 클라이언트에서 받아온 데이터가 requestDto 에 들어있음
+//        this.teamId = mainviewRequestDto.getTeamId();
+//        this.userId = mainviewRequestDto.getUserId();
+//        this.title = mainviewRequestDto.getTitle();
+//        this.description = mainviewRequestDto.getDescription();
+//        this.status = mainviewRequestDto.getStatus();
+//        this.startDate = calendarResponseDto.getStartDate();
+        this.dueDate = mainviewRequestDto.getDueDate();
+//        this.endDate = calendarResponseDto.getEndDate();
+//        this.parentTask = calendarResponseDto.getParentTask();
     }
 
     public void update(TaskRequestDto requestDto) {
