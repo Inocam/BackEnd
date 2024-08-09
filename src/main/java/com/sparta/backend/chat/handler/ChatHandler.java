@@ -22,8 +22,6 @@ public class ChatHandler implements ChannelInterceptor {
         this.jwtUtil = jwtUtil;
     }
 
-    public static String Token;
-
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);

@@ -19,4 +19,5 @@ public class RoomListResponseDto {
         this.createdDate = LocalDateTime.now();
         this.lastMessage = lastMessage;
     }
+
 }
