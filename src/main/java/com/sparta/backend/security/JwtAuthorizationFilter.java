@@ -3,11 +3,14 @@ package com.sparta.backend.security;
 import com.google.gson.Gson;
 import com.sparta.backend.user.model.UserRoleEnum;
 import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
+import com.sparta.backend.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,17 +26,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j(topic = "JWT 검증 및 인가")
+@RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
-
-    public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, RefreshTokenRedisRepository refreshTokenRedisRepository) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-        this.refreshTokenRedisRepository = refreshTokenRedisRepository;
-    }
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
@@ -52,6 +51,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     // JSON 객체 생성
                     Map<String, String> userInfo = new HashMap<>();
                     userInfo.put("accessToken", newToken);
+                    userInfo.put("id", userRepository.findByEmail(email).get().getId().toString());
+                    userInfo.put("username", userRepository.findByEmail(email).get().getUsername().toString());
                     userInfo.put("email", email);
 
                     // 응답 본문에 JSON 작성

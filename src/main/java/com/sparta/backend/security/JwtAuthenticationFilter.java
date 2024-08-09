@@ -80,7 +80,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // JSON 객체 생성
         Map<String, String> userInfo = new HashMap<>();
         userInfo.put("accessToken", accessToken);
-        userInfo.put("refreshToken", refreshToken);
         userInfo.put("id", userRepository.findByEmail(email).get().getId().toString());
         userInfo.put("username", userRepository.findByEmail(email).get().getUsername().toString());
         userInfo.put("email", email);
