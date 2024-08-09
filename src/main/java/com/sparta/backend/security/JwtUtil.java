@@ -1,4 +1,4 @@
-package com.sparta.backend.user.security;
+package com.sparta.backend.security;
 
 import com.sparta.backend.user.model.UserRoleEnum;
 import io.jsonwebtoken.*;
@@ -55,9 +55,12 @@ public class JwtUtil {
     }
 
     public String createRefreshToken(String email) {
+        Date date = new Date();
+
         return Jwts.builder()
                 .setSubject(email)
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
+                .setIssuedAt(date) // 발급일
                 .signWith(key, signatureAlgorithm)
                 .compact();
     }
@@ -65,10 +68,10 @@ public class JwtUtil {
     // header 에서 JWT 가져오기
     public String getJwtFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(7);
-        }
-        return null;
+//        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+//            return bearerToken.substring(7);
+//        }
+        return bearerToken;
     }
 
     // 토큰 검증
