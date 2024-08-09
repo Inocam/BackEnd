@@ -5,19 +5,24 @@ import com.sparta.backend.task.dto.MainviewResponseDto;
 import com.sparta.backend.task.dto.TaskRequestDto;
 import com.sparta.backend.task.dto.TaskResponseDto;
 import com.sparta.backend.task.entity.Task;
+import com.sparta.backend.task.repository.MainviewRepository;
 import com.sparta.backend.task.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final MainviewRepository mainviewRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, MainviewRepository mainviewRepository) {
         this.taskRepository = taskRepository;
+        this.mainviewRepository = mainviewRepository;
     }
 
     /* 생성 */
@@ -40,6 +45,21 @@ public class TaskService {
         // DB 조회
         return taskRepository.findAll().stream().map(TaskResponseDto::new).toList();
     }
+
+    // 특정월의 1일~말일 일자별 task 갯수
+    public Map<String, Long> countTasksByDay(String startDate, String endDate) {
+        List<Object[]> results = mainviewRepository.countTasksByDay(startDate, endDate);
+        Map<String, Long> taskCountByDay = new LinkedHashMap<>();
+
+        for (Object[] result : results) {
+            String dueDate = (String) result[0];
+            Long count = (Long) result[1];
+            taskCountByDay.put(dueDate, count);
+        }
+
+        return taskCountByDay;
+    }
+
 
     // 특정일자 조회
     public List<MainviewResponseDto> getView(String dueDate) {
