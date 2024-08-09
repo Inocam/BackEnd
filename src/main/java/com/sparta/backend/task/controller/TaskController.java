@@ -1,6 +1,7 @@
 package com.sparta.backend.task.controller;
 // 클라이언트에서 받은 요청을 서비스에게 전달하는 방법
 
+import com.sparta.backend.task.dto.MainviewResponseDto;
 import com.sparta.backend.task.dto.TaskRequestDto;
 import com.sparta.backend.task.dto.TaskResponseDto;
 import com.sparta.backend.task.service.TaskService;
@@ -24,17 +25,28 @@ public class TaskController {
     public TaskResponseDto createTask(@RequestBody TaskRequestDto requestDto) { //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
         return taskService.createTask(requestDto); //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
     }
+
+
     /* 조회 */
+    // 전체조회
     @GetMapping("/task")
     public List<TaskResponseDto> getTask() {
         return taskService.getTask();
     }
+
+    // 캘린더에서 선택한 “dueDate” 의 task list
+    @GetMapping("/task/mainview/")
+    public List<MainviewResponseDto> getView(@RequestParam("dueDate") String dueDate) {
+        return taskService.getView(dueDate);
+    }
+
 
     /* 수정 */
     @PutMapping("/task/{taskId}")
     public Long updateTask(@PathVariable Long taskId, @RequestBody TaskRequestDto requestDto) {
         return taskService.updateTask(taskId, requestDto);
     }
+
 
     /* 삭제 */
     @DeleteMapping("/task/{taskId}")
