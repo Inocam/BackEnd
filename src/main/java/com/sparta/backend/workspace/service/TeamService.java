@@ -232,6 +232,7 @@ public class TeamService {
         teamUserRepository.save(newTeamLeader); //변경된 역할 정보 저장
         return "팀장 권한을 이전했습니다.";
     }
+    //팀 수정
         @Transactional //성공적으로 완료  or 하나라도 실패 시 전체 작업 롤백 -> 수정 도중 예외 발생 시 변경 하기전으로 복원 필요
         public TeamUpdateResponseDto updateTeam(Long teamId, TeamUpdateRequestDto teamUpdateRequestDto) {
             Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId) //팀 id로 팀을 조회, 존재하지 않으면 예외를 던짐.

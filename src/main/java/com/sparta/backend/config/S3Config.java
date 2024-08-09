@@ -21,7 +21,6 @@ public class S3Config {
     @Value("${cloud.aws.region.static}")
     private String region;
 
-
     @Bean
     public AmazonS3 amazonS3() {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
@@ -29,7 +28,7 @@ public class S3Config {
         return AmazonS3ClientBuilder    //AmazonS3 클라이언트를빌드하기 위한 빌더 / 이를 통해 다양한 설정 적용 후 -> AmazonS3 인스턴스 생성
                 .standard()
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(region)
+                .withRegion("ap-northeast-2")
                 .build();
     }
 }

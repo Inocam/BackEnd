@@ -28,23 +28,29 @@ public class RestTeamController {
     private final TeamService teamService;
     private final AmazonS3 amazonS3;
 
-    @Value("${cloud.aws.s3.bucket:default-bucket-name}")
+    @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
     /* ______________________________Team___________________________________________________ */
 
     //팀 생성 엔드포인트(+) 팀장 추가(+)
     //creatorId 추가함 -> 팀 생성 요청 시 팀의 생성자를 추가하기 위해서, 누가 팀을 생성했는지를 설정!
-//    @PostMapping    //클라이언트가 json 데이터를 application/json 형식으로 전송할 수 있어, 코드가 간단해짐
+
+//    @PostMapping
 //    public ResponseEntity<ResponseTeamDto> createTeam(@RequestBody RequestTeamDto requestTeamDto) {
 //        ResponseTeamDto responseTeamDto = teamService.createTeam(requestTeamDto);
 //        return new ResponseEntity<>(responseTeamDto, HttpStatus.CREATED);
 //    }
 
-    @PostMapping    //클라이언트가  JSON 데이터를 포함하는 하나의 multipart/form-data 요청을 보내야함 -> json 데이터를 파일과 함께 전송해야하기 때문에 코드가 복잡해짐
+    //클라이언트가  JSON 데이터를 포함하는 하나의 multipart/form-data 요청을 보내야함 -> json 데이터를 파일과 함께 전송해야하기 때문에 코드가 복잡해짐
+
+    @PostMapping
     public ResponseEntity<ResponseTeamDto> createTeam(@RequestPart("team") RequestTeamDto requestTeamDto,
                                                       @RequestPart(value = "image", required = false) MultipartFile image) {
+        log.info("Creating  {}", requestTeamDto);
+        log.info("image1 {}", image.getSize());
         ResponseTeamDto responseTeamDto = teamService.createTeam(requestTeamDto, image);
         return new ResponseEntity<>(responseTeamDto, HttpStatus.CREATED);
+
     }
 //        이 방식은 파일이 없는 경우에도 multipart/form-data 형식을 사용해야함 -> 파일 처리와 json 데이터 처리가 혼합 -> 복잡
 
@@ -104,21 +110,29 @@ public class RestTeamController {
     @PutMapping("/{teamId}") //json  데이터와, 멀티파트 데이터를 모두 받아들일 것임을 명시해줌
     public ResponseEntity<TeamUpdateResponseDto> updateTeam(
             @PathVariable Long teamId,
-            @RequestPart(value = "data") TeamUpdateRequestDto teamUpdateRequestDto,
-            @RequestPart(value = "image", required = false) MultipartFile image) {
+            @ModelAttribute(value = "data") TeamUpdateRequestDto teamUpdateRequestDto,
+            @RequestParam(value = "image", required = false) MultipartFile image) {
 
-
+        log.info("data :{}", teamUpdateRequestDto);
+        log.info("image :{}", image);
+        log.info("teamId:{}", teamId);
         if(image != null && !image.isEmpty()) {
             try {
-                String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
+                String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename(); //고유한 파일 이름을 생성
+                log.info("bucketName1 : {}", bucketName);
                 amazonS3.putObject(new PutObjectRequest(bucketName, fileName, image.getInputStream(), new ObjectMetadata()));
+               log.info("image :{}", image);
+               log.info("bucketName2 : {}", bucketName);
                 String fileUrl = amazonS3.getUrl(bucketName, fileName).toString();
+                log.info("bucketName3 : {}", bucketName);
                 teamUpdateRequestDto.setImageUrl(fileUrl);
+                log.info("image url :{}", fileUrl);
             }  catch (IOException e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
         TeamUpdateResponseDto updatedTeam = teamService.updateTeam(teamId, teamUpdateRequestDto);
+        log.info("updated team :{}", updatedTeam);
         return new ResponseEntity<>(updatedTeam, HttpStatus.OK);
     }
 
