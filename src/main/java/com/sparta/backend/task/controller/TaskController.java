@@ -21,7 +21,7 @@ public class TaskController {
     }
 
     /* 생성 */
-    @PostMapping("/task")
+    @PostMapping("/task/create")
     public TaskResponseDto createTask(@RequestBody TaskRequestDto requestDto) { //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
         return taskService.createTask(requestDto); //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
     }
@@ -42,14 +42,14 @@ public class TaskController {
 
 
     /* 수정 */
-    @PutMapping("/task/{taskId}")
+    @PutMapping("/task/update/{taskId}")
     public Long updateTask(@PathVariable Long taskId, @RequestBody TaskRequestDto requestDto) {
         return taskService.updateTask(taskId, requestDto);
     }
 
 
     /* 삭제 */
-    @DeleteMapping("/task/{taskId}")
+    @DeleteMapping("/task/delete/{taskId}")
     public Long deleteTask(@PathVariable Long taskId) {
         return taskService.deleteTask(taskId);
     }
