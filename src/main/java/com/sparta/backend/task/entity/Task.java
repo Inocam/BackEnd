@@ -41,9 +41,11 @@ public class Task {
     private String description;
 
     /* 진행상황 -enum */
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.ORDINAL)
+//    @Column(nullable = false)
+// enum 사용방법은 일단 crud 하고나서!!
     @Column(name = "status", nullable = false, length = 100, columnDefinition = "VARCHAR(100)")
-    private TaskStatus status;
+    private String status;
 
     /* 시작일자 -date */
     @Column(name = "startDate", nullable = false, length = 100, columnDefinition = "VARCHAR(100)")
@@ -67,7 +69,7 @@ public class Task {
         this.userId = requestDto.getUserId();
         this.title = requestDto.getTitle();
         this.description = requestDto.getDescription();
-        this.status = TaskStatus.valueOf(requestDto.getStatus().toUpperCase());
+        this.status = requestDto.getStatus();
         this.startDate = requestDto.getStartDate();
         this.dueDate = requestDto.getDueDate();
         this.endDate = requestDto.getEndDate();
@@ -75,7 +77,15 @@ public class Task {
     }
 
     public void View(MainviewRequestDto mainviewRequestDto) { // 클라이언트에서 받아온 데이터가 requestDto 에 들어있음
+//        this.teamId = mainviewRequestDto.getTeamId();
+//        this.userId = mainviewRequestDto.getUserId();
+//        this.title = mainviewRequestDto.getTitle();
+//        this.description = mainviewRequestDto.getDescription();
+//        this.status = mainviewRequestDto.getStatus();
+//        this.startDate = calendarResponseDto.getStartDate();
         this.dueDate = mainviewRequestDto.getDueDate();
+//        this.endDate = calendarResponseDto.getEndDate();
+//        this.parentTask = calendarResponseDto.getParentTask();
     }
 
     public void update(TaskRequestDto requestDto) {
@@ -83,14 +93,14 @@ public class Task {
         this.userId = requestDto.getUserId();
         this.title = requestDto.getTitle();
         this.description = requestDto.getDescription();
-        this.status = TaskStatus.valueOf(requestDto.getStatus().toUpperCase());
+        this.status = requestDto.getStatus();
         this.startDate = requestDto.getStartDate();
         this.dueDate = requestDto.getDueDate();
         this.endDate = requestDto.getEndDate();
         this.parentTask = requestDto.getParentTask();
     }
 
-    public enum TaskStatus {
+    public enum Status {
         todo,
         ongoing,
         done,
