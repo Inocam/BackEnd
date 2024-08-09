@@ -60,6 +60,25 @@ public class TaskService {
         return taskCountByDay;
     }
 
+    // 새로운 기능: 상태별 작업 수 조회
+    public Map<String, Long> countTasksByStatus(String startDate, String endDate) {
+        List<Object[]> results = mainviewRepository.countTasksByStatus(startDate, endDate);
+        Map<String, Long> taskCountByStatus = new LinkedHashMap<>();
+
+        // 초기 상태값을 모두 0으로 설정
+        taskCountByStatus.put("todo", 0L);
+        taskCountByStatus.put("ongoing", 0L);
+        taskCountByStatus.put("done", 0L);
+        taskCountByStatus.put("delay", 0L);
+
+        for (Object[] result : results) {
+            String status = (String) result[0];
+            Long count = (Long) result[1];
+            taskCountByStatus.put(status, count);
+        }
+
+        return taskCountByStatus;
+    }
 
     // 특정일자 조회
     public List<MainviewResponseDto> getView(String dueDate) {

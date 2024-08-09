@@ -35,13 +35,19 @@ public class TaskController {
         return taskService.getTask();
     }
 
-    // 메인화면 -> 선택한 월 -> 1일~말일 일자별 task 갯수
+    // 메인화면 -> 선택 월 (1일~말일) -> 일자별 task 갯수
     @GetMapping("/mainview/countTask")
     public Map<String, Long> countTasksByDay(@RequestParam String startDate, @RequestParam String endDate) {
         return taskService.countTasksByDay(startDate, endDate);
     }
 
-    // 메인화면 -> 선택한 월 -> 선택한 일 -> task list
+    // 메인화면 -> 선택 월 (1일~말일) -> 전체 status 갯수
+    @GetMapping("/mainview/countTaskStatus")
+    public Map<String, Long> countTasksByStatus(@RequestParam String startDate, @RequestParam String endDate) {
+        return taskService.countTasksByStatus(startDate, endDate);
+    }
+
+    // 메인화면 -> 선택 월 -> 선택 일 -> task list
     @GetMapping("/mainview/")
     public List<MainviewResponseDto> getView(@RequestParam("dueDate") String dueDate) {
         return taskService.getView(dueDate);
