@@ -4,11 +4,11 @@ GET http://127.0.0.1:8080/foot/teams/user/
 
 ### 팀 생성 요청(+)
 POST http://127.0.0.1:8080/foot/teams
-Content-Type: multipart/form-data
+Content-Type: multipart/form-data; boundary=boundary123
 Accept: application/json
 
---boundary
-Content-Disposition: form-data; name="team"; filename="requestTeamDto.json"
+--boundary123
+Content-Disposition: form-data; name="team";
 Content-Type: application/json
 
 {
@@ -16,14 +16,12 @@ Content-Type: application/json
   "description": "병합 테스트5",
   "creatorId": 5
 }
---boundary--
+--boundary123
+Content-Disposition: form-data; name="image"; filename="images123.jpg"
+Content-Type: image/jpeg
 
-###--boundary
-#Content-Disposition: form-data; name="image"; filename="team_image.jpg"
-#Content-Type: image/jpeg
-#
-#< /absolute/path/to/your/team_image.jpg
-###--boundary--
+< C:/inflearn/workspace/src/main/resources/static/images123.jpg
+--boundary123--
 
 ### 팀 생성 요청
 POST http://127.0.0.1:8080/foot/teams
@@ -87,7 +85,6 @@ Accept: application/json
 ### 팀 수정(+)
 PUT http://127.0.0.1:8080/foot/teams/22
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
-
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="data"
