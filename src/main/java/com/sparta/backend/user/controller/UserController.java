@@ -1,15 +1,17 @@
 package com.sparta.backend.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sparta.backend.user.dto.LoginRequestDto;
+import com.google.gson.Gson;
 import com.sparta.backend.user.dto.UserResponseDto;
-import com.sparta.backend.security.JwtUtil;
-import com.sparta.backend.security.UserDetailsImpl;
+import com.sparta.backend.user.model.User;
+import com.sparta.backend.user.security.JwtUtil;
+import com.sparta.backend.user.security.UserDetailsImpl;
 import com.sparta.backend.user.service.KakaoService;
 import com.sparta.backend.user.service.UserService;
 import com.sparta.backend.user.dto.SignupRequestDto;
 import com.sparta.backend.user.dto.UserInfoDto;
-import jakarta.servlet.http.HttpServletRequest;
+import com.sparta.backend.user.model.UserRoleEnum;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -34,16 +40,6 @@ public class UserController {
     private final KakaoService kakaoService;
     private final JwtUtil jwtUtil;
 
-    //테스트용
-    @GetMapping("/user/login-page")
-    public String loginPage() {
-        return "login";
-    }
-
-    @PostMapping("/user/loginTest")
-    public void loginTest(HttpServletResponse res, @RequestBody LoginRequestDto loginRequestDto) {
-        userService.loginTest(res, loginRequestDto);
-    }
 
     @PostMapping("/user/signup")
     public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto, BindingResult bindingResult) {

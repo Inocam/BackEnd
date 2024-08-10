@@ -1,11 +1,11 @@
 package com.sparta.backend.config;
 
-import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
+import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.repository.UserRepository;
-import com.sparta.backend.security.JwtAuthenticationFilter;
-import com.sparta.backend.security.JwtAuthorizationFilter;
-import com.sparta.backend.security.UserDetailsServiceImpl;
-import com.sparta.backend.security.JwtUtil;
+import com.sparta.backend.user.security.JwtAuthenticationFilter;
+import com.sparta.backend.user.security.JwtAuthorizationFilter;
+import com.sparta.backend.user.security.UserDetailsServiceImpl;
+import com.sparta.backend.user.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -28,9 +28,8 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -44,14 +43,14 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, refreshTokenRedisRepository, userRepository);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, refreshTokenRepository, userRepository);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
     }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, refreshTokenRedisRepository, userRepository);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
     }
 
     @Bean
@@ -68,12 +67,8 @@ public class WebSecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                         .requestMatchers("/**").permitAll() // 메인 페이지 요청 허가
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/user/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
-//                        .requestMatchers("/swagger-ui.html").permitAll()
-//                        .requestMatchers("/swagger-ui/*").permitAll()
-//                        .requestMatchers("/v3/**").permitAll()
-                        .anyRequest().permitAll() // 그 외 모든 요청 인증처리
+                        //.requestMatchers("/api/user/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
+                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
         // 필터 관리

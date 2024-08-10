@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class S3ImageController {
     private final S3ImageService s3ImageService;
 
+
     //클라이언트 -> 이미지 파일 받음 -> 서비스 클래스로 전달 -> 서비스에서 S3에 업로드 -> 업로드 된 URL을 클라이언트한테 반환
     @PostMapping("/s3/upload")
     public ResponseEntity<?> s3Upload(@RequestPart(value = "image", required = false) MultipartFile image){

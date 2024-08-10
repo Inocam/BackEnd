@@ -26,9 +26,6 @@ public class ChatRoom {
     @Column(name="created_Date", nullable = false)
     private LocalDateTime createdDate;
 
-    @Column(name="is_deleted", nullable = false)
-    private boolean isDeleted = false;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false) // userId 추가
     private User user;
@@ -42,8 +39,5 @@ public class ChatRoom {
         this.createdDate = LocalDateTime.now();
     }
 
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
 }
 

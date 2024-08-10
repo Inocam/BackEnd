@@ -13,7 +13,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByKakaoId(Long kakaoId);
     List<User> findByUsernameStartingWith(String prefix);
-
-    Optional<User> findByIdAndIsDeleteFalse(Long id);
-
 }

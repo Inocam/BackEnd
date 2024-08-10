@@ -14,8 +14,7 @@ import lombok.Setter;
 public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "team_id")
-    private Long teamId;
+    private Long team_id;
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;
@@ -28,9 +27,6 @@ public class Team {
 
     @Column
     private String imageUrl;
-
-    @Column(name = "is_delete",nullable = false)
-    private Boolean isDelete = false;
 
     public Team(RequestTeamDto requestTeamDto) {
         this.name = requestTeamDto.getName();

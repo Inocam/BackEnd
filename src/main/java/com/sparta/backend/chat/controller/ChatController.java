@@ -70,7 +70,7 @@ public class  ChatController {
     public ChatMessageResponseDto sendMessage(@Payload ChatMessageRequestDto chatMessageRequestDto) {
         Long roomId = chatMessageRequestDto.getRoomId();
         ChatMessageResponseDto responseDto = chatMessageService.sendMessage(roomId, chatMessageRequestDto);
-        messagingTemplate.convertAndSend("/topic/room/" + roomId, responseDto);
+        messagingTemplate.convertAndSend("/send/" + roomId, responseDto);
         return responseDto;
     }
 

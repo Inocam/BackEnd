@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 import com.sparta.backend.user.dto.KakaoUserInfoDto;
 import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.model.UserRoleEnum;
-import com.sparta.backend.security.JwtUtil;
+import com.sparta.backend.user.security.JwtUtil;
 import com.sparta.backend.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -124,7 +124,7 @@ public class KakaoService {
 
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", accessToken);
+        headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity

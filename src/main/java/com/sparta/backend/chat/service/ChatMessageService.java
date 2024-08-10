@@ -40,7 +40,7 @@ public class ChatMessageService {
                 .orElseThrow(() -> new CustomException(404, USER_NOT_FOUND, "사용자를 찾을 수 없습니다"));
 
         // 채팅방 중복 여부
-        ChatRoom chatRoom = chatRoomRepository.findByRoomIdAndIsDeletedFalse(roomId)
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(404, CHATROOM_NOT_FOUND, "채팅 방을 찾을 수 없습니다"));
 
         // ChatMessage 엔티티 생성
@@ -57,7 +57,7 @@ public class ChatMessageService {
     public List<ReadMessageResponseDto> getChatMessageList(Long roomId) {
 
         // 채팅방 존재 여부
-        ChatRoom chatRoom = chatRoomRepository.findByRoomIdAndIsDeletedFalse(roomId)
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new  CustomException(404, CHATROOM_NOT_FOUND, "채팅 방을 찾을 수 없습니다"));
 
         // ChatMessage 목록 조회

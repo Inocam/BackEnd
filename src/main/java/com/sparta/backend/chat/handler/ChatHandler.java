@@ -1,6 +1,6 @@
 package com.sparta.backend.chat.handler;
 
-import com.sparta.backend.security.JwtUtil;
+import com.sparta.backend.user.security.JwtUtil;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -21,6 +21,8 @@ public class ChatHandler implements ChannelInterceptor {
     public ChatHandler(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
+
+    public static String Token;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
