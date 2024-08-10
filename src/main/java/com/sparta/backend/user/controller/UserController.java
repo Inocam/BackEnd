@@ -40,7 +40,7 @@ public class UserController {
         return "login";
     }
 
-    @GetMapping("/user/loginTest")
+    @PostMapping("/user/loginTest")
     public void loginTest(HttpServletResponse res, @RequestBody LoginRequestDto loginRequestDto) {
         userService.loginTest(res, loginRequestDto);
     }
