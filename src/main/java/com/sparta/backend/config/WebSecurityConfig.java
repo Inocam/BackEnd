@@ -1,8 +1,5 @@
 package com.sparta.backend.config;
 
-import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
-import com.sparta.backend.user.repository.RefreshTokenRepository;
-import com.sparta.backend.user.repository.UserRepository;
 import com.sparta.backend.security.JwtAuthenticationFilter;
 import com.sparta.backend.security.JwtAuthorizationFilter;
 import com.sparta.backend.security.UserDetailsServiceImpl;
