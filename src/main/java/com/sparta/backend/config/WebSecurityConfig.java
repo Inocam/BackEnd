@@ -24,8 +24,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import static com.google.gson.internal.$Gson$Types.arrayOf;
 
-@Configuration
-@EnableWebSecurity // Spring Security 지원을 가능하게 함
+//@Configuration
+//@EnableWebSecurity // Spring Security 지원을 가능하게 함
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
