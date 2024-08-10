@@ -1,5 +1,6 @@
 package com.sparta.backend.user.repository;
 
+import com.sparta.backend.chat.entity.UserRoom;
 import com.sparta.backend.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByKakaoId(Long kakaoId);
     List<User> findByUsernameStartingWith(String prefix);
+
+    Optional<User> findByIdAndIsDeleteFalse(Long id);
+
 }
