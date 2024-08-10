@@ -49,10 +49,9 @@ public class TeamService {
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "User Not Found", "잘못된 팀 생성 입니다."));
 
         Team team = new Team(requestTeamDto); // 팀 객체 생성
-        log.info("Creating team {}", team.getName());
-        log.info("request : {}", requestTeamDto);
         team.setImageUrl(imageUrl); //팀 엔티티에 이미지 url 설정
         Team saveTeam = teamRepository.save(team); // 팀 객체 데베에 저장
+
         TeamUser teamUser = new TeamUser(creator, saveTeam, "팀장"); //팀 생성자를 팀장으로 추가 //teamUser 객체 생성시 -> creator가 User 엔티티 객체, TeamUser 엔티티의 user 필드에 매핑됨,
         teamUserRepository.save(teamUser);
         // 변경 사항 저장 하는
@@ -107,7 +106,7 @@ public class TeamService {
                 .orElseThrow(() ->  new CustomException(HttpStatus.NOT_FOUND, "Team Not Found", "잘못된 팀 ID 입니다."));
         //User와 Team 객체를 사용하여 TeamUser를 조회 -> TeamUser 객체는 특정 팀에 속한 사용자의 역할을 정의
         TeamUser teamUser = teamUserRepository.findByTeamAndUser(team, requester);  // //정의된 순서에 따라 호출 -> teamUserRepository에 정의 된 순서에 따라서 호출!
-       // return teamUser != null && teamUser.getRole().equals("팀장");
+        // return teamUser != null && teamUser.getRole().equals("팀장");
         return teamUser != null && "팀장".equals(teamUser.getRole()); // ! 이 없으니깐
 
         //teamUser 객체가 존재하는지 확인 -> null이라면 해당 사용자가 해당 팀에 속하지 않는다는 의미
@@ -159,7 +158,7 @@ public class TeamService {
 
         // 초대 ID로 초대 객체를 조회
         Invitation invitation = invitationRepository.findById(invitationSetRequestDto.getInvitationId())     //클라이언트가 보낸 초대 id가 실제로 존재하는지 확인해야됨.
-                        .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "잘못된 초대 ID 입니다."));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "잘못된 초대 ID 입니다."));
 
         String responseString;  //변수 생명주기 때문에 여기 넣어줌.
         log.info("isAccept : {}", invitationSetRequestDto.isAccept());
@@ -211,7 +210,7 @@ public class TeamService {
     public String transferTeamLeader(Long teamId, Long newLeaderId) {
 
         Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId)
-                        .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "TeamId is incorrect", "잘못된 팀 ID 입니다."));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "TeamId is incorrect", "잘못된 팀 ID 입니다."));
 
         User newLeader = userRepository.findByIdAndIsDeleteFalse(newLeaderId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "UserId is incorrect", "잘못된 사용자 ID 입니다."));
@@ -234,28 +233,28 @@ public class TeamService {
         return "팀장 권한을 이전했습니다.";
     }
     //팀 수정
-        @Transactional //성공적으로 완료  or 하나라도 실패 시 전체 작업 롤백 -> 수정 도중 예외 발생 시 변경 하기전으로 복원 필요
-        public TeamUpdateResponseDto updateTeam(Long teamId, TeamUpdateRequestDto teamUpdateRequestDto) {
-            Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId) //팀 id로 팀을 조회, 존재하지 않으면 예외를 던짐.
-                    .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 ID 입니다."));
-            //요청 dto에서 팀 이름이 null이 아닌경우 팀 이름을 업데이트 한다.
-            if (teamUpdateRequestDto.getName() != null) {
-                team.setName(teamUpdateRequestDto.getName());
-            }
-            if(teamUpdateRequestDto.getDescription() != null) {
-                team.setDescription(teamUpdateRequestDto.getDescription());
-            }
-            if (teamUpdateRequestDto.getImageUrl() != null) {
-                team.setImageUrl(teamUpdateRequestDto.getImageUrl());
-            }
-            Team updateTeam = teamRepository.save(team);
-            return new TeamUpdateResponseDto(updateTeam.getTeamId(), updateTeam.getName(), updateTeam.getDescription(), updateTeam.getImageUrl()); //응답 dto를 반환하여 클라이언트에게 업데이트 된 팀 정보 전달
+    @Transactional //성공적으로 완료  or 하나라도 실패 시 전체 작업 롤백 -> 수정 도중 예외 발생 시 변경 하기전으로 복원 필요
+    public TeamUpdateResponseDto updateTeam(Long teamId, TeamUpdateRequestDto teamUpdateRequestDto) {
+        Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId) //팀 id로 팀을 조회, 존재하지 않으면 예외를 던짐.
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 ID 입니다."));
+        //요청 dto에서 팀 이름이 null이 아닌경우 팀 이름을 업데이트 한다.
+        if (teamUpdateRequestDto.getName() != null) {
+            team.setName(teamUpdateRequestDto.getName());
+        }
+        if(teamUpdateRequestDto.getDescription() != null) {
+            team.setDescription(teamUpdateRequestDto.getDescription());
+        }
+        if (teamUpdateRequestDto.getImageUrl() != null) {
+            team.setImageUrl(teamUpdateRequestDto.getImageUrl());
+        }
+        Team updateTeam = teamRepository.save(team);
+        return new TeamUpdateResponseDto(updateTeam.getTeamId(), updateTeam.getName(), updateTeam.getDescription(), updateTeam.getImageUrl()); //응답 dto를 반환하여 클라이언트에게 업데이트 된 팀 정보 전달
     }
 
     //하나의 팀에 소속된 전체 유저 목록 조회 메서드(+)
     public List<UsersInTeamResponseDto> getUsersInTeam(Long teamId) {
         Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId)
-                       .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "잘못된 팀 ID 입니다."));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "잘못된 팀 ID 입니다."));
 
         //List<TeamUser> teamUsers = teamUserRepository.findByTeam(team);
         return teamUserRepository.findByTeam(team).stream()
@@ -263,30 +262,30 @@ public class TeamService {
                         team.getTeamId(),  //팀 id
                         teamUser.getUser().getId(), //유저 id
                         teamUser.getUser().getUsername(),  //유저 이름
-                teamUser.getUser().getEmail()))
+                        teamUser.getUser().getEmail()))
                 .collect(Collectors.toList());  //스트림 결과를 리스트로 변환하여 반환
 
     }
-      // 사용자가 속한 팀 전체 목록 조회 메서드
-        public List<CustomResponseTeamDto> getTeamsByUserId(Long userId) {
-            //찾고자 하는 사용자가 속한 TeamUser 리스트
-            List<TeamUser> teamUsers = teamUserRepository.findAllByUserId(userId);
-            //return을 위한 빈 리스트 생성
-            List<CustomResponseTeamDto> teamDtos = new ArrayList<>();
-            //사용자가 속한 TeamUser 리스트 갯수만큼 loop
-            for(int i = 0; i < teamUsers.size(); i++){
-                TeamUser teamUser = teamUsers.get(i);
-                Team team = teamUser.getTeam();
-                User user = teamUser.getUser();
-                String username = user.getUsername();
-                //삭제되지 않은 팀이면
-                if (team.getIsDelete() == false) {
-                    //response객체 list에 add
-                    CustomResponseTeamDto customResponseTeamDto = new CustomResponseTeamDto(team, username);
-                    teamDtos.add(customResponseTeamDto);
-                }
+    // 사용자가 속한 팀 전체 목록 조회 메서드
+    public List<CustomResponseTeamDto> getTeamsByUserId(Long userId) {
+        //찾고자 하는 사용자가 속한 TeamUser 리스트
+        List<TeamUser> teamUsers = teamUserRepository.findAllByUserId(userId);
+        //return을 위한 빈 리스트 생성
+        List<CustomResponseTeamDto> teamDtos = new ArrayList<>();
+        //사용자가 속한 TeamUser 리스트 갯수만큼 loop
+        for(int i = 0; i < teamUsers.size(); i++){
+            TeamUser teamUser = teamUsers.get(i);
+            Team team = teamUser.getTeam();
+            User user = teamUser.getUser();
+            String username = user.getUsername();
+            //삭제되지 않은 팀이면
+            if (team.getIsDelete() == false) {
+                //response객체 list에 add
+                CustomResponseTeamDto customResponseTeamDto = new CustomResponseTeamDto(team, username);
+                teamDtos.add(customResponseTeamDto);
             }
-            return teamDtos;
+        }
+        return teamDtos;
     }
 }
 

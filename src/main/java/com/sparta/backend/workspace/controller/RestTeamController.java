@@ -46,6 +46,8 @@ public class RestTeamController {
     @PostMapping
     public ResponseEntity<ResponseTeamDto> createTeam(@RequestPart("team") RequestTeamDto requestTeamDto,
                                                       @RequestPart(value = "image", required = false) MultipartFile image) {
+//        log.info("Creating  {}", requestTeamDto);
+//        log.info("image1 {}", image.getSize());
         ResponseTeamDto responseTeamDto = teamService.createTeam(requestTeamDto, image);
         return new ResponseEntity<>(responseTeamDto, HttpStatus.CREATED);
 
@@ -91,7 +93,7 @@ public class RestTeamController {
     //팀 삭제 엔드포인트(+)
     @DeleteMapping("/{teamId}/requester/{requesterId}")
     public ResponseEntity<ErrorResponse> removeTeam(@PathVariable Long teamId, @PathVariable Long requesterId) {
-       String message = teamService.removeTeam(teamId, requesterId);
+        String message = teamService.removeTeam(teamId, requesterId);
         ErrorResponse errorResponse = new ErrorResponse("SUCCESS", message, HttpStatus.OK.value());
         return new ResponseEntity<>(errorResponse, HttpStatus.OK);
     }
@@ -111,17 +113,26 @@ public class RestTeamController {
             @ModelAttribute(value = "data") TeamUpdateRequestDto teamUpdateRequestDto,
             @RequestParam(value = "image", required = false) MultipartFile image) {
 
+        log.info("data :{}", teamUpdateRequestDto);
+        log.info("image :{}", image);
+        log.info("teamId:{}", teamId);
         if(image != null && !image.isEmpty()) {
             try {
                 String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename(); //고유한 파일 이름을 생성
+                log.info("bucketName1 : {}", bucketName);
                 amazonS3.putObject(new PutObjectRequest(bucketName, fileName, image.getInputStream(), new ObjectMetadata()));
+                log.info("image :{}", image);
+                log.info("bucketName2 : {}", bucketName);
                 String fileUrl = amazonS3.getUrl(bucketName, fileName).toString();
+                log.info("bucketName3 : {}", bucketName);
                 teamUpdateRequestDto.setImageUrl(fileUrl);
+                log.info("image url :{}", fileUrl);
             }  catch (IOException e) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
         TeamUpdateResponseDto updatedTeam = teamService.updateTeam(teamId, teamUpdateRequestDto);
+        log.info("updated team :{}", updatedTeam);
         return new ResponseEntity<>(updatedTeam, HttpStatus.OK);
     }
 
