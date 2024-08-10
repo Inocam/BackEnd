@@ -8,6 +8,7 @@ import com.sparta.backend.security.JwtAuthorizationFilter;
 import com.sparta.backend.security.UserDetailsServiceImpl;
 import com.sparta.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.google.gson.internal.$Gson$Types.arrayOf;
+
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ public class WebSecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final UserRepository userRepository;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -68,11 +72,12 @@ public class WebSecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                         .requestMatchers("/**").permitAll() // 메인 페이지 요청 허가
+                        .requestMatchers("/error").permitAll()
 //                        .requestMatchers("/api/user/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
 //                        .requestMatchers("/swagger-ui.html").permitAll()
 //                        .requestMatchers("/swagger-ui/*").permitAll()
 //                        .requestMatchers("/v3/**").permitAll()
-//                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+                        .anyRequest().permitAll() // 그 외 모든 요청 인증처리
         );
 
         // 필터 관리
