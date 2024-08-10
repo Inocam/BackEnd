@@ -21,14 +21,20 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    /* 생성 */
+    // ================================ 등록 ================================
+    /**
+     * 새로운 작업을 생성합니다.
+     *
+     * @param requestDto 생성할 작업의 정보
+     * @return 생성된 작업의 응답 정보
+     */
     @PostMapping("/create")
     public TaskResponseDto createTask(@RequestBody TaskRequestDto requestDto) { //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
         return taskService.createTask(requestDto); //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
     }
 
 
-    /* 조회 */
+    // ================================ 조회 ================================
     // 전체조회
     @GetMapping("")
     public List<TaskResponseDto> getTask() {
@@ -36,32 +42,52 @@ public class TaskController {
     }
 
     // 메인화면 -> 선택 월 (1일~말일) -> 일자별 task 갯수
+    /**
+     * 특정 기간 동안 일자별 일정 수를 조회
+     *
+     * @param startDate 조회 시작일
+     * @param endDate   조회 종료일
+     * @return 일자별 일정 수
+     */
     @GetMapping("/mainview/countTask")
     public Map<String, Long> countTasksByDay(@RequestParam String startDate, @RequestParam String endDate) {
         return taskService.countTasksByDay(startDate, endDate);
     }
 
     // 메인화면 -> 선택 월 (1일~말일) -> 전체 status 갯수
+    /**
+     * 특정 기간 동안 상태별 일정 수를 조회
+     *
+     * @param startDate 조회 시작일
+     * @param endDate   조회 종료일
+     * @return 상태별 일정 수
+     */
     @GetMapping("/mainview/countTaskStatus")
     public Map<String, Long> countTasksByStatus(@RequestParam String startDate, @RequestParam String endDate) {
         return taskService.countTasksByStatus(startDate, endDate);
     }
 
     // 메인화면 -> 선택 월 -> 선택 일 -> task list
+    /**
+     * 특정 일의 일정목록 조회
+     *
+     * @param dueDate 조회 일
+     * @return 일정 목록
+     */
     @GetMapping("/mainview/")
     public List<MainviewResponseDto> getView(@RequestParam("dueDate") String dueDate) {
         return taskService.getView(dueDate);
     }
 
 
-    /* 수정 */
+    // ================================ 수정 ================================
     @PutMapping("/update/{taskId}")
     public Long updateTask(@PathVariable Long taskId, @RequestBody TaskRequestDto requestDto) {
         return taskService.updateTask(taskId, requestDto);
     }
 
 
-    /* 삭제 */
+    // ================================ 삭제 ================================
     @DeleteMapping("/delete/{taskId}")
     public Long deleteTask(@PathVariable Long taskId) {
         return taskService.deleteTask(taskId);
