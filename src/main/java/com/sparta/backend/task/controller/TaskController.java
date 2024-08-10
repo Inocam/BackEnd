@@ -22,11 +22,12 @@ public class TaskController {
     }
 
     // ================================ 등록 ================================
+
     /**
-     * 새로운 작업을 생성합니다.
+     * 새로운 일정을 생성합니다.
      *
-     * @param requestDto 생성할 작업의 정보
-     * @return 생성된 작업의 응답 정보
+     * @param requestDto 생성할 일정의 정보
+     * @return 생성된 일정의 응답 정보
      */
     @PostMapping("/create")
     public TaskResponseDto createTask(@RequestBody TaskRequestDto requestDto) { //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
@@ -35,13 +36,19 @@ public class TaskController {
 
 
     // ================================ 조회 ================================
-    // 전체조회
+
+    /**
+     * DB내 모든 일정을 조회
+     *
+     * @return DB내 모든 일정의 리스트
+     */
     @GetMapping("")
     public List<TaskResponseDto> getTask() {
         return taskService.getTask();
     }
 
     // 메인화면 -> 선택 월 (1일~말일) -> 일자별 task 갯수
+
     /**
      * 특정 기간 동안 일자별 일정 수를 조회
      *
@@ -55,6 +62,7 @@ public class TaskController {
     }
 
     // 메인화면 -> 선택 월 (1일~말일) -> 전체 status 갯수
+
     /**
      * 특정 기간 동안 상태별 일정 수를 조회
      *
@@ -68,6 +76,7 @@ public class TaskController {
     }
 
     // 메인화면 -> 선택 월 -> 선택 일 -> task list
+
     /**
      * 특정 일의 일정목록 조회
      *
@@ -81,6 +90,14 @@ public class TaskController {
 
 
     // ================================ 수정 ================================
+
+    /**
+     * 특정 일정을 수정
+     *
+     * @param taskId     수정할 일정의 ID
+     * @param requestDto 수정할 일정의 정보
+     * @return 수정된 일정의 ID
+     */
     @PutMapping("/update/{taskId}")
     public Long updateTask(@PathVariable Long taskId, @RequestBody TaskRequestDto requestDto) {
         return taskService.updateTask(taskId, requestDto);
@@ -88,6 +105,13 @@ public class TaskController {
 
 
     // ================================ 삭제 ================================
+
+    /**
+     * 특정 일정을 삭제
+     *
+     * @param taskId 삭제할 일정의 ID
+     * @return 삭제된 일정의 ID
+     */
     @DeleteMapping("/delete/{taskId}")
     public Long deleteTask(@PathVariable Long taskId) {
         return taskService.deleteTask(taskId);
