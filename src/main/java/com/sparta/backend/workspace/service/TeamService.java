@@ -49,9 +49,10 @@ public class TeamService {
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "User Not Found", "잘못된 팀 생성 입니다."));
 
         Team team = new Team(requestTeamDto); // 팀 객체 생성
+        log.info("Creating team {}", team.getName());
+        log.info("request : {}", requestTeamDto);
         team.setImageUrl(imageUrl); //팀 엔티티에 이미지 url 설정
         Team saveTeam = teamRepository.save(team); // 팀 객체 데베에 저장
-
         TeamUser teamUser = new TeamUser(creator, saveTeam, "팀장"); //팀 생성자를 팀장으로 추가 //teamUser 객체 생성시 -> creator가 User 엔티티 객체, TeamUser 엔티티의 user 필드에 매핑됨,
         teamUserRepository.save(teamUser);
         // 변경 사항 저장 하는
