@@ -1,6 +1,6 @@
 package com.sparta.backend.user.model;
 
-import com.sparta.backend.user.security.JwtUtil;
+import com.sparta.backend.security.JwtUtil;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

@@ -1,4 +1,4 @@
-package com.sparta.backend.user.security;
+package com.sparta.backend.security;
 
 import com.sparta.backend.user.model.UserRoleEnum;
 import io.jsonwebtoken.*;
@@ -55,9 +55,12 @@ public class JwtUtil {
     }
 
     public String createRefreshToken(String email) {
+        Date date = new Date();
+
         return Jwts.builder()
                 .setSubject(email)
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
+                .setIssuedAt(date) // 발급일
                 .signWith(key, signatureAlgorithm)
                 .compact();
     }
@@ -68,7 +71,7 @@ public class JwtUtil {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);
         }
-        return null;
+        return bearerToken;
     }
 
     // 토큰 검증
@@ -90,6 +93,20 @@ public class JwtUtil {
 
     // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        Claims claims;
+
+        try {
+            claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            // 토큰이 만료된 경우에도 클레임을 추출할 수 있음
+            claims = e.getClaims();
+            return claims;
+        }
+
+        return claims;
     }
 }

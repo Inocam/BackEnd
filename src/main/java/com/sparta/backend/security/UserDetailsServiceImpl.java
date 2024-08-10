@@ -1,4 +1,4 @@
-package com.sparta.backend.user.security;
+package com.sparta.backend.security;
 
 import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.repository.UserRepository;
