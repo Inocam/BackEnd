@@ -1,12 +1,11 @@
 package com.sparta.backend.config;
 
-import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
 import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.repository.UserRepository;
-import com.sparta.backend.security.JwtAuthenticationFilter;
-import com.sparta.backend.security.JwtAuthorizationFilter;
-import com.sparta.backend.security.UserDetailsServiceImpl;
-import com.sparta.backend.security.JwtUtil;
+import com.sparta.backend.user.security.JwtAuthenticationFilter;
+import com.sparta.backend.user.security.JwtAuthorizationFilter;
+import com.sparta.backend.user.security.UserDetailsServiceImpl;
+import com.sparta.backend.user.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +28,7 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
 
     @Bean
@@ -44,14 +43,14 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, refreshTokenRedisRepository, userRepository);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, refreshTokenRepository, userRepository);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
     }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, refreshTokenRedisRepository, userRepository);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
     }
 
     @Bean

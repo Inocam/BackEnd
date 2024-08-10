@@ -46,8 +46,8 @@ public class RestTeamController {
     @PostMapping
     public ResponseEntity<ResponseTeamDto> createTeam(@RequestPart("team") RequestTeamDto requestTeamDto,
                                                       @RequestPart(value = "image", required = false) MultipartFile image) {
-//        log.info("Creating  {}", requestTeamDto);
-//        log.info("image1 {}", image.getSize());
+        log.info("Creating  {}", requestTeamDto);
+        log.info("image1 {}", image.getSize());
         ResponseTeamDto responseTeamDto = teamService.createTeam(requestTeamDto, image);
         return new ResponseEntity<>(responseTeamDto, HttpStatus.CREATED);
 
