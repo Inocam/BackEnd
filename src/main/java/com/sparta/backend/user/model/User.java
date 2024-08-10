@@ -33,9 +33,6 @@ public class User {
 
     private Long kakaoId;
 
-    @Column(name = "is_delete",nullable = false)
-    private Boolean isDelete = false;
-
     public User(String username, String password, String email, UserRoleEnum role) {
         this.username = username;
         this.password = password;
