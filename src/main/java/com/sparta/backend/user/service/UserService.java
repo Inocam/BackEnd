@@ -77,7 +77,7 @@ public class UserService {
         String accessToken = jwtUtil.createAccessToken(email, UserRoleEnum.USER);
         String refreshToken = jwtUtil.createRefreshToken(email);
 
-        refreshTokenRedisRepository.save(email, refreshToken);
+        //refreshTokenRedisRepository.save(email, refreshToken);
 
         // JSON 객체 생성
         Map<String, String> userInfo = new HashMap<>();
