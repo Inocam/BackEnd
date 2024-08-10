@@ -11,6 +11,7 @@ import com.sparta.backend.chat.dto.userRoom.UserRoomRequestDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomResponseDto;
 import com.sparta.backend.chat.service.ChatMessageService;
 import com.sparta.backend.chat.service.ChatRoomService;
+import org.springframework.data.domain.Page;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -43,8 +44,10 @@ public class  ChatController {
 
     // 채팅방 전체 조회
     @GetMapping()
-    public List<RoomListResponseDto> getListRoom() {
-        return chatRoomService.getListRoom();
+    public Page<RoomListResponseDto> getListRoom(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+        return chatRoomService.getListRoom(page, size);
     }
 
     // 사용자가 속한 채팅방 조회
@@ -76,7 +79,10 @@ public class  ChatController {
 
     // 채팅 조회
     @GetMapping("/{roomId}/messages")
-    public List<ReadMessageResponseDto> getChatMessagesList(@PathVariable Long roomId) {
-        return chatMessageService.getChatMessageList(roomId);
+    public Page<ReadMessageResponseDto> getChatMessagesList(
+            @PathVariable Long roomId,
+            @RequestParam(defaultValue = "1") int page, // 기본값 0
+            @RequestParam(defaultValue = "30") int size) { // 기본값 30
+        return chatMessageService.getChatMessageList(roomId, page, size);
     }
 }

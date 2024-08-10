@@ -10,11 +10,16 @@ import com.sparta.backend.chat.repository.ChatMessageRepository;
 import com.sparta.backend.chat.repository.ChatRoomRepository;
 import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import static com.sparta.backend.chat.global.ErrorCode.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatMessageService {
@@ -53,23 +58,24 @@ public class ChatMessageService {
         return new ChatMessageResponseDto(savedChatMessage);
     }
 
-    // 채팅조회
-    public List<ReadMessageResponseDto> getChatMessageList(Long roomId) {
+    public Page<ReadMessageResponseDto> getChatMessageList(Long roomId, int page, int size) {
 
         // 채팅방 존재 여부
         ChatRoom chatRoom = chatRoomRepository.findByRoomIdAndIsDeletedFalse(roomId)
-                .orElseThrow(() -> new  CustomException(404, CHATROOM_NOT_FOUND, "채팅 방을 찾을 수 없습니다"));
+                .orElseThrow(() -> new CustomException(404, CHATROOM_NOT_FOUND, "채팅 방을 찾을 수 없습니다"));
 
-        // ChatMessage 목록 조회
-        List<ChatMessage> chatMessages = chatMessageRepository.findByChatRoom(chatRoom);
+        // 페이지네이션 설정
+        Pageable pageable = PageRequest.of(page-1, size);
 
-        // ReadMessageResponseDto로 변환
-        List<ReadMessageResponseDto> responseDto = new ArrayList<>();
+        // 페이지네이션된 ChatMessage 목록 조회
+        Page<ChatMessage> chatMessagesPage = chatMessageRepository.findByChatRoom(chatRoom, pageable);
 
-        // ChatMessage 객체를 dto로 변환하여 List에 추가
-        for (ChatMessage chatMessage : chatMessages) {
-            responseDto.add(new ReadMessageResponseDto(chatMessage));
+        // ChatMessage 객체를 ReadMessageResponseDto로 변환
+        List<ReadMessageResponseDto> readMessageResponseDto = new ArrayList<>();
+        for (ChatMessage chatMessage : chatMessagesPage.getContent()) {
+            readMessageResponseDto.add(new ReadMessageResponseDto(chatMessage));
         }
-        return responseDto;
+        // Page<ReadMessageResponseDto> 객체 생성하여 반환
+        return new PageImpl<>(readMessageResponseDto, pageable, chatMessagesPage.getTotalElements());
     }
 }
