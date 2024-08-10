@@ -1,14 +1,12 @@
 package com.sparta.backend.config;
 
 import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
-import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.repository.UserRepository;
 import com.sparta.backend.security.JwtAuthenticationFilter;
 import com.sparta.backend.security.JwtAuthorizationFilter;
 import com.sparta.backend.security.UserDetailsServiceImpl;
 import com.sparta.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +19,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import static com.google.gson.internal.$Gson$Types.arrayOf;
 
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
