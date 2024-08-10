@@ -1,6 +1,7 @@
 package com.sparta.backend.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sparta.backend.user.dto.LoginRequestDto;
 import com.sparta.backend.user.dto.UserResponseDto;
 import com.sparta.backend.security.JwtUtil;
 import com.sparta.backend.security.UserDetailsImpl;
@@ -8,6 +9,7 @@ import com.sparta.backend.user.service.KakaoService;
 import com.sparta.backend.user.service.UserService;
 import com.sparta.backend.user.dto.SignupRequestDto;
 import com.sparta.backend.user.dto.UserInfoDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,11 @@ public class UserController {
     @GetMapping("/user/login-page")
     public String loginPage() {
         return "login";
+    }
+
+    @GetMapping("/user/loginTest")
+    public void loginTest(HttpServletRequest req, HttpServletResponse res, @RequestBody LoginRequestDto loginRequestDto) {
+        userService.loginTest(req, res, loginRequestDto);
     }
 
     @PostMapping("/user/signup")
