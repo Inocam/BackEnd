@@ -1,9 +1,12 @@
 package com.sparta.backend.config;
 
-import com.sparta.backend.security.*;
 import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
 import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.repository.UserRepository;
+import com.sparta.backend.security.JwtAuthenticationFilter;
+import com.sparta.backend.security.JwtAuthorizationFilter;
+import com.sparta.backend.security.UserDetailsServiceImpl;
+import com.sparta.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,14 +55,9 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public CustomSecurityFilter customSecurityFilter() throws Exception {
-        return new CustomSecurityFilter();
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 설정
-        http.csrf(AbstractHttpConfigurer::disable);
+        http.csrf((csrf) -> csrf.disable());
 
         // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
         http.sessionManagement((sessionManagement) ->
@@ -72,13 +69,12 @@ public class WebSecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                         .requestMatchers("/**").permitAll() // 메인 페이지 요청 허가
                         //.requestMatchers("/api/user/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
-                        .anyRequest().permitAll() // 그 외 모든 요청 인증처리
+                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
         // 필터 관리
-//        http.addFilterBefore(customSecurityFilter(), JwtAuthorizationFilter.class);
-//        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
-//        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

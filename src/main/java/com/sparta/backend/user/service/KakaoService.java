@@ -124,7 +124,7 @@ public class KakaoService {
 
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", accessToken);
+        headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
