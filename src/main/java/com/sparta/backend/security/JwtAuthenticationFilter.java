@@ -3,7 +3,11 @@ package com.sparta.backend.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.sparta.backend.user.dto.LoginRequestDto;
+import com.sparta.backend.user.model.RefreshToken;
 import com.sparta.backend.user.model.UserRoleEnum;
+import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
+import com.sparta.backend.user.repository.RefreshTokenRepository;
+import com.sparta.backend.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,8 +26,14 @@ import java.util.Map;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+
+    private final UserRepository userRepository;
+
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRedisRepository refreshTokenRedisRepository, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
+        this.refreshTokenRedisRepository = refreshTokenRedisRepository;
+        this.userRepository = userRepository;
         setFilterProcessesUrl("/api/user/login");
     }
 
@@ -63,10 +73,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
 
         String accessToken = jwtUtil.createAccessToken(email, role);
+        String refreshToken = jwtUtil.createRefreshToken(email);
+
+        refreshTokenRedisRepository.save(email, refreshToken);
 
         // JSON 객체 생성
         Map<String, String> userInfo = new HashMap<>();
         userInfo.put("accessToken", accessToken);
+        userInfo.put("id", userRepository.findByEmail(email).get().getId().toString());
+        userInfo.put("username", userRepository.findByEmail(email).get().getUsername().toString());
         userInfo.put("email", email);
 
 

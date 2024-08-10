@@ -58,9 +58,12 @@ public class KakaoService {
         log.info(encodedValue);
 
 
+        String refreshToken = jwtUtil.createRefreshToken(kakaoUser.getEmail());
+
         // JSON 객체 생성
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", encodedValue);
+        tokens.put("refreshToken", refreshToken);
 
         // 응답 본문에 JSON 작성
         response.setContentType("application/json");
