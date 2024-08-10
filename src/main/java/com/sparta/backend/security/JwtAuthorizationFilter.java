@@ -100,9 +100,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 //                log.error(e.getMessage());
 //                return;
 //            }
-        }
+    ///    }
 
-        filterChain.doFilter(req, res);
+        //filterChain.doFilter(req, res);
     }
 
     // 인증 처리
