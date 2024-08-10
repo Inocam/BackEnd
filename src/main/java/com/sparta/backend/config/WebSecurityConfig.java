@@ -72,7 +72,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/**").permitAll()
-                        //.anyRequest().authenticated() // 그 외 모든 요청 인증처리
+                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
         // 필터 관리
