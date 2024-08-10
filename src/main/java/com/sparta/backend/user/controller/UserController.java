@@ -41,8 +41,8 @@ public class UserController {
     }
 
     @GetMapping("/user/loginTest")
-    public void loginTest(HttpServletRequest req, HttpServletResponse res, @RequestBody LoginRequestDto loginRequestDto) {
-        userService.loginTest(req, res, loginRequestDto);
+    public void loginTest(HttpServletResponse res, @RequestBody LoginRequestDto loginRequestDto) {
+        userService.loginTest(res, loginRequestDto);
     }
 
     @PostMapping("/user/signup")
