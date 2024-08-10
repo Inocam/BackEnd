@@ -46,12 +46,12 @@ public class JwtUtil {
         Date date = new Date();
 
         return Jwts.builder()
-                        .setSubject(email) // 사용자 식별자값(ID)
-                        .claim(AUTHORIZATION_KEY, role) // 사용자 권한
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
-                        .setIssuedAt(date) // 발급일
-                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
-                        .compact();
+                .setSubject(email) // 사용자 식별자값(ID)
+                .claim(AUTHORIZATION_KEY, role) // 사용자 권한
+                .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
+                .setIssuedAt(date) // 발급일
+                .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                .compact();
     }
 
     public String createRefreshToken(String email) {
@@ -68,9 +68,9 @@ public class JwtUtil {
     // header 에서 JWT 가져오기
     public String getJwtFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(7);
-        }
+//        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+//            return bearerToken.substring(7);
+//        }
         return bearerToken;
     }
 
