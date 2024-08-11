@@ -8,7 +8,6 @@ import com.sparta.backend.user.service.KakaoService;
 import com.sparta.backend.user.service.UserService;
 import com.sparta.backend.user.dto.SignupRequestDto;
 import com.sparta.backend.user.dto.UserInfoDto;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class UserController {
@@ -32,12 +31,6 @@ public class UserController {
     private final UserService userService;
     private final KakaoService kakaoService;
     private final JwtUtil jwtUtil;
-
-    //테스트용
-    @GetMapping("/user/login-page")
-    public String loginPage() {
-        return "login";
-    }
 
     @GetMapping("/user/kakao/callback")
     public String kakaoCallback(@RequestParam String code, HttpServletResponse response, @AuthenticationPrincipal UserDetailsImpl userDetails) throws JsonProcessingException {
@@ -47,7 +40,6 @@ public class UserController {
     }
 
     @PostMapping("/user/signup")
-    @ResponseBody
     public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
@@ -66,19 +58,7 @@ public class UserController {
         }
     }
 
-    // 회원 정보 받기
-    @GetMapping("/user-info")
-    @ResponseBody
-    public UserInfoDto getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String username = userDetails.getUser().getUsername();
-        String email = userDetails.getUser().getEmail();
-        Long userId = userDetails.getUser().getId();
-
-        return new UserInfoDto(userId, username, email);
-    }
-
     @GetMapping("/users")
-    @ResponseBody
     public List<UserResponseDto> getUsersByEmailPrefix(@RequestParam String prefix) {
         return userService.getUsersByEmailPrefix(prefix);
     }
