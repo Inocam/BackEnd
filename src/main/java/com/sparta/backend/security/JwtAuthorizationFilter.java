@@ -39,8 +39,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String tokenValue = jwtUtil.getJwtFromHeader(req);
         log.info("doFilterInternal");
         if (StringUtils.hasText(tokenValue)) {
+            log.info("StringUtils.hasText");
             Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-
+            log.info("Claims");
             if (!jwtUtil.validateToken(tokenValue)) {
                 log.error("Token Error");
 
@@ -72,6 +73,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     info = jwtUtil.getUserInfoFromToken(newToken);
                 } else {
                     // 유효하지 않은 토큰이므로 필터 체인을 호출하지 않고 반환
+                    log.error("refreshTokenRedisRepository not exists");
                     return;
                 }
             }
@@ -84,8 +86,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
         }
-        
-        log.info("End of Authentication");
+
+        log.info("End of Authorization Filter");
 
         filterChain.doFilter(req, res);
     }
