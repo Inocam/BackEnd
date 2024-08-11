@@ -1,21 +1,13 @@
 package com.sparta.backend.user.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.backend.user.dto.UserResponseDto;
-import com.sparta.backend.security.JwtUtil;
-import com.sparta.backend.security.UserDetailsImpl;
-import com.sparta.backend.user.service.KakaoService;
 import com.sparta.backend.user.service.UserService;
 import com.sparta.backend.user.dto.SignupRequestDto;
-import com.sparta.backend.user.dto.UserInfoDto;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +17,13 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/user/signup")
+    @ResponseBody
+    @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
@@ -49,11 +42,13 @@ public class UserController {
         }
     }
 
+    @ResponseBody
     @GetMapping("/users")
     public List<UserResponseDto> getUsersByEmailPrefix(@RequestParam String prefix) {
         return userService.getUsersByEmailPrefix(prefix);
     }
 
+//    @ResponseBody
 //    @GetMapping("/user/refresh")
 //    @ResponseBody
 //    public void refresh(HttpServletRequest request, HttpServletResponse response) {

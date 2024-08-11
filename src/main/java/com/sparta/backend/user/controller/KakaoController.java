@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/api/user/kakao/callback")
+@RequestMapping("/kakao/callback")
 @RequiredArgsConstructor
 public class KakaoController {
     private final KakaoService kakaoService;
