@@ -46,9 +46,9 @@ public class TaskService {
         return taskRepository.findAll().stream().map(TaskResponseDto::new).toList();
     }
 
-    // 특정월의 1일~말일 일자별 task 갯수
-    public Map<String, Long> countTasksByDay(String startDate, String endDate) {
-        List<Object[]> results = mainviewRepository.countTasksByDay(startDate, endDate);
+    // 특정 월의 팀별 일자별 task 갯수
+    public Map<String, Long> countTasksByDay(String startDate, String endDate, Long teamId) {
+        List<Object[]> results = mainviewRepository.countTasksByDay(startDate, endDate, teamId);
         Map<String, Long> taskCountByDay = new LinkedHashMap<>();
 
         for (Object[] result : results) {
@@ -60,16 +60,10 @@ public class TaskService {
         return taskCountByDay;
     }
 
-    // 새로운 기능: 상태별 작업 수 조회
-    public Map<String, Long> countTasksByStatus(String startDate, String endDate) {
-        List<Object[]> results = mainviewRepository.countTasksByStatus(startDate, endDate);
+    // 특정 월의 팀별 상태별 task 갯수
+    public Map<String, Long> countTasksByStatus(String startDate, String endDate, Long teamId) {
+        List<Object[]> results = mainviewRepository.countTasksByStatus(startDate, endDate, teamId);
         Map<String, Long> taskCountByStatus = new LinkedHashMap<>();
-
-        // 초기 상태값을 모두 0으로 설정
-        taskCountByStatus.put("todo", 0L);
-        taskCountByStatus.put("ongoing", 0L);
-        taskCountByStatus.put("done", 0L);
-        taskCountByStatus.put("delay", 0L);
 
         for (Object[] result : results) {
             String status = (String) result[0];
@@ -80,18 +74,10 @@ public class TaskService {
         return taskCountByStatus;
     }
 
-    // 특정일자 조회
-    public List<MainviewResponseDto> getView(String dueDate) {
-        return taskRepository.findAll().stream()
-                .filter(task -> task.getDueDate().equals(dueDate))
-                .map(task -> new MainviewResponseDto(
-                        task.getTaskId(),
-                        task.getDueDate(),
-                        task.getTitle(),
-                        task.getDescription(),
-                        task.getStatus()
-                ))
-                .toList();
+    // 특정 날짜의 팀별 일정 조회
+    public TaskResponseDto getTaskByDueDate(String dueDate, Long teamId) {
+        Task task = taskRepository.findByDueDateAndTeamId(dueDate, teamId);
+        return new TaskResponseDto(task);
     }
 
 
