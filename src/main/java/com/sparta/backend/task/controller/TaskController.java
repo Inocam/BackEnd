@@ -42,7 +42,7 @@ public class TaskController {
      *
      * @return DB내 모든 일정의 리스트
      */
-    @GetMapping("")
+    @GetMapping("/list")
     public List<TaskResponseDto> getTask() {
         return taskService.getTask();
     }
@@ -50,42 +50,45 @@ public class TaskController {
     // 메인화면 -> 선택 월 (1일~말일) -> 일자별 task 갯수
 
     /**
-     * 특정 기간 동안 일자별 일정 수를 조회
+     * 특정 기간 동안 팀별로 일자별 일정 수를 조회합니다.
      *
      * @param startDate 조회 시작일
      * @param endDate   조회 종료일
-     * @return 일자별 일정 수
+     * @param teamId    조회할 팀의 ID
+     * @return 팀별 일자별 일정 수
      */
     @GetMapping("/mainview/countTask")
-    public Map<String, Long> countTasksByDay(@RequestParam String startDate, @RequestParam String endDate) {
-        return taskService.countTasksByDay(startDate, endDate);
+    public Map<String, Long> countTasksByDay(@RequestParam String startDate, @RequestParam String endDate, @RequestParam Long teamId) {
+        return taskService.countTasksByDay(startDate, endDate, teamId);
     }
 
     // 메인화면 -> 선택 월 (1일~말일) -> 전체 status 갯수
 
     /**
-     * 특정 기간 동안 상태별 일정 수를 조회
+     * 특정 기간 동안 팀별로 상태별 일정 수를 조회합니다.
      *
      * @param startDate 조회 시작일
      * @param endDate   조회 종료일
-     * @return 상태별 일정 수
+     * @param teamId    조회할 팀의 ID
+     * @return 팀별 상태별 일정 수
      */
     @GetMapping("/mainview/countTaskStatus")
-    public Map<String, Long> countTasksByStatus(@RequestParam String startDate, @RequestParam String endDate) {
-        return taskService.countTasksByStatus(startDate, endDate);
+    public Map<String, Long> countTasksByStatus(@RequestParam String startDate, @RequestParam String endDate, @RequestParam Long teamId) {
+        return taskService.countTasksByStatus(startDate, endDate, teamId);
     }
 
     // 메인화면 -> 선택 월 -> 선택 일 -> task list
 
     /**
-     * 특정 일의 일정목록 조회
+     * 특정 날짜에 해당하는 팀의 일정을 조회합니다.
      *
-     * @param dueDate 조회 일
-     * @return 일정 목록
+     * @param dueDate 조회할 날짜
+     * @param teamId  조회할 팀의 ID
+     * @return 특정 날짜의 팀 일정
      */
     @GetMapping("/mainview/")
-    public List<MainviewResponseDto> getView(@RequestParam("dueDate") String dueDate) {
-        return taskService.getView(dueDate);
+    public TaskResponseDto getTaskByDueDate(@RequestParam String dueDate, @RequestParam Long teamId) {
+        return taskService.getTaskByDueDate(dueDate, teamId);
     }
 
 
