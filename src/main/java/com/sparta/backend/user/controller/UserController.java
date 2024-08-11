@@ -83,9 +83,9 @@ public class UserController {
         return userService.getUsersByEmailPrefix(prefix);
     }
 
-    @GetMapping("/user/refresh")
-    @ResponseBody
-    public void refresh(HttpServletRequest request, HttpServletResponse response) {
-        userService.refresh(request, response);
-    }
+//    @GetMapping("/user/refresh")
+//    @ResponseBody
+//    public void refresh(HttpServletRequest request, HttpServletResponse response) {
+//        userService.refresh(request, response);
+//    }
 }
