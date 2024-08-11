@@ -8,6 +8,7 @@ import com.sparta.backend.user.service.KakaoService;
 import com.sparta.backend.user.service.UserService;
 import com.sparta.backend.user.dto.SignupRequestDto;
 import com.sparta.backend.user.dto.UserInfoDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class UserController {
@@ -37,7 +39,15 @@ public class UserController {
         return "login";
     }
 
+    @GetMapping("/user/kakao/callback")
+    public String kakaoCallback(@RequestParam String code, HttpServletResponse response, @AuthenticationPrincipal UserDetailsImpl userDetails) throws JsonProcessingException {
+        kakaoService.kakaoLogin(code, response);
+
+        return "redirect:/";
+    }
+
     @PostMapping("/user/signup")
+    @ResponseBody
     public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
@@ -67,20 +77,15 @@ public class UserController {
         return new UserInfoDto(userId, username, email);
     }
 
-    @GetMapping("/user/kakao/callback")
-    public String kakaoCallback(@RequestParam String code, HttpServletResponse response, @AuthenticationPrincipal UserDetailsImpl userDetails) throws JsonProcessingException {
-        kakaoService.kakaoLogin(code, response);
-
-        return "redirect:/";
-    }
-
     @GetMapping("/users")
+    @ResponseBody
     public List<UserResponseDto> getUsersByEmailPrefix(@RequestParam String prefix) {
         return userService.getUsersByEmailPrefix(prefix);
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<String> refresh(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return null;
+    @GetMapping("/user/refresh")
+    @ResponseBody
+    public void refresh(HttpServletRequest request, HttpServletResponse response) {
+        userService.refresh(request, response);
     }
 }
