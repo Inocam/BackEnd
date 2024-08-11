@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class UserController {
@@ -78,5 +77,10 @@ public class UserController {
     @GetMapping("/users")
     public List<UserResponseDto> getUsersByEmailPrefix(@RequestParam String prefix) {
         return userService.getUsersByEmailPrefix(prefix);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refresh(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return null;
     }
 }

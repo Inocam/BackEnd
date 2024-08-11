@@ -6,6 +6,7 @@ import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.model.UserRoleEnum;
 import com.sparta.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -54,10 +56,12 @@ public class UserService {
         final int LIST_COUNT = 10;
 
         List<UserResponseDto> users = userRepository.findAllByEmailStartingWith(prefix).stream().map(UserResponseDto::new).toList();
-        users.stream()
+
+        users = users.stream()
                 .sorted(Comparator.comparing(UserResponseDto::getEmail))
                 .limit(LIST_COUNT)
                 .collect(Collectors.toList());
+
 
         return users;
     }
