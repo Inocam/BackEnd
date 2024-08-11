@@ -53,8 +53,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     // JSON 객체 생성
                     Map<String, String> userInfo = new HashMap<>();
                     userInfo.put("accessToken", newToken);
-                    userInfo.put("id", userRepository.findByEmail(email).get().getId().toString());
-                    userInfo.put("username", userRepository.findByEmail(email).get().getUsername().toString());
+//                    userInfo.put("id", userRepository.findByEmail(email).get().getId().toString());
+//                    userInfo.put("username", userRepository.findByEmail(email).get().getUsername().toString());
                     userInfo.put("email", email);
 
                     // 응답 본문에 JSON 작성
