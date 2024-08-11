@@ -29,15 +29,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final KakaoService kakaoService;
-    private final JwtUtil jwtUtil;
-
-    @GetMapping("/user/kakao/callback")
-    public String kakaoCallback(@RequestParam String code, HttpServletResponse response, @AuthenticationPrincipal UserDetailsImpl userDetails) throws JsonProcessingException {
-        kakaoService.kakaoLogin(code, response);
-
-        return "redirect:/";
-    }
 
     @PostMapping("/user/signup")
     public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto, BindingResult bindingResult) {
