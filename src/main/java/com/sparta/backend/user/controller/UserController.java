@@ -3,6 +3,8 @@ package com.sparta.backend.user.controller;
 import com.sparta.backend.user.dto.UserResponseDto;
 import com.sparta.backend.user.service.UserService;
 import com.sparta.backend.user.dto.SignupRequestDto;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,29 +19,21 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
 
     @ResponseBody
-    @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto, BindingResult bindingResult) {
-        // Validation 예외처리
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        if (fieldErrors.size() > 0) {
-            for (FieldError fieldError : bindingResult.getFieldErrors()) {
-                log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("not valid input");
-        }
+    @PostMapping("/user/signup")
+    public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto requestDto) {
+        return userService.signup(requestDto);
+    }
 
-        try {
-            userService.signup(requestDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body("signup success");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원가입 중 중복 발생");
-        }
+    @ResponseBody
+    @GetMapping("/user/refresh")
+    public void refresh(HttpServletRequest request, HttpServletResponse response) {
+        userService.refresh(request, response);
     }
 
     @ResponseBody
@@ -48,10 +42,4 @@ public class UserController {
         return userService.getUsersByEmailPrefix(prefix);
     }
 
-//    @ResponseBody
-//    @GetMapping("/user/refresh")
-//    @ResponseBody
-//    public void refresh(HttpServletRequest request, HttpServletResponse response) {
-//        userService.refresh(request, response);
-//    }
 }

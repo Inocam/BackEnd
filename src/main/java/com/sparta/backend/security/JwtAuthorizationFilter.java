@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -36,7 +37,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
+        if (req.getRequestURI().equals("/api/user/refresh")) {
+            filterChain.doFilter(req, res);
+            return;
+        }
+
         String tokenValue = jwtUtil.getJwtFromHeader(req);
+
         log.info("doFilterInternal");
         if (StringUtils.hasText(tokenValue)) {
             log.info("StringUtils.hasText");
@@ -44,51 +51,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             log.info("Claims");
             if (!jwtUtil.validateToken(tokenValue)) {
                 log.error("Token Error");
-
-                String email = info.getSubject();
-                if (refreshTokenRedisRepository.existsByKey(email)) {
-                    String newToken = jwtUtil.createAccessToken(email, UserRoleEnum.USER);
-                    log.info("refreshTokenRedisRepository.existsByKey");
-
-                    // JSON 객체 생성
-                    Map<String, String> userInfo = new HashMap<>();
-                    userInfo.put("accessToken", newToken);
-//                    userInfo.put("id", userRepository.findByEmail(email).get().getId().toString());
-//                    userInfo.put("username", userRepository.findByEmail(email).get().getUsername().toString());
-                    userInfo.put("email", email);
-
-                    // 응답 본문에 JSON 작성
-                    res.setContentType("application/json");
-                    res.setCharacterEncoding("UTF-8");
-
-                    try (PrintWriter out = res.getWriter()) {
-                        out.print(new Gson().toJson(userInfo)); // Gson 라이브러리를 사용하여 JSON 변환
-                        out.flush();
-                        log.info("flush");
-                    } catch (IOException e) {
-                        log.error("Failed to send response", e);
-                    }
-
-                    // 새로운 토큰 정보로 인증 설정
-                    info = jwtUtil.getUserInfoFromToken(newToken);
-                } else {
-                    // 유효하지 않은 토큰이므로 필터 체인을 호출하지 않고 반환
-                    log.error("refreshTokenRedisRepository not exists");
-                    return;
-                }
-            }
-
-            try {
-                setAuthentication(info.getSubject());
-                log.info("setAuthentication");
-            } catch (Exception e) {
-                log.error(e.getMessage());
+                res.setStatus(HttpStatus.SC_UNAUTHORIZED);
                 return;
             }
+
+            setAuthentication(info.getSubject());
         }
-
-        log.info("End of Authorization Filter");
-
         filterChain.doFilter(req, res);
     }
 

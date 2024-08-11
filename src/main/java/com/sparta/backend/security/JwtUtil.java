@@ -94,6 +94,7 @@ public class JwtUtil {
     // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
         Claims claims;
+        log.info("getUserInfoFromToken");
 
         try {
             claims = Jwts.parserBuilder()
@@ -101,12 +102,15 @@ public class JwtUtil {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+
+            log.info("getUserInfoFromToken : try end");
+            return claims;
         } catch (ExpiredJwtException e) {
             // 토큰이 만료된 경우에도 클레임을 추출할 수 있음
             claims = e.getClaims();
+
+            log.info("getUserInfoFromToken : catch end");
             return claims;
         }
-
-        return claims;
     }
 }
