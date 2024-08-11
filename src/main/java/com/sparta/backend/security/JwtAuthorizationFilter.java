@@ -47,6 +47,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 String email = info.getSubject();
                 if (refreshTokenRedisRepository.existsByKey(email)) {
                     String newToken = jwtUtil.createAccessToken(email, UserRoleEnum.USER);
+                    log.info("refreshTokenRedisRepository.existsByKey");
 
                     // JSON 객체 생성
                     Map<String, String> userInfo = new HashMap<>();
@@ -58,9 +59,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     // 응답 본문에 JSON 작성
                     res.setContentType("application/json");
                     res.setCharacterEncoding("UTF-8");
+
                     try (PrintWriter out = res.getWriter()) {
                         out.print(new Gson().toJson(userInfo)); // Gson 라이브러리를 사용하여 JSON 변환
                         out.flush();
+                        log.info("flush");
                     } catch (IOException e) {
                         log.error("Failed to send response", e);
                     }
@@ -75,11 +78,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             try {
                 setAuthentication(info.getSubject());
+                log.info("setAuthentication");
             } catch (Exception e) {
                 log.error(e.getMessage());
                 return;
             }
         }
+        
+        log.info("End of Authentication");
 
         filterChain.doFilter(req, res);
     }
