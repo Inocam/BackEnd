@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, select {
+            margin-top: 5px;
+            padding: 8px;
+            font-size: 1em;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 15px;
+            font-size: 1em;
+            width: 100%;
+            max-width: 200px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f4;
+            text-align: left;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>할 일 API 테스트</h1>
+
+    <!-- 모든 할 일 조회 -->
+    <form id="getAllTasksForm">
+        <h2>모든 할 일 조회</h2>
+        <button type="submit">조회 요청</button>
+    </form>
+
+    <!-- 특정 할 일 조회 -->
+    <form id="getTaskForm">
+        <h2>특정 할 일 조회</h2>
+        <label for="getTaskId">할 일 ID:</label>
+        <input type="number" id="getTaskId" placeholder="할 일 ID" required>
+        <button type="submit">조회 요청</button>
+    </form>
+
+    <!-- 조건별 할 일 조회 -->
+    <form id="searchTasksForm">
+        <h2>조건별 할 일 조회</h2>
+        <label for="searchStatus">상태:</label>
+        <select id="searchStatus">
+            <option value="">-- 선택하세요 --</option>
+            <option value="todo">Todo</option>
+            <option value="ongoing">Ongoing</option>
+            <option value="done">Done</option>
+            <option value="delay">Delay</option>
+        </select>
+
+        <label for="searchTeamId">팀 ID:</label>
+        <input type="number" id="searchTeamId" placeholder="팀 ID">
+
+        <label for="searchUserId">사용자 ID:</label>
+        <input type="number" id="searchUserId" placeholder="사용자 ID">
+
+        <button type="submit">조회 요청</button>
+    </form>
+
+    <!-- 완료되지 않은 할 일 조회 -->
+    <form id="getIncompleteTasksForm">
+        <h2>완료되지 않은 할 일 조회</h2>
+        <button type="submit">조회 요청</button>
+    </form>
+
+    <table id="taskTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>제목</th>
+            <th>설명</th>
+            <th>상태</th>
+            <th>시작일자</th>
+            <th>마감일자</th>
+            <th>완료일자</th>
+            <th>팀 ID</th>
+            <th>사용자 ID</th>
+            <th>상위 할 일 ID</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 검색 결과가 여기에 표시됩니다. -->
+        </tbody>
+    </table>
+
+    <div id="response" class="response"></div>
+</div>
+
+<script>
+    const responseElement = document.getElementById('response');
+    const taskTableBody = document.querySelector('#taskTable tbody');
+
+    function updateResponse(message) {
+        responseElement.textContent = JSON.stringify(message, null, 2);
+    }
+
+    // 모든 할 일 조회 요청
+    document.getElementById('getAllTasksForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        fetch('/foot/task/list')
+            .then(response => response.json())
+            .then(tasks => {
+                taskTableBody.innerHTML = ''; // 테이블 초기화
+                if (tasks.length === 0) {
+                    updateResponse({ message: '검색 결과가 없습니다.' });
+                    return;
+                }
+
+                tasks.forEach(task => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${task.taskId}</td>
+                        <td>${task.title}</td>
+                        <td>${task.description}</td>
+                        <td>${task.status}</td>
+                        <td>${task.startDate}</td>
+                        <td>${task.dueDate}</td>
+                        <td>${task.endDate || ''}</td>
+                        <td>${task.teamId}</td>
+                        <td>${task.userId}</td>
+                        <td>${task.parentTask || ''}</td>
+                    `;
+                    taskTableBody.appendChild(row);
+                });
+                updateResponse({ message: '모든 할 일이 조회되었습니다.', count: tasks.length });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                updateResponse({ error: '할 일 조회 실패', details: error });
+            });
+    });
+
+    // 특정 할 일 조회 요청
+    document.getElementById('getTaskForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const taskId = document.getElementById('getTaskId').value;
+
+        fetch(`/foot/task/${taskId}`)
+            .then(response => response.json())
+            .then(task => {
+                taskTableBody.innerHTML = ''; // 테이블 초기화
+                if (!task || task.taskId === undefined) {
+                    updateResponse({ message: '해당 ID의 할 일을 찾을 수 없습니다.' });
+                    return;
+                }
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${task.taskId}</td>
+                    <td>${task.title}</td>
+                    <td>${task.description}</td>
+                    <td>${task.status}</td>
+                    <td>${task.startDate}</td>
+                    <td>${task.dueDate}</td>
+                    <td>${task.endDate || ''}</td>
+                    <td>${task.teamId}</td>
+                    <td>${task.userId}</td>
+                    <td>${task.parentTask || ''}</td>
+                `;
+                taskTableBody.appendChild(row);
+                updateResponse({ message: '할 일이 조회되었습니다.' });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                updateResponse({ error: '할 일 조회 실패', details: error });
+            });
+    });
+
+    // 조건별 할 일 조회 요청
+    document.getElementById('searchTasksForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const params = new URLSearchParams();
+        const status = document.getElementById('searchStatus').value;
+        const teamId = document.getElementById('searchTeamId').value;
+        const userId = document.getElementById('searchUserId').value;
+
+        if (status) params.append('status', status);
+        if (teamId) params.append('teamId', teamId);
+        if (userId) params.append('userId', userId);
+
+        fetch(`/foot/task/search?${params.toString()}`)
+            .then(response => response.json())
+            .then(tasks => {
+                taskTableBody.innerHTML = ''; // 테이블 초기화
+                if (tasks.length === 0) {
+                    updateResponse({ message: '검색 결과가 없습니다.' });
+                    return;
+                }
+
+                tasks.forEach(task => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${task.taskId}</td>
+                        <td>${task.title}</td>
+                        <td>${task.description}</td>
+                        <td>${task.status}</td>
+                        <td>${task.startDate}</td>
+                        <td>${task.dueDate}</td>
+                        <td>${task.endDate || ''}</td>
+                        <td>${task.teamId}</td>
+                        <td>${task.userId}</td>
+                        <td>${task.parentTask || ''}</td>
+                    `;
+                    taskTableBody.appendChild(row);
+                });
+                updateResponse({ message: '검색이 완료되었습니다.', count: tasks.length });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                updateResponse({ error: '할 일 조회 실패', details: error });
+            });
+    });
+
+    // 완료되지 않은 할 일 조회 요청
+    document.getElementById('getIncompleteTasksForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        fetch('/foot/task/incomplete')
+            .then(response => response.json())
+            .then(tasks => {
+                taskTableBody.innerHTML = ''; // 테이블 초기화
+                if (tasks.length === 0) {
+                    updateResponse({ message: '검색 결과가 없습니다.' });
+                    return;
+                }
+
+                tasks.forEach(task => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${task.taskId}</td>
+                        <td>${task.title}</td>
+                        <td>${task.description}</td>
+                        <td>${task.status}</td>
+                        <td>${task.startDate}</td>
+                        <td>${task.dueDate}</td>
+                        <td>${task.endDate || ''}</td>
+                        <td>${task.teamId}</td>
+                        <td>${task.userId}</td>
+                        <td>${task.parentTask || ''}</td>
+                    `;
+                    taskTableBody.appendChild(row);
+                });
+                updateResponse({ message: '완료되지 않은 할 일이 조회되었습니다.', count: tasks.length });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                updateResponse({ error: '할 일 조회 실패', details: error });
+            });
+    });
+</script>
+</body>
+</html>
