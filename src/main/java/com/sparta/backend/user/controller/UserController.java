@@ -76,7 +76,7 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<UserResponseDto> getUsersByUsernamePrefix(@RequestParam String prefix) {
-        return userService.getUsersByUsernamePrefix(prefix);
+    public List<UserResponseDto> getUsersByEmailPrefix(@RequestParam String prefix) {
+        return userService.getUsersByEmailPrefix(prefix);
     }
 }

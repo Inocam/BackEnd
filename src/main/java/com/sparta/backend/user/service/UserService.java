@@ -9,8 +9,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +50,15 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public List<UserResponseDto> getUsersByUsernamePrefix(String prefix) {
-        return userRepository.findByUsernameStartingWith(prefix).stream().map(UserResponseDto::new).toList();
+    public List<UserResponseDto> getUsersByEmailPrefix(String prefix) {
+        final int LIST_COUNT = 10;
+
+        List<UserResponseDto> users = userRepository.findAllByEmailStartingWith(prefix).stream().map(UserResponseDto::new).toList();
+        users.stream()
+                .sorted(Comparator.comparing(UserResponseDto::getEmail))
+                .limit(LIST_COUNT)
+                .collect(Collectors.toList());
+
+        return users;
     }
 }
