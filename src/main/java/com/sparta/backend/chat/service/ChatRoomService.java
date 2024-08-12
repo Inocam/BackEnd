@@ -17,6 +17,10 @@ import com.sparta.backend.chat.repository.UserRoomRepository;
 import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -70,23 +74,19 @@ public class ChatRoomService {
         return new ChatRoomResponseDto(savedChatRoom);
     }
 
-    // 채팅방 전체 조회
-    public List<RoomListResponseDto> getListRoom() {
+    public Page<RoomListResponseDto> getListRoom(int page, int size) {
 
-        List<RoomListResponseDto> roomList = new ArrayList<>();
-
-        List<ChatRoom> chatRooms = chatRoomRepository.findAllByIsDeletedFalse();
+        Pageable pageable = PageRequest.of(page-1, size);
+        Page<ChatRoom> chatRoomPage = chatRoomRepository.findAllByIsDeletedFalse(pageable);
 
         // 각 채팅방에 대해 마지막 메시지를 가져와서 RoomListResponseDto 객체를 생성
-        for (ChatRoom chatRoom : chatRooms) {
+        List<RoomListResponseDto> roomList = new ArrayList<>();
 
-            // 각 채팅방의 모든 메시지를 보낸 시간 기준으로 오름차순으로 가져옴
+        for (ChatRoom chatRoom : chatRoomPage) {
+
             List<ChatMessage> messageList = chatMessageRepository.findAllByChatRoomOrderBySendDateAsc(chatRoom);
-
-            // 가장 최신 메시지
             ChatMessage lastMessage = messageList.isEmpty() ? null : messageList.get(messageList.size() - 1);
 
-            // LastMessageResponseDto 생성
             LastMessageResponseDto lastMessageDto = new LastMessageResponseDto();
             if (lastMessage != null) {
                 lastMessageDto.setUserId(lastMessage.getUser().getId());
@@ -94,26 +94,22 @@ public class ChatRoomService {
                 lastMessageDto.setSendDate(lastMessage.getSendDate());
             }
 
-            // RoomListResponseDto 생성
             RoomListResponseDto roomListResponseDto = new RoomListResponseDto(chatRoom, lastMessageDto);
             roomList.add(roomListResponseDto);
         }
 
         // sendDate 기준으로 정렬, null 값은 가장 뒤로 이동
         roomList.sort((room1, room2) -> {
-            // room1의 마지막 메시지가 null이거나 sendDate가 null인 경우
             if (room1.getLastMessage() == null || room1.getLastMessage().getSendDate() == null) {
-                return 1; // room1이 room2보다 뒤로 가게 함
+                return 1;
             }
-            // room2의 마지막 메시지가 null이거나 sendDate가 null인 경우
             if (room2.getLastMessage() == null || room2.getLastMessage().getSendDate() == null) {
-                return -1; // room2가 room1보다 뒤로 가게 함
+                return -1;
             }
-            // sendDate가 null이 아닌 경우 정렬
             return room1.getLastMessage().getSendDate().compareTo(room2.getLastMessage().getSendDate());
         });
 
-        return roomList;
+        return new PageImpl<>(roomList, pageable, chatRoomPage.getTotalElements());
     }
 
     // 사용자가 속한 채팅방 조회
