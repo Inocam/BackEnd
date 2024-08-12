@@ -47,9 +47,8 @@ Accept: application/json
 
 {
   "teamId": 75,
-  "userId":7,
-  "requesterId": 5,
-  "status": "pending"
+  "userId":3,
+  "requesterId": 5
 }
 
 ### 팀 삭제 요청(+), 팀장 권한있는 사람만 팀 삭제 할 수 있는 코드 추가해야됨(+) -> 아마 url에 그 팀장권한 있는 사람의 id코드..?나 뭐 넣어야 할 듯
@@ -68,12 +67,12 @@ Content-Type: application/json
 Accept: application/json
 
 ### 초대 처리(+) 수락,거부(+)
-DELETE http://127.0.0.1:8080/foot/teams/invite
+POST http://127.0.0.1:8080/foot/teams/invite/processing
 Content-Type: application/json
 Accept: application/json
 
 {
-  "invitationId": 18,
+  "invitationId": 2,
   "isAccept":true
 }
 

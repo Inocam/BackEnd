@@ -63,7 +63,7 @@ public class RestTeamController {
     }
 
     // 초대 처리 엔드포인트
-    @DeleteMapping("/invite")
+    @PostMapping("/invite/processing")
     public ResponseEntity<InvitationSetResponseDto> setInvitation(@RequestBody InvitationSetRequestDto invitationSetRequestDto) {
         log.info("Controller received: invitationId={}, isAccept={}",
                 invitationSetRequestDto.getInvitationId(), invitationSetRequestDto.isAccept());
