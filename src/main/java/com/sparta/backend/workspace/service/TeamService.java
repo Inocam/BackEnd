@@ -56,7 +56,10 @@ public class TeamService {
         teamUserRepository.save(teamUser);
         // 변경 사항 저장 하는
         //userRepository.save(creator);
-        return new ResponseTeamDto(saveTeam, creator.getUsername());
+        ResponseTeamDto responseTeamDto = new ResponseTeamDto(saveTeam, creator.getUsername());
+        responseTeamDto.setCreationDate(LocalDateTime.now());
+
+        return responseTeamDto;
     }
 
     //controller 팀원 초대할 때 요청자가 팀장인지, 대상이 팀에 이미 속해 있는지, 초대장이 이미 있는지 확인
