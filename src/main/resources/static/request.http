@@ -12,8 +12,8 @@ Content-Disposition: form-data; name="team";
 Content-Type: application/json
 
 {
-  "name": "테스트5",
-  "description": "병합 테스트5",
+  "name": "팀 생성3",
+  "description": "팀 생성3",
   "creatorId": 5
 }
 --boundary123
@@ -33,8 +33,8 @@ Content-Disposition: form-data; name="team"; filename="requestTeamDto.json"
 Content-Type: application/json
 
 {
-  "name": "테스트5",
-  "description": "병합 테스트5",
+  "name": "팀 생성3",
+  "description": "팀 생성3",
   "creatorId": 5
 }
 --boundary--
@@ -46,8 +46,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "teamId": 24,
-  "userId":2,
+  "teamId": 75,
+  "userId":4,
   "requesterId": 5,
   "status": "pending"
 }
@@ -73,8 +73,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "invitationId": 15,
-  "isAccept":false
+  "invitationId": 18,
+  "isAccept":true
 }
 
 ### 팀장 권한 주기(+)
@@ -111,7 +111,7 @@ Accept: application/json
 
 
 ### 하나의 팀에 소속된 전체 유저 목록(+)
-GET http://127.0.0.1:8080/foot/teams/2/members
+GET http://127.0.0.1:8080/foot/teams/75/members
 Content-Type: application/json
 Accept: application/json
 

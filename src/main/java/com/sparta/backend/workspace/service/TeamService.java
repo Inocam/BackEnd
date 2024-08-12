@@ -261,10 +261,12 @@ public class TeamService {
                         team.getTeamId(),  //팀 id
                         teamUser.getUser().getId(), //유저 id
                         teamUser.getUser().getUsername(),  //유저 이름
-                teamUser.getUser().getEmail()))
+                        teamUser.getUser().getEmail(),
+                        teamUser.getJoinedAt() //팀에 합류한 시간
+                        ))
                 .collect(Collectors.toList());  //스트림 결과를 리스트로 변환하여 반환
-
     }
+
       // 사용자가 속한 팀 전체 목록 조회 메서드
         public List<CustomResponseTeamDto> getTeamsByUserId(Long userId) {
             //찾고자 하는 사용자가 속한 TeamUser 리스트
