@@ -46,8 +46,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "teamId": 75,
-  "userId":3,
+  "teamId": 78,
+  "userId":1,
   "requesterId": 5
 }
 
