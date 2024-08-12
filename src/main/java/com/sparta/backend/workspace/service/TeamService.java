@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,8 +50,6 @@ public class TeamService {
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "User Not Found", "잘못된 팀 생성 입니다."));
 
         Team team = new Team(requestTeamDto); // 팀 객체 생성
-//        log.info("Creating team {}", team.getName());
-//        log.info("request : {}", requestTeamDto);
         team.setImageUrl(imageUrl); //팀 엔티티에 이미지 url 설정
         Team saveTeam = teamRepository.save(team); // 팀 객체 데베에 저장
         TeamUser teamUser = new TeamUser(creator, saveTeam, "팀장"); //팀 생성자를 팀장으로 추가 //teamUser 객체 생성시 -> creator가 User 엔티티 객체, TeamUser 엔티티의 user 필드에 매핑됨,
@@ -153,7 +152,7 @@ public class TeamService {
 
     //초대 처리(수락,거부) 메서드(+) // 클라이언트가 요청한 초대
     @Transactional
-    public String setInvitation(InvitationSetRequestDto invitationSetRequestDto){
+    public InvitationSetResponseDto setInvitation(InvitationSetRequestDto invitationSetRequestDto){
         log.info("Received invitation ID: {}", invitationSetRequestDto.getInvitationId());
         log.info("accept : {}", invitationSetRequestDto.isAccept());
 
@@ -161,7 +160,6 @@ public class TeamService {
         Invitation invitation = invitationRepository.findById(invitationSetRequestDto.getInvitationId())     //클라이언트가 보낸 초대 id가 실제로 존재하는지 확인해야됨.
                         .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "잘못된 초대 ID 입니다."));
 
-        String responseString;  //변수 생명주기 때문에 여기 넣어줌.
         log.info("isAccept : {}", invitationSetRequestDto.isAccept());
 
         if(invitationSetRequestDto.isAccept()){
@@ -169,18 +167,18 @@ public class TeamService {
             TeamUser teamUser = new TeamUser(invitation.getUser(), invitation.getTeam(),"팀원");
             //유저 추가 -> 초대장 삭제
             teamUserRepository.save(teamUser);
-            responseString = "초대가 완료되었습니다.";
+            invitation.setInvitationReceivedAt(LocalDateTime.now());  // 초대 수락 시간 설정
+            invitationRepository.save(invitation);  // 초대 객체를 업데이트된 정보와 함께 저장
         }else{
             log.info("Rejecting the invitation");
-            responseString = "초대가 거부되었습니다.";
         }
         log.info("Deleting the invitation");
         //초대장 삭제
         invitationRepository.delete(invitation);
-        return responseString;
+        return new InvitationSetResponseDto(invitation);
     }
 
-    //팀원 삭제 메서드 // 팀장만 가능(+)
+    //팀원 삭제 메서드
     public String removeTeamMember(Long teamId, Long userId, Long requesterId) {
         //요청자가 팀장인지 확인
         if (!isRequesterTeamLeader(requesterId, teamId)) {
@@ -194,7 +192,7 @@ public class TeamService {
         return "팀원이 삭제되었습니다.";
     }
 
-    //팀 삭제 메서드 /팀장만 가능??(-)
+    //팀 삭제 메서드
     public String removeTeam(Long teamId, Long requesterId) { //teamId -> 삭제할 팀을 고유하게 식별하는 값
         if (!isRequesterTeamLeader(requesterId, teamId)) {
             throw new CustomException(HttpStatus.BAD_REQUEST, "Unauthorized", "팀장만 팀원을 삭제할 수 있습니다.");
@@ -263,10 +261,12 @@ public class TeamService {
                         team.getTeamId(),  //팀 id
                         teamUser.getUser().getId(), //유저 id
                         teamUser.getUser().getUsername(),  //유저 이름
-                teamUser.getUser().getEmail()))
+                        teamUser.getUser().getEmail(),
+                        teamUser.getJoinedAt() //팀에 합류한 시간
+                        ))
                 .collect(Collectors.toList());  //스트림 결과를 리스트로 변환하여 반환
-
     }
+
       // 사용자가 속한 팀 전체 목록 조회 메서드
         public List<CustomResponseTeamDto> getTeamsByUserId(Long userId) {
             //찾고자 하는 사용자가 속한 TeamUser 리스트

@@ -64,11 +64,12 @@ public class RestTeamController {
 
     // 초대 처리 엔드포인트
     @DeleteMapping("/invite")
-    public ResponseEntity<String> setInvitation(@RequestBody InvitationSetRequestDto invitationSetRequestDto) {
+    public ResponseEntity<InvitationSetResponseDto> setInvitation(@RequestBody InvitationSetRequestDto invitationSetRequestDto) {
         log.info("Controller received: invitationId={}, isAccept={}",
                 invitationSetRequestDto.getInvitationId(), invitationSetRequestDto.isAccept());
-        String responseString = teamService.setInvitation(invitationSetRequestDto);
-        return ResponseEntity.ok(responseString);
+        // Service Layer 호출
+        InvitationSetResponseDto invitationSetResponseDto = teamService.setInvitation(invitationSetRequestDto);
+        return ResponseEntity.ok(invitationSetResponseDto);
     }
 
     //초대받은 모든 팀 목록 조회 엔드포인트
