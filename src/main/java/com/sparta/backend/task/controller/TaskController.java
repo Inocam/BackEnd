@@ -42,7 +42,7 @@ public class TaskController {
      *
      * @return DB내 모든 일정의 리스트
      */
-    @GetMapping("/list")
+    @GetMapping("/read/taskList/all")
     public List<TaskResponseDto> getTask() {
         return taskService.getTask();
     }
@@ -57,7 +57,7 @@ public class TaskController {
      * @param teamId    조회할 팀의 ID
      * @return 팀별 일자별 일정 수
      */
-    @GetMapping("/mainview/countTask")
+    @GetMapping("/read/taskListQuantity/MonthByTeam")
     public Map<String, Long> countTasksByDay(@RequestParam String startDate, @RequestParam String endDate, @RequestParam Long teamId) {
         return taskService.countTasksByDay(startDate, endDate, teamId);
     }
@@ -72,7 +72,7 @@ public class TaskController {
      * @param teamId    조회할 팀의 ID
      * @return 팀별 상태별 일정 수
      */
-    @GetMapping("/mainview/countTaskStatus")
+    @GetMapping("/read/taskStatusQuantity/MonthByTeam")
     public Map<String, Long> countTasksByStatus(@RequestParam String startDate, @RequestParam String endDate, @RequestParam Long teamId) {
         return taskService.countTasksByStatus(startDate, endDate, teamId);
     }
@@ -86,7 +86,7 @@ public class TaskController {
      * @param teamId  조회할 팀의 ID
      * @return 특정 날짜의 팀 일정
      */
-    @GetMapping("/mainview/")
+    @GetMapping("/read/taskList/DayByTeam")
     public TaskResponseDto getTaskByDueDate(@RequestParam String dueDate, @RequestParam Long teamId) {
         return taskService.getTaskByDueDate(dueDate, teamId);
     }
