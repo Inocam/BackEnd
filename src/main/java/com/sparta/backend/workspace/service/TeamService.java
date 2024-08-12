@@ -3,12 +3,12 @@ package com.sparta.backend.workspace.service;
 import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.repository.UserRepository;
 import com.sparta.backend.workspace.dto.*;
-import com.sparta.backend.workspace.exception.CustomException;
-import com.sparta.backend.workspace.repository.TeamRepository;
 import com.sparta.backend.workspace.entity.Invitation;
 import com.sparta.backend.workspace.entity.Team;
 import com.sparta.backend.workspace.entity.TeamUser;
+import com.sparta.backend.workspace.exception.CustomException;
 import com.sparta.backend.workspace.repository.InvitationRepository;
+import com.sparta.backend.workspace.repository.TeamRepository;
 import com.sparta.backend.workspace.repository.TeamUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -271,6 +271,11 @@ public class TeamService {
         public List<CustomResponseTeamDto> getTeamsByUserId(Long userId) {
             //찾고자 하는 사용자가 속한 TeamUser 리스트
             List<TeamUser> teamUsers = teamUserRepository.findAllByUserId(userId);
+
+            // 팀이 없을 경우 예외 던지기
+            if (teamUsers.isEmpty()) {
+                throw new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "속해있는 팀이 없습니다.");
+            }
             //return을 위한 빈 리스트 생성
             List<CustomResponseTeamDto> teamDtos = new ArrayList<>();
             //사용자가 속한 TeamUser 리스트 갯수만큼 loop
