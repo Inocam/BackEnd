@@ -75,9 +75,8 @@ public class TaskService {
     }
 
     // 특정 날짜의 팀별 일정 조회
-    public TaskResponseDto getTaskByDueDate(String dueDate, Long teamId) {
-        Task task = taskRepository.findByDueDateAndTeamId(dueDate, teamId);
-        return new TaskResponseDto(task);
+    public List<TaskResponseDto> getTaskByDueDate(String dueDate, Long teamId) {
+        return taskRepository.findAllByDueDateAndTeamId(dueDate, teamId).stream().map(TaskResponseDto::new).toList();
     }
 
 

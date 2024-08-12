@@ -87,7 +87,7 @@ public class TaskController {
      * @return 특정 날짜의 팀 일정
      */
     @GetMapping("/read/taskList/DayByTeam")
-    public TaskResponseDto getTaskByDueDate(@RequestParam String dueDate, @RequestParam Long teamId) {
+    public List<TaskResponseDto> getTaskByDueDate(@RequestParam String dueDate, @RequestParam Long teamId) {
         return taskService.getTaskByDueDate(dueDate, teamId);
     }
 
