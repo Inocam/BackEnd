@@ -3,12 +3,12 @@ package com.sparta.backend.workspace.service;
 import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.repository.UserRepository;
 import com.sparta.backend.workspace.dto.*;
-import com.sparta.backend.workspace.exception.CustomException;
-import com.sparta.backend.workspace.repository.TeamRepository;
 import com.sparta.backend.workspace.entity.Invitation;
 import com.sparta.backend.workspace.entity.Team;
 import com.sparta.backend.workspace.entity.TeamUser;
+import com.sparta.backend.workspace.exception.CustomException;
 import com.sparta.backend.workspace.repository.InvitationRepository;
+import com.sparta.backend.workspace.repository.TeamRepository;
 import com.sparta.backend.workspace.repository.TeamUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -89,7 +89,7 @@ public class TeamService {
         User user = userRepository.findByIdAndIsDeleteFalse(invitationRequestDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 사용자 이름 입니다."));
 
-        Invitation invitation = new Invitation(invitationRequestDto.getStatus(), team, user, requesterId);
+        Invitation invitation = new Invitation( team, user, requesterId);
         Invitation saveInvitation = invitationRepository.save(invitation);
 
         return new InvitationResponseDto(saveInvitation);
@@ -123,7 +123,7 @@ public class TeamService {
         return teamUserRepository.existsByTeamAndUser(team, user);
     }
 
-    //초대장이 이미 존재하는지 확인하는 메서드 //
+    //초대장이 이미 존재하는지 확인하는 메서드
     private boolean isInvitationExist(Long userId, Long teamId) {
         User user = userRepository.findByIdAndIsDeleteFalse(userId)
 // userId에 해당하는 user 객체를 데이터베이스에서 조회한다 -> 만약 해당 userId에 해당하는 user 객체가 없으면 예외를 발생시킴 -> 조회 된 User 객체는 user 변수에 할당함.
@@ -135,17 +135,19 @@ public class TeamService {
 
     //사용자가 초대받은 팀 목록 조회 메서드 (모든 상태)(+)
     public List<ResponseTeamDto> getAllTeamsByUserId(Long userId) {
+
         List<Invitation> invitations = invitationRepository.findByUserId(userId);
         // 초대장이 없는 경우 예외를 던짐
         if (invitations.isEmpty()) {
-            throw new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "초대장을 받은 적이 없습니다.");
+            throw new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "초대장을 받은 적이 없습니다.");     //list로 반환하는 건 에러 발생 시  response 줄 필요 없음
         }
         return invitations.stream()
                 .map(invitation -> {
                     Team team = invitation.getTeam();
                     User creator = userRepository.findById(team.getCreatorId())
-                            .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "팀 생성자를 찾을 수 없습니다."));
-                    return new ResponseTeamDto(team, creator.getUsername());
+                            .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "팀 생성자를 찾을 수 없습니다."));  //(-)
+                    // invitationId와 함께 responseTeamDto 생성
+                    return new ResponseTeamDto(invitation.getId() ,team, creator.getUsername());
                 })
                 .collect(Collectors.toList());
     }
@@ -215,10 +217,9 @@ public class TeamService {
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "UserId is incorrect", "잘못된 사용자 ID 입니다."));
         //기존 팀장을 찾아서 역할을 변경
         TeamUser currentLeader = teamUserRepository.findByTeamAndRole(team, "팀장") //현재 팀장 조회 -> 특정 팀의 역할이 "팀장"인 TeamUser 객체 반환
-                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Current team leader not found","현재 팀장을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Current team leader not found","현재 팀장을 찾을 수 없습니다."));     //(-)
         currentLeader.setRole("팀원");    //역할 변경 / 조회된 TeamUser 객체의 role 필드를 팀장 -> 팀원으로 변경
         teamUserRepository.save(currentLeader); //변경된 TeamUser 객체를 db에 저장 // 변경된 역할 정보가 반영
-
         //새로운 팀장을 설정
         TeamUser newTeamLeader = teamUserRepository.findByTeamAndUser(team, newLeader);
         if (newTeamLeader == null) {
@@ -235,7 +236,7 @@ public class TeamService {
         @Transactional //성공적으로 완료  or 하나라도 실패 시 전체 작업 롤백 -> 수정 도중 예외 발생 시 변경 하기전으로 복원 필요
         public TeamUpdateResponseDto updateTeam(Long teamId, TeamUpdateRequestDto teamUpdateRequestDto) {
             Team team = teamRepository.findByTeamIdAndIsDeleteFalse(teamId) //팀 id로 팀을 조회, 존재하지 않으면 예외를 던짐.
-                    .orElseThrow(() -> new IllegalArgumentException("잘못된 팀 ID 입니다."));
+                    .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "TeamId is incorrect", "잘못된 팀 ID 입니다."));
             //요청 dto에서 팀 이름이 null이 아닌경우 팀 이름을 업데이트 한다.
             if (teamUpdateRequestDto.getName() != null) {
                 team.setName(teamUpdateRequestDto.getName());
@@ -267,10 +268,15 @@ public class TeamService {
                 .collect(Collectors.toList());  //스트림 결과를 리스트로 변환하여 반환
     }
 
-      // 사용자가 속한 팀 전체 목록 조회 메서드
+      //유저가 속한 팀 전체 목록 조회 메서드
         public List<CustomResponseTeamDto> getTeamsByUserId(Long userId) {
             //찾고자 하는 사용자가 속한 TeamUser 리스트
             List<TeamUser> teamUsers = teamUserRepository.findAllByUserId(userId);
+
+            // 팀이 없을 경우 예외 던지기
+            if (teamUsers.isEmpty()) {
+                throw new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "속해있는 팀이 없습니다.");
+            }
             //return을 위한 빈 리스트 생성
             List<CustomResponseTeamDto> teamDtos = new ArrayList<>();
             //사용자가 속한 TeamUser 리스트 갯수만큼 loop

@@ -40,9 +40,9 @@ public class RestTeamController {
 //        ResponseTeamDto responseTeamDto = teamService.createTeam(requestTeamDto);
 //        return new ResponseEntity<>(responseTeamDto, HttpStatus.CREATED);
 //    }
-
     //클라이언트가  JSON 데이터를 포함하는 하나의 multipart/form-data 요청을 보내야함 -> json 데이터를 파일과 함께 전송해야하기 때문에 코드가 복잡해짐
 
+    //팀 스페이스 생성
     @PostMapping
     public ResponseEntity<ResponseTeamDto> createTeam(@RequestPart("team") RequestTeamDto requestTeamDto,
                                                       @RequestPart(value = "image", required = false) MultipartFile image) {
@@ -132,7 +132,7 @@ public class RestTeamController {
         List<UsersInTeamResponseDto> members = teamService.getUsersInTeam(teamId);
         return new ResponseEntity<>(members, HttpStatus.OK);
     }
-    //한 유저가 속한 전체 팀 목록 조회
+    //유저가 속한 전체 팀 목록 조회
     @GetMapping("/user/{userId}/teams")
     public ResponseEntity<List<CustomResponseTeamDto>> getTeamsByUserId(@PathVariable Long userId) {
         log.info("API /user/{}/all called", userId);
