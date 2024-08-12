@@ -18,5 +18,5 @@ public class TeamUpdateRequestDto implements Serializable {
          this.description = description;
          this.imageUrl = imageUrl;
 
-     }  //그럼 multipartfile로 받는게 맞지 않나?
+     }
 }
