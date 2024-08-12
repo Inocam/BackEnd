@@ -46,7 +46,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "teamId": 31,
+  "teamId": 24,
   "userId":2,
   "requesterId": 5,
   "status": "pending"
@@ -63,7 +63,7 @@ Content-Type: application/json
 Accept: application/json
 
 ### 초대 받은 팀 목록 조회(+)
-GET http://127.0.0.1:8080/foot/teams/user/5/all
+GET http://127.0.0.1:8080/foot/teams/user/6/all
 Content-Type: application/json
 Accept: application/json
 
@@ -74,7 +74,7 @@ Accept: application/json
 
 {
   "invitationId": 15,
-  "isAccept":true
+  "isAccept":false
 }
 
 ### 팀장 권한 주기(+)
@@ -111,7 +111,7 @@ Accept: application/json
 
 
 ### 하나의 팀에 소속된 전체 유저 목록(+)
-GET http://127.0.0.1:8080/foot/teams/1/members
+GET http://127.0.0.1:8080/foot/teams/2/members
 Content-Type: application/json
 Accept: application/json
 
