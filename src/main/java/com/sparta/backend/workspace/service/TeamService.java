@@ -58,7 +58,6 @@ public class TeamService {
         //userRepository.save(creator);
         ResponseTeamDto responseTeamDto = new ResponseTeamDto(saveTeam, creator.getUsername());
         responseTeamDto.setCreationDate(LocalDateTime.now());
-
         return responseTeamDto;
     }
 
@@ -137,7 +136,7 @@ public class TeamService {
     }
 
     //사용자가 초대받은 팀 목록 조회 메서드 (모든 상태)(+)
-    public List<ResponseTeamDto> getAllTeamsByUserId(Long userId) {
+    public List<ResponseTeamInvitationIdDto> getAllTeamsByUserId(Long userId) {
 
         List<Invitation> invitations = invitationRepository.findByUserId(userId);
         // 초대장이 없는 경우 예외를 던짐
@@ -150,7 +149,7 @@ public class TeamService {
                     User creator = userRepository.findById(team.getCreatorId())
                             .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "팀 생성자를 찾을 수 없습니다."));  //(-)
                     // invitationId와 함께 responseTeamDto 생성
-                    return new ResponseTeamDto(invitation.getId() ,team, creator.getUsername());
+                    return new ResponseTeamInvitationIdDto(invitation.getId() ,team, creator.getUsername());
                 })
                 .collect(Collectors.toList());
     }

@@ -74,8 +74,8 @@ public class RestTeamController {
 
     //초대받은 모든 팀 목록 조회 엔드포인트
     @GetMapping("/user/{userId}/all")
-    public ResponseEntity<List<ResponseTeamDto>> getAllTeamsByUserId(@PathVariable Long userId) {
-        List<ResponseTeamDto> teams = teamService.getAllTeamsByUserId(userId);
+    public ResponseEntity<List<ResponseTeamInvitationIdDto>> getAllTeamsByUserId(@PathVariable Long userId) {
+        List<ResponseTeamInvitationIdDto> teams = teamService.getAllTeamsByUserId(userId);
         return ResponseEntity.ok(teams);
     }
 
