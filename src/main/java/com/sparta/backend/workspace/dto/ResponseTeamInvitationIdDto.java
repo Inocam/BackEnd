@@ -5,23 +5,32 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
+import java.time.LocalDateTime;
+
 @Getter
+@Setter
 @NoArgsConstructor
-public class CustomResponseTeamDto {
+public class ResponseTeamInvitationIdDto {
+
+    private Long invitationId; //추가
     private Long teamId;
     private String name;
     private String description;
     private Long creatorId;
     private String creatorName;
+    private LocalDateTime creationDate;
     private String imageUrl;
 
-    public CustomResponseTeamDto(Team team, String creatorName) {
+    // 초대장 포함 시 사용할 생성자
+    public ResponseTeamInvitationIdDto(Long invitationId, Team team, String creatorName) {
+        this.invitationId = invitationId;  // 초대장 ID 설정
         this.teamId = team.getTeamId();
         this.name = team.getName();
         this.description = team.getDescription();
         this.creatorId = team.getCreatorId();
         this.creatorName = creatorName;
+        this.creationDate = LocalDateTime.now();
         this.imageUrl = team.getImageUrl();
     }
 }
+
