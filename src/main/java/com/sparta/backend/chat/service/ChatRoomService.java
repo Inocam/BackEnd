@@ -74,6 +74,7 @@ public class ChatRoomService {
         return new ChatRoomResponseDto(savedChatRoom);
     }
 
+    // 채팅방 전체 조회
     public Page<RoomListResponseDto> getListRoom(int page, int size) {
 
         Pageable pageable = PageRequest.of(page-1, size);
@@ -170,6 +171,12 @@ public class ChatRoomService {
         // 사용자 존재 여부
         User user = userRepository.findById(userRoomRequestDto.getUserId())
                 .orElseThrow(() -> new CustomException(400, USER_NOT_IN_ROOM, "해당 사용자는 이 채팅방에 속해 있지 않습니다."));
+
+        // 채팅방에 사람이 있을 경우
+        boolean userAlreadyInRoom = userRoomRepository.existsByChatRoomAndUser(chatRoom, user);
+        if (userAlreadyInRoom) {
+            throw new CustomException(400, USER_ALREADY_IN_ROOM, "해당 사용자가 이미 채팅방에 존재합니다.");
+        }
 
         // UserRoom 엔티티 생성
         UserRoom userRoom = new UserRoom(chatRoom, user);

@@ -5,5 +5,5 @@ public enum ErrorCode {
     USER_NOT_FOUND,
     CHATROOM_NOT_FOUND,
     USER_NOT_IN_ROOM,
-    SERVER_ERROR;
+    SERVER_ERROR, USER_ALREADY_IN_ROOM;
 }

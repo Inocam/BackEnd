@@ -5,6 +5,7 @@ import com.sparta.backend.user.model.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "chat_rooms")
 public class ChatRoom {
@@ -40,10 +42,6 @@ public class ChatRoom {
         this.roomName = chatRoomRequestDto.getRoomName();
         this.user = user;
         this.createdDate = LocalDateTime.now();
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
     }
 }
 
