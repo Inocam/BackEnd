@@ -4,26 +4,24 @@ GET http://127.0.0.1:8080/foot/teams/user/
 
 ### 팀 생성 요청(+)
 POST http://127.0.0.1:8080/foot/teams
-Content-Type: multipart/form-data
+Content-Type: multipart/form-data; boundary=boundary123
 Accept: application/json
 
---boundary
-Content-Disposition: form-data; name="team"; filename="requestTeamDto.json"
+--boundary123
+Content-Disposition: form-data; name="team";
 Content-Type: application/json
 
 {
-  "name": "테스트5",
-  "description": "병합 테스트5",
-  "creatorId": 5
+  "name": "팀장",
+  "description": "팀장시간",
+  "creatorId": 4
 }
---boundary--
+--boundary123
+Content-Disposition: form-data; name="image"; filename="images123.jpg"
+Content-Type: image/jpeg
 
-###--boundary
-#Content-Disposition: form-data; name="image"; filename="team_image.jpg"
-#Content-Type: image/jpeg
-#
-#< /absolute/path/to/your/team_image.jpg
-###--boundary--
+< C:/inflearn/workspace/src/main/resources/static/images123.jpg
+--boundary123--
 
 ### 팀 생성 요청
 POST http://127.0.0.1:8080/foot/teams
@@ -35,8 +33,8 @@ Content-Disposition: form-data; name="team"; filename="requestTeamDto.json"
 Content-Type: application/json
 
 {
-  "name": "테스트5",
-  "description": "병합 테스트5",
+  "name": "팀 생성3",
+  "description": "팀 생성3",
   "creatorId": 5
 }
 --boundary--
@@ -48,46 +46,44 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "teamId": 31,
-  "userId":2,
-  "requesterId": 5,
-  "status": "pending"
+  "teamId": 78,
+  "userId":1,
+  "requesterId": 5
 }
 
 ### 팀 삭제 요청(+), 팀장 권한있는 사람만 팀 삭제 할 수 있는 코드 추가해야됨(+) -> 아마 url에 그 팀장권한 있는 사람의 id코드..?나 뭐 넣어야 할 듯
-DELETE http://127.0.0.1:8080/foot/teams/19/requester/5
+DELETE http://127.0.0.1:8080/foot/teams/30/requester/5
 Content-Type: application/json
 Accept: application/json
 
 ### 팀원 삭제 요청(+), 이것도 팀장 권한있는 사람만 팀원 삭제 할 수 있도록(+)
-DELETE http://127.0.0.1:8080/foot/teams/20/members/3/requester/5
+DELETE http://127.0.0.1:8080/foot/teams/24/members/6/requester/5
 Content-Type: application/json
 Accept: application/json
 
 ### 초대 받은 팀 목록 조회(+)
-GET http://127.0.0.1:8080/foot/teams/user/5/all
+GET http://127.0.0.1:8080/foot/teams/user/1/all
 Content-Type: application/json
 Accept: application/json
 
 ### 초대 처리(+) 수락,거부(+)
-DELETE http://127.0.0.1:8080/foot/teams/invite
+POST http://127.0.0.1:8080/foot/teams/invite/processing
 Content-Type: application/json
 Accept: application/json
 
 {
-  "invitationId": 15,
+  "invitationId": 26,
   "isAccept":true
 }
 
 ### 팀장 권한 주기(+)
-POST http://127.0.0.1:8080/foot/teams/20/transfer-leader/4
+POST http://127.0.0.1:8080/foot/teams/15/transfer-leader/101
 Content-Type: application/json
 Accept: application/json
 
 ### 팀 수정(+)
 PUT http://127.0.0.1:8080/foot/teams/22
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
-
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="data"
@@ -114,7 +110,7 @@ Accept: application/json
 
 
 ### 하나의 팀에 소속된 전체 유저 목록(+)
-GET http://127.0.0.1:8080/foot/teams/1/members
+GET http://127.0.0.1:8080/foot/teams/75/members
 Content-Type: application/json
 Accept: application/json
 
@@ -130,6 +126,6 @@ Content-Type: image/jpg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ### 유저가 속한 전체 팀 목록 조회
-GET http://127.0.0.1:8080/foot/teams/user/5/teams
+GET http://127.0.0.1:8080/foot/teams/user/7/teams
 Content-Type: application/json
 Accept: application/json
