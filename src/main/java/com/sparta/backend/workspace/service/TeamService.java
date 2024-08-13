@@ -149,7 +149,7 @@ public class TeamService {
                     User creator = userRepository.findById(team.getCreatorId())
                             .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "팀 생성자를 찾을 수 없습니다."));  //(-)
                     // invitationId와 함께 responseTeamDto 생성
-                    return new ResponseTeamInvitationIdDto(invitation.getId() ,team, creator.getUsername());
+                    return new ResponseTeamInvitationIdDto(invitation.getId(), team, creator.getUsername());
                 })
                 .collect(Collectors.toList());
     }

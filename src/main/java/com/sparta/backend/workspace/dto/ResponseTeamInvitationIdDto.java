@@ -29,6 +29,7 @@ public class ResponseTeamInvitationIdDto {
         this.description = team.getDescription();
         this.creatorId = team.getCreatorId();
         this.creatorName = creatorName;
+        this.creationDate = LocalDateTime.now();
         this.imageUrl = team.getImageUrl();
     }
 }
