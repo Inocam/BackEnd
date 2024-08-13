@@ -15,11 +15,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import static com.sparta.backend.chat.global.ErrorCode.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static com.sparta.backend.chat.global.ErrorCode.CHATROOM_NOT_FOUND;
+import static com.sparta.backend.chat.global.ErrorCode.USER_NOT_FOUND;
 
 @Service
 public class ChatMessageService {
@@ -58,6 +59,7 @@ public class ChatMessageService {
         return new ChatMessageResponseDto(savedChatMessage);
     }
 
+    // 채팅 조회
     public Page<ReadMessageResponseDto> getChatMessageList(Long roomId, int page, int size) {
 
         // 채팅방 존재 여부

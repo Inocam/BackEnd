@@ -4,9 +4,11 @@ import com.sparta.backend.user.model.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "user_rooms")
 public class UserRoom {
