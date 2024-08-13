@@ -38,3 +38,5 @@ out/
 
 # Ignore application-private.properties in the src/main/resources directory
 src/main/resources/application-private.properties
+
+src/main/resources/application.properties
