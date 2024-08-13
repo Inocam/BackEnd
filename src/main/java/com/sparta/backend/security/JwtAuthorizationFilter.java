@@ -42,6 +42,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             return;
         }
 
+        log.info(req.getRequestURI());
+
+
         String tokenValue = jwtUtil.getJwtFromHeader(req);
 
         log.info("doFilterInternal");
