@@ -3,199 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Service Demo</title>
+    <title>Task API 테스트</title>
     <style>
-        body { font-family: Arial, sans-serif; }
-        form { margin-bottom: 20px; }
-        label { display: block; margin-top: 10px; }
-        input, select, textarea { width: 100%; padding: 8px; }
-        button { margin-top: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 15px;
+        }
     </style>
 </head>
 <body>
-<h1>Task 서비스 데모 페이지</h1>
+<h1>Task API 테스트</h1>
+<form id="taskForm">
+    <label for="teamId">팀 ID</label>
+    <input type="number" id="teamId" name="teamId" required>
 
-<!-- 할 일 생성 폼 -->
-<form id="createTaskForm">
-    <h2>할 일 생성</h2>
-    <label for="createTitle">할 일 제목:</label>
-    <input type="text" id="createTitle" name="title" required>
-    <label for="createDescription">설명:</label>
-    <textarea id="createDescription" name="description" required></textarea>
-    <label for="createStatus">상태:</label>
-    <select id="createStatus" name="status" required>
-        <option value="todo">Todo</option>
-        <option value="ongoing">Ongoing</option>
-        <option value="done">Done</option>
-        <option value="delay">Delay</option>
+    <label for="title">제목</label>
+    <input type="text" id="title" name="title" maxlength="255" required>
+
+    <label for="description">설명</label>
+    <textarea id="description" name="description"></textarea>
+
+    <label for="status">상태</label>
+    <select id="status" name="status">
+        <option value="todo">진행 전</option>
+        <option value="ongoing">진행 중</option>
+        <option value="done">완료</option>
+        <option value="delay">지연</option>
     </select>
-    <label for="createStartDate">시작일자:</label>
-    <input type="date" id="createStartDate" name="startDate" required>
-    <label for="createDueDate">마감일자:</label>
-    <input type="date" id="createDueDate" name="dueDate" required>
-    <label for="createEndDate">완료일자:</label>
-    <input type="date" id="createEndDate" name="endDate">
-    <label for="createTeamId">팀 ID:</label>
-    <input type="number" id="createTeamId" name="teamId" required>
-    <label for="createUserId">사용자 ID:</label>
-    <input type="number" id="createUserId" name="userId" required>
-    <label for="createParentTask">상위 할 일 ID:</label>
-    <input type="number" id="createParentTask" name="parentTask">
-    <button type="submit">할 일 생성</button>
-</form>
 
-<!-- 특정 할 일 조회 폼 -->
-<form id="getTaskForm">
-    <h2>특정 할 일 조회</h2>
-    <label for="getTaskId">할 일 ID:</label>
-    <input type="number" id="getTaskId" name="taskId" required>
-    <button type="submit">조회</button>
-</form>
-<div id="singleTask"></div>
+    <label for="startDate">시작일자</label>
+    <input type="date" id="startDate" name="startDate" required>
 
-<!-- 할 일 수정 폼 -->
-<form id="updateTaskForm">
-    <h2>할 일 수정</h2>
-    <label for="updateTaskId">할 일 ID:</label>
-    <input type="number" id="updateTaskId" name="taskId" required>
-    <label for="updateTitle">할 일 제목:</label>
-    <input type="text" id="updateTitle" name="title" required>
-    <label for="updateDescription">설명:</label>
-    <textarea id="updateDescription" name="description" required></textarea>
-    <label for="updateStatus">상태:</label>
-    <select id="updateStatus" name="status" required>
-        <option value="todo">Todo</option>
-        <option value="ongoing">Ongoing</option>
-        <option value="done">Done</option>
-        <option value="delay">Delay</option>
-    </select>
-    <label for="updateStartDate">시작일자:</label>
-    <input type="date" id="updateStartDate" name="startDate" required>
-    <label for="updateDueDate">마감일자:</label>
-    <input type="date" id="updateDueDate" name="dueDate" required>
-    <label for="updateEndDate">완료일자:</label>
-    <input type="date" id="updateEndDate" name="endDate">
-    <label for="updateTeamId">팀 ID:</label>
-    <input type="number" id="updateTeamId" name="teamId" required>
-    <label for="updateUserId">사용자 ID:</label>
-    <input type="number" id="updateUserId" name="userId" required>
-    <label for="updateParentTask">상위 할 일 ID:</label>
-    <input type="number" id="updateParentTask" name="parentTask">
-    <button type="submit">할 일 수정</button>
-</form>
+    <label for="dueDate">마감일자</label>
+    <input type="date" id="dueDate" name="dueDate" required>
 
-<!-- 할 일 삭제 폼 -->
-<form id="deleteTaskForm">
-    <h2>할 일 삭제</h2>
-    <label for="deleteTaskId">할 일 ID:</label>
-    <input type="number" id="deleteTaskId" name="taskId" required>
-    <button type="submit">할 일 삭제</button>
-</form>
+    <label for="parentTask">상위 일정 ID</label>
+    <input type="number" id="parentTask" name="parentTask">
 
-<div id="response"></div>
+    <button type="submit">일정 제출</button>
+</form>
 
 <script>
-    // 할 일 생성
-    document.getElementById('createTaskForm').addEventListener('submit', function(event) {
-        event.preventDefault();
+    document.getElementById('taskForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 기본 폼 제출 방지
 
-        const data = {
-            title: document.getElementById('createTitle').value,
-            description: document.getElementById('createDescription').value,
-            status: document.getElementById('createStatus').value,
-            startDate: document.getElementById('createStartDate').value,
-            dueDate: document.getElementById('createDueDate').value,
-            endDate: document.getElementById('createEndDate').value,
-            teamId: document.getElementById('createTeamId').value,
-            userId: document.getElementById('createUserId').value,
-            parentTask: document.getElementById('createParentTask').value
-        };
+        const formData = new FormData(this);
+        const jsonData = JSON.stringify(Object.fromEntries(formData));
 
-        fetch('/foot/task/create', {
+        fetch('/foot/task', { // API 엔드포인트 URL
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data)
+            body: jsonData,
         })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('response').innerText = '할 일이 생성되었습니다: ' + JSON.stringify(data);
+                alert('일정이 성공적으로 제출되었습니다!');
+                console.log('성공:', data);
             })
             .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('response').innerText = '할 일 생성 실패';
-            });
-    });
-
-    // 특정 할 일 조회
-    document.getElementById('getTaskForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const taskId = document.getElementById('getTaskId').value;
-
-        fetch(`/foot/task/${taskId}`)
-            .then(response => response.json())
-            .then(task => {
-                const singleTask = document.getElementById('singleTask');
-                singleTask.innerHTML = `ID: ${task.taskId}, 제목: ${task.title}, 설명: ${task.description}, 상태: ${task.status}, 시작일자: ${task.startDate}, 마감일자: ${task.dueDate}, 완료일자: ${task.endDate}, 팀 ID: ${task.teamId}, 사용자 ID: ${task.userId}, 상위 할 일 ID: ${task.parentTask}`;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('response').innerText = '할 일 조회 실패';
-            });
-    });
-
-    // 할 일 수정
-    document.getElementById('updateTaskForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const taskId = document.getElementById('updateTaskId').value;
-        const data = {
-            title: document.getElementById('updateTitle').value,
-            description: document.getElementById('updateDescription').value,
-            status: document.getElementById('updateStatus').value,
-            startDate: document.getElementById('updateStartDate').value,
-            dueDate: document.getElementById('updateDueDate').value,
-            endDate: document.getElementById('updateEndDate').value,
-            teamId: document.getElementById('updateTeamId').value,
-            userId: document.getElementById('updateUserId').value,
-            parentTask: document.getElementById('updateParentTask').value
-        };
-
-        fetch(`/foot/task/update/${taskId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('response').innerText = '할 일이 수정되었습니다: ' + JSON.stringify(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('response').innerText = '할 일 수정 실패';
-            });
-    });
-
-    // 할 일 삭제
-    document.getElementById('deleteTaskForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const taskId = document.getElementById('deleteTaskId').value;
-
-        fetch(`/foot/task/delete/${taskId}`, {
-            method: 'DELETE'
-        })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('response').innerText = '할 일이 삭제되었습니다.';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('response').innerText = '할 일 삭제 실패';
+                alert('일정 제출 중 오류 발생');
+                console.error('오류:', error);
             });
     });
 </script>

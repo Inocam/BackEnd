@@ -9,7 +9,6 @@ import lombok.Setter;
 public class InvitationSetRequestDto {
     private long invitationId;
 
-    @JsonProperty("Accept")
-    private boolean Accept; // 수락했는지 -> boolean -> true or false
-
+    @JsonProperty( "isAccept" )
+    private boolean isAccept; // 수락했는지 -> boolean -> true or false
 }
