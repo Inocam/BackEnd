@@ -26,13 +26,13 @@ public class ChatHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-            String authToken = accessor.getFirstNativeHeader("Authorization");
-            // JWT 검증 로직 추가
-            if (!validateToken(authToken)) {
-                throw new AccessDeniedException("Invalid token");
-            }
-        }
+//        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+//            String authToken = accessor.getFirstNativeHeader("Authorization");
+//            // JWT 검증 로직 추가
+//            if (!validateToken(authToken)) {
+//                throw new AccessDeniedException("Invalid token");
+//            }
+//        }
         return message;
     }
 
