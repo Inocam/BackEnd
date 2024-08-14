@@ -41,9 +41,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(req, res);
             return;
         }
+<<<<<<< HEAD
 
         log.info(req.getRequestURI());
 
+=======
+>>>>>>> main
 
         String tokenValue = jwtUtil.getJwtFromHeader(req);
 
@@ -55,7 +58,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             if (!jwtUtil.validateToken(tokenValue)) {
                 log.error("Token Error");
                 res.setStatus(HttpStatus.SC_UNAUTHORIZED);
+<<<<<<< HEAD
                 return;
+=======
+>>>>>>> main
             }
 
             setAuthentication(info.getSubject());
