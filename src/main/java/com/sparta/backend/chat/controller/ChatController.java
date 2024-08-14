@@ -5,6 +5,7 @@ import com.sparta.backend.chat.dto.chatMessage.ChatMessageResponseDto;
 import com.sparta.backend.chat.dto.chatMessage.ReadMessageResponseDto;
 import com.sparta.backend.chat.dto.chatRoom.ChatRoomRequestDto;
 import com.sparta.backend.chat.dto.chatRoom.ChatRoomResponseDto;
+import com.sparta.backend.chat.dto.chatRoom.ChatRoomSendInfoDto;
 import com.sparta.backend.chat.dto.chatRoom.RoomListResponseDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomListResponseDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomRequestDto;
@@ -24,6 +25,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -35,6 +37,8 @@ public class  ChatController {
     private final ChatMessageService chatMessageService;
     private final SimpMessagingTemplate messagingTemplate;
     private final UserRepository userRepository;
+    private final UserRoomRepository userRoomRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     // 채팅방 생성
     @PostMapping()
@@ -88,6 +92,13 @@ public class  ChatController {
         Long roomId = chatMessageRequestDto.getRoomId();
         ChatMessageResponseDto responseDto = chatMessageService.sendMessage(roomId, chatMessageRequestDto);
         messagingTemplate.convertAndSend("/topic/chat/" + roomId, responseDto);
+
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElse(null);
+        List<UserRoom> userRooms = userRoomRepository.findAllByChatRoom(chatRoom).orElse(null);
+        for(UserRoom userRoom : userRooms) {
+            messagingTemplate.convertAndSend("/topic/room/" + userRoom.getUser().getId(), new ChatRoomSendInfoDto(chatMessageRequestDto.getMessage(), LocalDateTime.now(), roomId));
+        }
+
         return responseDto;
     }
 

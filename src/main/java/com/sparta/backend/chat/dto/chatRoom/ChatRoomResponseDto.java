@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ChatRoomResponseDto {
-
+    private String type = "create";
     private Long roomId;
     private Long userId;
     private Long targetUserId;

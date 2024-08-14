@@ -17,4 +17,6 @@ public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
     Page<UserRoom> findByUserId(Long userId, Pageable pageable);
 
     UserRoom findByChatRoomAndUserIdNot(ChatRoom chatRoom, Long userId);
+
+    Optional<List<UserRoom>> findAllByChatRoom(ChatRoom chatRoom);
 }
