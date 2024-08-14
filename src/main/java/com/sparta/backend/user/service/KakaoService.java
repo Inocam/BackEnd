@@ -57,11 +57,20 @@ public class KakaoService {
 
         log.info(encodedValue);
 
+
+        String refreshToken = jwtUtil.createRefreshToken(kakaoUser.getEmail());
+
+        // JSON 객체 생성
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", encodedValue);
+        tokens.put("refreshToken", refreshToken);
+
         // 응답 본문에 JSON 작성
-        try {
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write("{\"accessToken\": \"" + accessToken + "\"}");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            out.print(new Gson().toJson(tokens)); // Gson 라이브러리를 사용하여 JSON 변환
+            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -84,7 +93,7 @@ public class KakaoService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "7b763bccc220b29e4d4af23e000de57b");
-        body.add("redirect_uri", "https://" + serverAddress + "/api/user/kakao/callback");
+        body.add("redirect_uri", "https://" + serverAddress + "/kakao/callback");
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
@@ -115,7 +124,7 @@ public class KakaoService {
 
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
+        headers.add("Authorization", accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity

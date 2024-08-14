@@ -1,5 +1,6 @@
 package com.sparta.backend.config;
 
+import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
 import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.repository.UserRepository;
 import com.sparta.backend.security.JwtAuthenticationFilter;
@@ -7,6 +8,7 @@ import com.sparta.backend.security.JwtAuthorizationFilter;
 import com.sparta.backend.security.UserDetailsServiceImpl;
 import com.sparta.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.webmvc.ui.SwaggerIndexTransformer;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.xml.transform.Templates;
+
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
 @RequiredArgsConstructor
@@ -28,7 +32,7 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final UserRepository userRepository;
 
     @Bean
@@ -43,18 +47,18 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, refreshTokenRepository, userRepository);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, refreshTokenRedisRepository, userRepository);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
     }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, refreshTokenRedisRepository, userRepository);
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, SwaggerIndexTransformer indexPageTransformer) throws Exception {
         // CSRF 설정
         http.csrf((csrf) -> csrf.disable());
 
@@ -66,9 +70,14 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                        .requestMatchers("/**").permitAll() // 메인 페이지 요청 허가
-                        //.requestMatchers("/api/user/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
-                        //.anyRequest().authenticated() // 그 외 모든 요청 인증처리
+                        .requestMatchers("/**").permitAll()
+//                        .requestMatchers("/api/user/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
+                        .requestMatchers("/swagger-ui.html").permitAll()
+                        .requestMatchers("/swagger-ui/*").permitAll()
+                        .requestMatchers("/v3/**").permitAll()
+                        .requestMatchers("/api/user/refresh").permitAll()
+                        .requestMatchers("/ws/**").permitAll()  // WebSocket 엔드포인트 접근 허용
+                        .anyRequest().permitAll() // 그 외 모든 요청 인증처리
         );
 
         // 필터 관리

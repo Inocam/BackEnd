@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.sparta.backend.user.dto.LoginRequestDto;
 import com.sparta.backend.user.model.RefreshToken;
 import com.sparta.backend.user.model.UserRoleEnum;
+import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
 import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -25,13 +26,13 @@ import java.util.Map;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
 
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
     private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRedisRepository refreshTokenRedisRepository, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
-        this.refreshTokenRepository = refreshTokenRepository;
+        this.refreshTokenRedisRepository = refreshTokenRedisRepository;
         this.userRepository = userRepository;
         setFilterProcessesUrl("/api/user/login");
     }
@@ -72,9 +73,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
 
         String accessToken = jwtUtil.createAccessToken(email, role);
-        String refreshToken = jwtUtil.createRefreshToken(email);
-
-        saveRefreshToken(email, refreshToken);
 
         // 응답 본문에 JSON 작성
         response.setContentType("application/json");
@@ -85,7 +83,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             jsonBuilder.append("{");
             jsonBuilder.append("\"accessToken\": \"" + accessToken + "\",\n");
             jsonBuilder.append("\"id\": \"" + userRepository.findByEmail(email).get().getId().toString() + "\",\n");
-            jsonBuilder.append("\"username\": \"" + userRepository.findByEmail(email).get().getUsername().toString() + "\"");
+            jsonBuilder.append("\"username\": \"" + userRepository.findByEmail(email).get().getUsername().toString() + "\",\n");
             jsonBuilder.append("\"email\": \"" + email + "\"");
             jsonBuilder.append("}");
 
@@ -99,10 +97,4 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
         response.setStatus(401);
     }
-
-    private void saveRefreshToken(String email, String refreshToken) {
-        RefreshToken token = new RefreshToken(email, refreshToken);
-        refreshTokenRepository.save(token);
-    }
-
 }
