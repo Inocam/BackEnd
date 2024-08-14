@@ -1,4 +1,4 @@
-package com.sparta.backend.user.security;
+package com.sparta.backend.security;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;

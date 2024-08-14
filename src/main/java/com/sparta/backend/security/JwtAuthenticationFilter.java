@@ -1,4 +1,4 @@
-package com.sparta.backend.user.security;
+package com.sparta.backend.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -8,7 +8,6 @@ import com.sparta.backend.user.model.UserRoleEnum;
 import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

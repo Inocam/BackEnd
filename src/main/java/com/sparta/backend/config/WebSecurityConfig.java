@@ -2,10 +2,10 @@ package com.sparta.backend.config;
 
 import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.repository.UserRepository;
-import com.sparta.backend.user.security.JwtAuthenticationFilter;
-import com.sparta.backend.user.security.JwtAuthorizationFilter;
-import com.sparta.backend.user.security.UserDetailsServiceImpl;
-import com.sparta.backend.user.security.JwtUtil;
+import com.sparta.backend.security.JwtAuthenticationFilter;
+import com.sparta.backend.security.JwtAuthorizationFilter;
+import com.sparta.backend.security.UserDetailsServiceImpl;
+import com.sparta.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;

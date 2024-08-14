@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 import com.sparta.backend.user.dto.KakaoUserInfoDto;
 import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.model.UserRoleEnum;
-import com.sparta.backend.user.security.JwtUtil;
+import com.sparta.backend.security.JwtUtil;
 import com.sparta.backend.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
