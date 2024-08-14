@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -14,6 +16,7 @@ public class CustomResponseTeamDto {
     private String description;
     private Long creatorId;
     private String creatorName;
+    private LocalDateTime creationDate;
     private String imageUrl;
 
     public CustomResponseTeamDto(Team team, String creatorName) {
@@ -22,6 +25,7 @@ public class CustomResponseTeamDto {
         this.description = team.getDescription();
         this.creatorId = team.getCreatorId();
         this.creatorName = creatorName;
+        this.creationDate = LocalDateTime.now();
         this.imageUrl = team.getImageUrl();
     }
 }
