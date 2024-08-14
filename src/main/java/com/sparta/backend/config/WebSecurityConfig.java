@@ -77,7 +77,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/v3/**").permitAll()
                         .requestMatchers("/api/user/refresh").permitAll()
                         .requestMatchers("/ws/**").permitAll()  // WebSocket 엔드포인트 접근 허용
-                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+                        .anyRequest().permitAll() // 그 외 모든 요청 인증처리
         );
 
         // 필터 관리
