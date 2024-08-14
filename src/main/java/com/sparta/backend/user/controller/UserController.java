@@ -42,4 +42,10 @@ public class UserController {
         return userService.getUsersByEmailPrefix(prefix);
     }
 
+    @ResponseBody
+    @GetMapping("/read/user/{userId}")
+    public UserResponseDto getUserNameAndEmailById(@PathVariable Long userId) {
+        return userService.getUserNameAndEmailById(userId);
+    }
+
 }

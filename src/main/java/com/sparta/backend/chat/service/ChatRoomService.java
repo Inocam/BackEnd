@@ -59,6 +59,12 @@ public class ChatRoomService {
         User user = userRepository.findById(chatRoomRequestDto.getUserId())
                 .orElseThrow(() -> new CustomException(404, USER_NOT_FOUND, "사용자가 없습니다."));
 
+        // target 사용자 존재 여부
+        User targetUser = userRepository.findById(chatRoomRequestDto.getTargetId())
+                .orElseThrow(() -> new CustomException(404, USER_NOT_FOUND, "target 사용자가 없습니다."));
+
+
+
         // ChatRoom 엔티티 생성
         ChatRoom chatRoom = new ChatRoom(chatRoomRequestDto, user);
 
@@ -67,11 +73,15 @@ public class ChatRoomService {
 
         // UserRoom 엔티티 생성
         UserRoom userRoom = new UserRoom(savedChatRoom, user);
+        UserRoom targetUserRoom = new UserRoom(savedChatRoom, targetUser);
 
         // UserRoom 저장
         userRoomRepository.save(userRoom);
+        userRoomRepository.save(targetUserRoom);
 
-        return new ChatRoomResponseDto(savedChatRoom);
+        String targetUserName = targetUser.getUsername();
+
+        return new ChatRoomResponseDto(userRoom.getId(), user.getId(), targetUser.getId(), chatRoom.getRoomName(), targetUserName);
     }
 
     // 채팅방 전체 조회

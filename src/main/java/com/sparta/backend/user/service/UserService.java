@@ -123,4 +123,8 @@ public class UserService {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
+
+    public UserResponseDto getUserNameAndEmailById(Long userId) {
+        return userRepository.findById(userId).map(UserResponseDto::new).orElse(null);
+    }
 }

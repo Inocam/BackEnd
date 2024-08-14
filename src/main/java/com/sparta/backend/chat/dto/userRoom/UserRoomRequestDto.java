@@ -8,4 +8,5 @@ public class UserRoomRequestDto {
 
     private Long roomId;
     private Long userId;
+
 }

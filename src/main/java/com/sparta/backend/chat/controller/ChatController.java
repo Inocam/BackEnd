@@ -9,8 +9,15 @@ import com.sparta.backend.chat.dto.chatRoom.RoomListResponseDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomListResponseDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomRequestDto;
 import com.sparta.backend.chat.dto.userRoom.UserRoomResponseDto;
+import com.sparta.backend.chat.entity.ChatRoom;
+import com.sparta.backend.chat.entity.UserRoom;
+import com.sparta.backend.chat.repository.ChatRoomRepository;
+import com.sparta.backend.chat.repository.UserRoomRepository;
 import com.sparta.backend.chat.service.ChatMessageService;
 import com.sparta.backend.chat.service.ChatRoomService;
+import com.sparta.backend.user.model.User;
+import com.sparta.backend.user.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -21,25 +28,23 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/foot/chat/rooms")
+@AllArgsConstructor
 public class  ChatController {
 
     private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
     private final SimpMessagingTemplate messagingTemplate;
-
-    public ChatController(ChatRoomService chatRoomService,
-                          ChatMessageService chatMessageService,
-                          SimpMessagingTemplate messagingTemplate) {
-
-        this.chatRoomService = chatRoomService;
-        this.chatMessageService = chatMessageService;
-        this.messagingTemplate = messagingTemplate;
-    }
+    private final UserRepository userRepository;
 
     // 채팅방 생성
     @PostMapping()
-    public ChatRoomResponseDto createRoom(@RequestBody ChatRoomRequestDto chatRoomRequestDto) {
-        return chatRoomService.createRoom(chatRoomRequestDto);
+    public void createRoom(@RequestBody ChatRoomRequestDto chatRoomRequestDto) {
+        ChatRoomResponseDto chatRoomResponseDto = chatRoomService.createRoom(chatRoomRequestDto);
+        messagingTemplate.convertAndSend("/topic/room/" + chatRoomRequestDto.getUserId(),chatRoomResponseDto);
+
+        User targetUser = userRepository.findById(chatRoomRequestDto.getTargetId()).orElse(null);
+        chatRoomResponseDto.setTargetUserName(targetUser.getUsername());
+        messagingTemplate.convertAndSend("/topic/room/" + chatRoomRequestDto.getTargetId(),chatRoomResponseDto);
     }
 
     // 채팅방 전체 조회
@@ -68,6 +73,12 @@ public class  ChatController {
     // 채팅방 참여
     @PostMapping("/join")
     public UserRoomResponseDto createUserRoom(@RequestBody UserRoomRequestDto userRoomRequestDto) {
+//        ChatRoom chatRoom = chatRoomRepository.findById(userRoomRequestDto.getRoomId()).orElse(null);
+//        List<UserRoom> foundUserRoom = userRoomRepository.findALlByChatRoom(chatRoom).orElse(null);
+//        for(UserRoom userRoom : foundUserRoom) {
+//            messagingTemplate.convertAndSend("/topic/room/" + userRoom.getUser().getId(),chatRoomService.createUserRoom(userRoomRequestDto));
+//        }
+
         return chatRoomService.createUserRoom(userRoomRequestDto);
     }
 
@@ -76,7 +87,7 @@ public class  ChatController {
     public ChatMessageResponseDto sendMessage(@Payload ChatMessageRequestDto chatMessageRequestDto) {
         Long roomId = chatMessageRequestDto.getRoomId();
         ChatMessageResponseDto responseDto = chatMessageService.sendMessage(roomId, chatMessageRequestDto);
-        messagingTemplate.convertAndSend("/topic/room/" + roomId, responseDto);
+        messagingTemplate.convertAndSend("/topic/chat/" + roomId, responseDto);
         return responseDto;
     }
 
