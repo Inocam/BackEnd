@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .chat-container {
+            width: 500px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .chat-messages {
+            height: 300px;
+            border: 1px solid #ccc;
+            overflow-y: scroll;
+            padding: 5px;
+        }
+        .chat-input {
+            width: calc(100% - 110px);
+        }
+        .chat-send {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="chat-container">
+    <h2>Chat Room</h2>
+    <div id="chat-messages" class="chat-messages"></div>
+    <input type="text" id="chat-input" class="chat-input" placeholder="Type a message...">
+    <button id="chat-send" class="chat-send">Send</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script>
+    let stompClient = null;
+    const roomId = 1; // Example room ID
+
+    function connect() {
+        const socket = new SockJS('/foot/chat');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+
+            // Subscribe to the chat room topic
+            stompClient.subscribe('/topic/room/' + roomId, function (message) {
+                showMessage(JSON.parse(message.body));
+            });
+
+            // Load chat history
+            loadChatHistory();
+        });
+    }
+
+    function sendMessage() {
+        const messageInput = document.getElementById('chat-input');
+        const messageContent = messageInput.value.trim();
+
+        if (!messageContent) {
+            alert('Message cannot be empty!');
+            return;
+        }
+
+        if (stompClient) {
+            const chatMessage = {
+                roomId: roomId,
+                message: messageContent,
+                userId: 1 // Example user ID
+            };
+            stompClient.send("/foot/chat/rooms/sendMessage", {}, JSON.stringify(chatMessage));
+            messageInput.value = '';
+        }
+    }
+
+    function showMessage(message) {
+        const messageElement = document.createElement('div');
+        messageElement.className = 'chat-message';
+        messageElement.innerText = message.message; // Changed to message.message to match the DTO
+        document.getElementById('chat-messages').appendChild(messageElement);
+    }
+
+    function loadChatHistory() {
+        fetch(`/foot/chat/rooms/${roomId}/messages`)
+            .then(response => response.json())
+            .then(messages => {
+                messages.forEach(message => showMessage(message));
+            })
+            .catch(error => console.error('Error loading chat history:', error));
+    }
+
+    document.getElementById('chat-send').addEventListener('click', sendMessage);
+    document.getElementById('chat-input').addEventListener('keyup', function (event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    connect();
+</script>
+</body>
+</html>

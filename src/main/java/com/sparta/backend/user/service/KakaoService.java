@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 import com.sparta.backend.user.dto.KakaoUserInfoDto;
 import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.model.UserRoleEnum;
-import com.sparta.backend.user.security.JwtUtil;
+import com.sparta.backend.security.JwtUtil;
 import com.sparta.backend.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -93,7 +93,7 @@ public class KakaoService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "7b763bccc220b29e4d4af23e000de57b");
-        body.add("redirect_uri", "https://" + serverAddress + "/api/user/kakao/callback");
+        body.add("redirect_uri", "https://" + serverAddress + "/kakao/callback");
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
@@ -124,7 +124,7 @@ public class KakaoService {
 
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
+        headers.add("Authorization", accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity

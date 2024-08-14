@@ -5,6 +5,7 @@ import com.sparta.backend.user.model.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "chat_rooms")
 public class ChatRoom {
@@ -20,14 +22,17 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
 
-    @Column(name="roomName", nullable = false)
+    @Column(name="room_name", nullable = false)
     private String roomName;
 
-    @Column(name="createdDate", nullable = false)
+    @Column(name="created_Date", nullable = false)
     private LocalDateTime createdDate;
 
+    @Column(name="is_deleted", nullable = false)
+    private boolean isDeleted = false;
+
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false) // userId 추가
+    @JoinColumn(name = "user_id", nullable = false) // userId 추가
     private User user;
 
     @OneToMany(mappedBy = "chatRoom")
@@ -38,6 +43,5 @@ public class ChatRoom {
         this.user = user;
         this.createdDate = LocalDateTime.now();
     }
-
 }
 
