@@ -5,24 +5,19 @@ import com.sparta.backend.task.dto.MainviewResponseDto;
 import com.sparta.backend.task.dto.TaskRequestDto;
 import com.sparta.backend.task.dto.TaskResponseDto;
 import com.sparta.backend.task.entity.Task;
-import com.sparta.backend.task.repository.MainviewRepository;
 import com.sparta.backend.task.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
-    private final MainviewRepository mainviewRepository;
 
-    public TaskService(TaskRepository taskRepository, MainviewRepository mainviewRepository) {
+    public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
-        this.mainviewRepository = mainviewRepository;
     }
 
     /* 생성 */
@@ -46,37 +41,18 @@ public class TaskService {
         return taskRepository.findAll().stream().map(TaskResponseDto::new).toList();
     }
 
-    // 특정 월의 팀별 일자별 task 갯수
-    public Map<String, Long> countTasksByDay(String startDate, String endDate, Long teamId) {
-        List<Object[]> results = mainviewRepository.countTasksByDay(startDate, endDate, teamId);
-        Map<String, Long> taskCountByDay = new LinkedHashMap<>();
-
-        for (Object[] result : results) {
-            String dueDate = (String) result[0];
-            Long count = (Long) result[1];
-            taskCountByDay.put(dueDate, count);
-        }
-
-        return taskCountByDay;
-    }
-
-    // 특정 월의 팀별 상태별 task 갯수
-    public Map<String, Long> countTasksByStatus(String startDate, String endDate, Long teamId) {
-        List<Object[]> results = mainviewRepository.countTasksByStatus(startDate, endDate, teamId);
-        Map<String, Long> taskCountByStatus = new LinkedHashMap<>();
-
-        for (Object[] result : results) {
-            String status = (String) result[0];
-            Long count = (Long) result[1];
-            taskCountByStatus.put(status, count);
-        }
-
-        return taskCountByStatus;
-    }
-
-    // 특정 날짜의 팀별 일정 조회
-    public List<TaskResponseDto> getTaskByDueDate(String dueDate, Long teamId) {
-        return taskRepository.findAllByDueDateAndTeamId(dueDate, teamId).stream().map(TaskResponseDto::new).toList();
+    // 특정일자 조회
+    public List<MainviewResponseDto> getView(String dueDate) {
+        return taskRepository.findAll().stream()
+                .filter(task -> task.getDueDate().equals(dueDate))
+                .map(task -> new MainviewResponseDto(
+                        task.getTaskId(),
+                        task.getDueDate(),
+                        task.getTitle(),
+                        task.getDescription(),
+                        task.getStatus()
+                ))
+                .toList();
     }
 
 

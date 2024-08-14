@@ -1,18 +1,11 @@
-package com.sparta.backend.security;
+package com.sparta.backend.user.security;
 
-import com.google.gson.Gson;
-import com.sparta.backend.user.model.UserRoleEnum;
-import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
-import com.sparta.backend.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -22,42 +15,39 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j(topic = "JWT 검증 및 인가")
-@RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
-    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
-    private final UserRepository userRepository;
+
+    public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService) {
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
-//        if (req.getRequestURI().equals("/api/user/refresh") || req.getRequestURI().equals("/foot/chat") || req.getRequestURI().equals("/foot/chat/info")) {
-//            filterChain.doFilter(req, res);
-//            return;
-//        }
-//
-//        String tokenValue = jwtUtil.getJwtFromHeader(req);
-//
-//        log.info("doFilterInternal");
-//        if (StringUtils.hasText(tokenValue)) {
-//            log.info("StringUtils.hasText");
-//            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-//            log.info("Claims");
-//            if (!jwtUtil.validateToken(tokenValue)) {
-//                log.error("Token Error");
-//                res.setStatus(HttpStatus.SC_UNAUTHORIZED);
-//            }
-//
-//            setAuthentication(info.getSubject());
-//        }
 
-        setAuthentication("email@email.com");
+        String tokenValue = jwtUtil.getJwtFromHeader(req);
+
+        if (StringUtils.hasText(tokenValue)) {
+
+            if (!jwtUtil.validateToken(tokenValue)) {
+                log.error("Token Error");
+                return;
+            }
+
+            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+
+            try {
+                setAuthentication(info.getSubject());
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return;
+            }
+        }
         filterChain.doFilter(req, res);
     }
 

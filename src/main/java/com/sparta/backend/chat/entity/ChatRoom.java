@@ -13,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "chat_rooms")
 public class ChatRoom {
@@ -41,10 +42,6 @@ public class ChatRoom {
         this.roomName = chatRoomRequestDto.getRoomName();
         this.user = user;
         this.createdDate = LocalDateTime.now();
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
     }
 }
 

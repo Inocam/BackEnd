@@ -52,11 +52,8 @@ public class  ChatController {
 
     // 사용자가 속한 채팅방 조회
     @GetMapping("/{userId}")
-    public Page<RoomListResponseDto> getRoom(
-            @PathVariable Long userId,
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
-        return chatRoomService.getRoom(userId, page, size);
+    public List<UserRoomListResponseDto> getRoom(@PathVariable Long userId) {
+        return chatRoomService.getRoom(userId);
     }
 
     // 채팅방 삭제

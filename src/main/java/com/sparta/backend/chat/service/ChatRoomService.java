@@ -114,46 +114,24 @@ public class ChatRoomService {
     }
 
     // 사용자가 속한 채팅방 조회
-    public Page<RoomListResponseDto> getRoom(Long userId, int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+    public List<UserRoomListResponseDto> getRoom(Long userId) {
 
-        // 사용자가 속한 모든 채팅방을 조회
-        Page<UserRoom> userRoomPage = userRoomRepository.findByUserId(userId, pageable);
+        // 사용자가 속한 채팅방 정보 확인
+        List<UserRoom> userRooms = userRoomRepository.findAllByUserId(userId);
 
-        List<RoomListResponseDto> roomList = new ArrayList<>();
-
-        for (UserRoom userRoom : userRoomPage) {
-            ChatRoom chatRoom = userRoom.getChatRoom();
-
-            // 채팅방이 삭제되지 않은 경우
-            if (!chatRoom.isDeleted()) {
-                List<ChatMessage> messageList = chatMessageRepository.findTopByChatRoomOrderBySendDateDesc(chatRoom);
-                ChatMessage lastMessage = messageList.isEmpty() ? null : messageList.get(0);
-
-                LastMessageResponseDto lastMessageDto = new LastMessageResponseDto();
-                if (lastMessage != null) {
-                    lastMessageDto.setUserId(lastMessage.getUser().getId());
-                    lastMessageDto.setMessage(lastMessage.getMessage());
-                    lastMessageDto.setSendDate(lastMessage.getSendDate());
-                }
-
-                RoomListResponseDto roomListResponseDto = new RoomListResponseDto(chatRoom, lastMessageDto);
-                roomList.add(roomListResponseDto);
-            }
+        // 사용자가 속한 채팅방 존재 여부
+        if (userRooms.isEmpty()) {
+            throw new CustomException(400, USER_NOT_IN_ROOM, "사용자는 이 채팅방에 속해 있지 않습니다.");
         }
 
-        // sendDate 기준으로 정렬, null 값은 가장 뒤로 정렬
-        roomList.sort((room1, room2) -> {
-            if (room1.getLastMessage() == null || room1.getLastMessage().getSendDate() == null) {
-                return 1;
-            }
-            if (room2.getLastMessage() == null || room2.getLastMessage().getSendDate() == null) {
-                return -1;
-            }
-            return room2.getLastMessage().getSendDate().compareTo(room1.getLastMessage().getSendDate());
-        });
+        // 사용자가 속한 채팅방 정보 List 생성
+        List<UserRoomListResponseDto> UserRoomListResponseDto = new ArrayList<>();
 
-        return new PageImpl<>(roomList, pageable, userRoomPage.getTotalElements());
+        // UserRoom 객체를 dto로 변환하여 List에 추가
+        for (UserRoom userRoom : userRooms) {
+            UserRoomListResponseDto.add(new UserRoomListResponseDto(userRoom));
+        }
+        return UserRoomListResponseDto;
     }
 
     // 채팅방 삭제
