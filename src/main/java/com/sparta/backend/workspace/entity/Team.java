@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "team")
 @Getter
@@ -32,11 +34,15 @@ public class Team {
     @Column(name = "is_delete",nullable = false)
     private Boolean isDelete = false;
 
+    @Column(name = "create_date", nullable = false, updatable = false)
+    private LocalDateTime createDate;
+
     public Team(RequestTeamDto requestTeamDto) {
         this.name = requestTeamDto.getName();
         this.description = requestTeamDto.getDescription();
         this.creatorId = requestTeamDto.getCreatorId();
-        this.imageUrl = requestTeamDto.getImageUrl();
+        this.createDate = LocalDateTime.now();
+//        this.imageUrl = requestTeamDto.getImageUrl();
 
     }
     public Team(String name, String description, Long creatorId, String imageUrl) {

@@ -13,4 +13,6 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     List<ChatMessage> findAllByChatRoomOrderBySendDateAsc(ChatRoom chatRoom);
 
     Page<ChatMessage> findByChatRoom(ChatRoom chatRoom, Pageable pageable);
+
+    List<ChatMessage> findTopByChatRoomOrderBySendDateDesc(ChatRoom chatRoom);
 }

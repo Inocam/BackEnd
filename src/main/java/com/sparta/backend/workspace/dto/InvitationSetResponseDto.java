@@ -8,17 +8,18 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class InvitationResponseDto {
+public class InvitationSetResponseDto {
 
     private Long id;
     private Long userId;
     private Long teamId;
+    private LocalDateTime invitationReceivedAt;
 
 
-    public InvitationResponseDto(Invitation invitation) {
+    public InvitationSetResponseDto(Invitation invitation) {
         this.id = invitation.getId();
         this.userId = invitation.getUser().getId();
         this.teamId = invitation.getTeam().getTeamId();
-
+        this.invitationReceivedAt = invitation.getInvitationReceivedAt();
     }
 }

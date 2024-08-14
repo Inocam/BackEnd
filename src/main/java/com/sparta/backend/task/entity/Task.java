@@ -2,13 +2,12 @@ package com.sparta.backend.task.entity;
 // DB를 구성하고, 데이터를 주고받는 방법을 정희
 
 /* 포함 라이브러리, 패키지,  */
-
 import com.sparta.backend.task.dto.MainviewRequestDto;
 import com.sparta.backend.task.dto.TaskRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /* 사용 어노테이션 선언 */
 @Entity // 해당 클래스가 entity 임을 지정
@@ -16,13 +15,6 @@ import lombok.Setter;
 @Setter // Lombok 라이브러리 - setter 메서드 자동생성
 @Table(name = "task")   // 아래 규칙을 사용한 DB의 table name 지정
 @NoArgsConstructor      // Lombok 라이브러리 - 기본 생성자를 자동 생성
-
-//public enum Status {
-//    todooo,
-//    ongoing,
-//    done,
-//    delay
-//} enum 사용방법은 일단 crud 하고나서!!
 
 
 /* task 라는 테이블을 정의하는 클래스 */
@@ -106,6 +98,13 @@ public class Task {
         this.dueDate = requestDto.getDueDate();
         this.endDate = requestDto.getEndDate();
         this.parentTask = requestDto.getParentTask();
+    }
+
+    public enum Status {
+        todo,
+        ongoing,
+        done,
+        delay
     }
 
 }

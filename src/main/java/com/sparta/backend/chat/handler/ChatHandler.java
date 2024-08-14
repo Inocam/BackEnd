@@ -1,6 +1,6 @@
 package com.sparta.backend.chat.handler;
 
-import com.sparta.backend.user.security.JwtUtil;
+import com.sparta.backend.security.JwtUtil;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -22,10 +22,10 @@ public class ChatHandler implements ChannelInterceptor {
         this.jwtUtil = jwtUtil;
     }
 
-//    @Override
-//    public Message<?> preSend(Message<?> message, MessageChannel channel) {
-//        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-//
+    @Override
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+
 //        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
 //            String authToken = accessor.getFirstNativeHeader("Authorization");
 //            // JWT 검증 로직 추가
@@ -33,8 +33,8 @@ public class ChatHandler implements ChannelInterceptor {
 //                throw new AccessDeniedException("Invalid token");
 //            }
 //        }
-//        return message;
-//    }
+        return message;
+    }
 
     private boolean validateToken(String authToken) {
 
