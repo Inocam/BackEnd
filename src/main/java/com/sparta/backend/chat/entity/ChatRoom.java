@@ -31,7 +31,7 @@ public class ChatRoom {
     private boolean isDeleted = false;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // userId 추가
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "chatRoom")

@@ -147,7 +147,11 @@ public class ChatRoomService {
                     lastMessageDto.setSendDate(lastMessage.getSendDate());
                 }
 
-                RoomListResponseDto roomListResponseDto = new RoomListResponseDto(chatRoom, lastMessageDto);
+                // 상대방 사용자 이름을 찾기
+                UserRoom targetUserRoom = userRoomRepository.findByChatRoomAndUserIdNot(chatRoom, userId);
+                String targetUserName = targetUserRoom != null ? targetUserRoom.getUser().getUsername() : "null";
+
+                RoomListResponseDto roomListResponseDto = new RoomListResponseDto(chatRoom, lastMessageDto, targetUserName);
                 roomList.add(roomListResponseDto);
             }
         }
