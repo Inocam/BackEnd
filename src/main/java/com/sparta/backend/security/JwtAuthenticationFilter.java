@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            requestDto.getUsername(),
+                            requestDto.getEmail(),
                             requestDto.getPassword(),
                             null
                     )
@@ -76,21 +76,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         saveRefreshToken(email, refreshToken);
 
-        // JSON 객체 생성
-        Map<String, String> userInfo = new HashMap<>();
-        userInfo.put("accessToken", accessToken);
-        userInfo.put("refreshToken", refreshToken);
-        userInfo.put("id", userRepository.findByEmail(email).get().getId().toString());
-        userInfo.put("username", userRepository.findByEmail(email).get().getUsername().toString());
-        userInfo.put("email", email);
-
-
         // 응답 본문에 JSON 작성
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.print(new Gson().toJson(userInfo)); // Gson 라이브러리를 사용하여 JSON 변환
-            out.flush();
+        StringBuilder jsonBuilder = new StringBuilder();
+
+        try {
+            jsonBuilder.append("{");
+            jsonBuilder.append("\"accessToken\": \"" + accessToken + "\",\n");
+            jsonBuilder.append("\"id\": \"" + userRepository.findByEmail(email).get().getId().toString() + "\",\n");
+            jsonBuilder.append("\"username\": \"" + userRepository.findByEmail(email).get().getUsername().toString() + "\"");
+            jsonBuilder.append("\"email\": \"" + email + "\"");
+            jsonBuilder.append("}");
+
+            response.getWriter().write(jsonBuilder.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

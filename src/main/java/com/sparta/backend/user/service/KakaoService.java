@@ -57,20 +57,11 @@ public class KakaoService {
 
         log.info(encodedValue);
 
-
-        String refreshToken = jwtUtil.createRefreshToken(kakaoUser.getEmail());
-
-        // JSON 객체 생성
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", encodedValue);
-        tokens.put("refreshToken", refreshToken);
-
         // 응답 본문에 JSON 작성
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.print(new Gson().toJson(tokens)); // Gson 라이브러리를 사용하여 JSON 변환
-            out.flush();
+        try {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("{\"accessToken\": \"" + accessToken + "\"}");
         } catch (IOException e) {
             e.printStackTrace();
         }
