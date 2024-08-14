@@ -12,7 +12,6 @@ import java.util.Date;
 
 @Entity
 @Getter
-@NoArgsConstructor
 public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
