@@ -26,7 +26,7 @@ public class ResponseTeamDto {
         this.description = team.getDescription();
         this.creatorId = team.getCreatorId();
         this.creatorName = creatorName;
-        this.creationDate = LocalDateTime.now();
+        this.creationDate = team.getCreateDate(); //엔티티의 생성 시간 가져오기
         this.imageUrl = team.getImageUrl();
     }
 
