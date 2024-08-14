@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 
 public class TaskResponseDto {
+    private String type;
     private Long taskId;        //일정 key -자동생성
     private Long teamId;        //팀 key
     private Long userId;        //작성자 key

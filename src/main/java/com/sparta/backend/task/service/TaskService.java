@@ -1,7 +1,6 @@
 package com.sparta.backend.task.service;
 // 컨트롤러에서 전달된 데이터를 처리하는 방법
 
-import com.sparta.backend.task.dto.MainviewResponseDto;
 import com.sparta.backend.task.dto.TaskRequestDto;
 import com.sparta.backend.task.dto.TaskResponseDto;
 import com.sparta.backend.task.entity.Task;
@@ -82,25 +81,30 @@ public class TaskService {
 
     /* 수정 */
     @Transactional //영속성 -> 변경추적
-    public Long updateTask(Long taskId, TaskRequestDto requestDto) {
+    public TaskResponseDto updateTask(Long taskId, TaskRequestDto requestDto) {
         // 해당 메모가 DB에 존재하는지 확인
         Task task = findTask(taskId);
 
         // task 내용 수정
         task.update(requestDto);
 
-        return taskId;
+        TaskResponseDto taskResponseDto = new TaskResponseDto(task);
+        taskResponseDto.setType("update");
+
+        return taskResponseDto;
     }
 
     /* 삭제 */
-    public Long deleteTask(Long taskId) {
+    public Long deleteTaskAndReturnTeamId(Long taskId) {
         // 해당 메모가 DB에 존재하는지 확인
         Task task = findTask(taskId);
+
+        Long teamId = task.getTeamId();
 
         // task 삭제
         taskRepository.delete(task);
 
-        return taskId;
+        return teamId;
     }
 
     private Task findTask(Long TaskId) {

@@ -1,10 +1,10 @@
 package com.sparta.backend.task.controller;
 // 클라이언트에서 받은 요청을 서비스에게 전달하는 방법
 
-import com.sparta.backend.task.dto.MainviewResponseDto;
 import com.sparta.backend.task.dto.TaskRequestDto;
 import com.sparta.backend.task.dto.TaskResponseDto;
 import com.sparta.backend.task.service.TaskService;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,9 +16,11 @@ import java.util.Map;
 public class TaskController {
 
     private final TaskService taskService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, SimpMessagingTemplate messagingTemplate) {
         this.taskService = taskService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     // ================================ 등록 ================================
@@ -31,7 +33,10 @@ public class TaskController {
      */
     @PostMapping("/create")
     public TaskResponseDto createTask(@RequestBody TaskRequestDto requestDto) { //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
-        return taskService.createTask(requestDto); //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
+        TaskResponseDto taskResponseDto = taskService.createTask(requestDto);
+        taskResponseDto.setType("create");
+        messagingTemplate.convertAndSend("/topic/task" + taskResponseDto.getTeamId(), taskResponseDto);
+        return taskResponseDto; //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
     }
 
 
@@ -102,8 +107,10 @@ public class TaskController {
      * @return 수정된 일정의 ID
      */
     @PutMapping("/update/{taskId}")
-    public Long updateTask(@PathVariable Long taskId, @RequestBody TaskRequestDto requestDto) {
-        return taskService.updateTask(taskId, requestDto);
+    public TaskResponseDto updateTask(@PathVariable Long taskId, @RequestBody TaskRequestDto requestDto) {
+        TaskResponseDto taskResponseDto = taskService.updateTask(taskId, requestDto);
+        messagingTemplate.convertAndSend("/topic/task" + taskResponseDto.getTeamId(), taskResponseDto);
+        return taskResponseDto;
     }
 
 
@@ -116,8 +123,10 @@ public class TaskController {
      * @return 삭제된 일정의 ID
      */
     @DeleteMapping("/delete/{taskId}")
-    public Long deleteTask(@PathVariable Long taskId) {
-        return taskService.deleteTask(taskId);
+    public Long deleteTaskAndReturnTeamId(@PathVariable Long taskId) {
+        Long teamId = taskService.deleteTaskAndReturnTeamId(taskId);
+        messagingTemplate.convertAndSend("/topic/task" +teamId, taskId);
+        return taskId;
     }
 
 }

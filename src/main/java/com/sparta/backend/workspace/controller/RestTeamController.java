@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +28,7 @@ public class RestTeamController {
 
     private final TeamService teamService;
     private final AmazonS3 amazonS3;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
@@ -59,6 +61,8 @@ public class RestTeamController {
     @PostMapping("/invite")
     public ResponseEntity<InvitationResponseDto> inviteTeam(@RequestBody InvitationRequestDto invitationRequestDto) {
         InvitationResponseDto responseInvitationDto = teamService.inviteUserToTeam(invitationRequestDto);
+        messagingTemplate.convertAndSend("/topic/invite" + invitationRequestDto.getUserId(), responseInvitationDto);
+
         return new ResponseEntity<>(responseInvitationDto, HttpStatus.CREATED);
     }
 
