@@ -25,7 +25,7 @@ public class CustomResponseTeamDto {
         this.description = team.getDescription();
         this.creatorId = team.getCreatorId();
         this.creatorName = creatorName;
-        this.creationDate = team.getCreateDate();
+        this.creationDate = team.getCreateDate().minusMonths(3);
         this.imageUrl = team.getImageUrl();
     }
 }
