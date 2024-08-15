@@ -170,6 +170,52 @@ public class ChatRoomService {
         return new PageImpl<>(roomList, pageable, userRoomPage.getTotalElements());
     }
 
+    // List - 사용자가 속한 채팅방 조회
+    public List<RoomListResponseDto> getRooms(Long userId) {
+
+        // 사용자가 속한 모든 채팅방을 조회
+        List<UserRoom> userRoomPage = userRoomRepository.findByUserId(userId);
+
+        List<RoomListResponseDto> roomList = new ArrayList<>();
+
+        for (UserRoom userRoom : userRoomPage) {
+            ChatRoom chatRoom = userRoom.getChatRoom();
+
+            // 채팅방이 삭제되지 않은 경우
+            if (!chatRoom.isDeleted()) {
+                List<ChatMessage> messageList = chatMessageRepository.findTopByChatRoomOrderBySendDateDesc(chatRoom);
+                ChatMessage lastMessage = messageList.isEmpty() ? null : messageList.get(0);
+
+                LastMessageResponseDto lastMessageDto = new LastMessageResponseDto();
+                if (lastMessage != null) {
+                    lastMessageDto.setUserId(lastMessage.getUser().getId());
+                    lastMessageDto.setMessage(lastMessage.getMessage());
+                    lastMessageDto.setSendDate(lastMessage.getSendDate());
+                }
+
+                // 상대방 사용자 이름을 찾기
+                UserRoom targetUserRoom = userRoomRepository.findByChatRoomAndUserIdNot(chatRoom, userId);
+                String targetUserName = targetUserRoom != null ? targetUserRoom.getUser().getUsername() : "null";
+
+                RoomListResponseDto roomListResponseDto = new RoomListResponseDto(chatRoom, lastMessageDto, targetUserName);
+                roomList.add(roomListResponseDto);
+            }
+        }
+
+        // sendDate 기준으로 정렬, null 값은 가장 뒤로 정렬
+        roomList.sort((room1, room2) -> {
+            if (room1.getLastMessage() == null || room1.getLastMessage().getSendDate() == null) {
+                return 1;
+            }
+            if (room2.getLastMessage() == null || room2.getLastMessage().getSendDate() == null) {
+                return -1;
+            }
+            return room2.getLastMessage().getSendDate().compareTo(room1.getLastMessage().getSendDate());
+        });
+
+        return roomList;
+    }
+
     // 채팅방 삭제
     @Transactional
     public String deleteRoom(Long roomId, Long userId) {
