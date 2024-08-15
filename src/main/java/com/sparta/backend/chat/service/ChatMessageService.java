@@ -10,10 +10,7 @@ import com.sparta.backend.chat.repository.ChatMessageRepository;
 import com.sparta.backend.chat.repository.ChatRoomRepository;
 import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.repository.UserRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -67,7 +64,7 @@ public class ChatMessageService {
                 .orElseThrow(() -> new CustomException(404, CHATROOM_NOT_FOUND, "채팅 방을 찾을 수 없습니다"));
 
         // 페이지네이션 설정
-        Pageable pageable = PageRequest.of(page-1, size);
+        Pageable pageable = PageRequest.of(page-1, size, Sort.by(Sort.Order.desc("sendDate")));
 
         // 페이지네이션된 ChatMessage 목록 조회
         Page<ChatMessage> chatMessagesPage = chatMessageRepository.findByChatRoom(chatRoom, pageable);
@@ -77,7 +74,7 @@ public class ChatMessageService {
         for (ChatMessage chatMessage : chatMessagesPage.getContent()) {
             readMessageResponseDto.add(new ReadMessageResponseDto(chatMessage));
         }
-        // Page<ReadMessageResponseDto> 객체 생성하여 반환
+
         return new PageImpl<>(readMessageResponseDto, pageable, chatMessagesPage.getTotalElements());
     }
 }

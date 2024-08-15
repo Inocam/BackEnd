@@ -68,6 +68,12 @@ public class  ChatController {
         return chatRoomService.getRoom(userId, page, size);
     }
 
+    // List - 사용자가 속한 채팅방 조회
+    @GetMapping("/get/{userId}")
+    public List<RoomListResponseDto> getRooms(@PathVariable Long userId) {
+        return chatRoomService.getRooms(userId);
+    }
+
     // 채팅방 삭제
     @DeleteMapping("/{roomId}")
     public String deleteRoom(@PathVariable Long roomId, @RequestParam Long userId) {
@@ -106,8 +112,9 @@ public class  ChatController {
     @GetMapping("/{roomId}/messages")
     public Page<ReadMessageResponseDto> getChatMessagesList(
             @PathVariable Long roomId,
-            @RequestParam(defaultValue = "1") int page, // 기본값 0
-            @RequestParam(defaultValue = "30") int size) { // 기본값 30
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "30") int size) {
+
         return chatMessageService.getChatMessageList(roomId, page, size);
     }
 }
