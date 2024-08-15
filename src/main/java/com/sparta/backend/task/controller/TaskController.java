@@ -35,7 +35,7 @@ public class TaskController {
     public TaskResponseDto createTask(@RequestBody TaskRequestDto requestDto) { //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
         TaskResponseDto taskResponseDto = taskService.createTask(requestDto);
         taskResponseDto.setType("create");
-        messagingTemplate.convertAndSend("/topic/task" + taskResponseDto.getTeamId(), taskResponseDto);
+        messagingTemplate.convertAndSend("/topic/task/" + taskResponseDto.getTeamId(), taskResponseDto);
         return taskResponseDto; //컨트롤러의 매서드 이름 == 서비스의 매서드 이름 : 알아보기 쉬움
     }
 
@@ -109,7 +109,7 @@ public class TaskController {
     @PutMapping("/update/{taskId}")
     public TaskResponseDto updateTask(@PathVariable Long taskId, @RequestBody TaskRequestDto requestDto) {
         TaskResponseDto taskResponseDto = taskService.updateTask(taskId, requestDto);
-        messagingTemplate.convertAndSend("/topic/task" + taskResponseDto.getTeamId(), taskResponseDto);
+        messagingTemplate.convertAndSend("/topic/task/" + taskResponseDto.getTeamId(), taskResponseDto);
         return taskResponseDto;
     }
 
@@ -125,7 +125,7 @@ public class TaskController {
     @DeleteMapping("/delete/{taskId}")
     public Long deleteTaskAndReturnTeamId(@PathVariable Long taskId) {
         Long teamId = taskService.deleteTaskAndReturnTeamId(taskId);
-        messagingTemplate.convertAndSend("/topic/task" +teamId, taskId);
+        messagingTemplate.convertAndSend("/topic/task/" +teamId, taskId);
         return taskId;
     }
 

@@ -91,10 +91,21 @@ public class TeamService {
         User user = userRepository.findByIdAndIsDeleteFalse(invitationRequestDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 사용자 이름 입니다."));
 
-        Invitation invitation = new Invitation( team, user, requesterId);
+        Invitation invitation = new Invitation(team, user, requesterId);
         Invitation saveInvitation = invitationRepository.save(invitation);
 
-        return new InvitationResponseDto(saveInvitation);
+        User leader = userRepository.findByIdAndIsDeleteFalse(team.getCreatorId()).orElse(null);
+
+        InvitationResponseDto invitationResponseDto =
+                new InvitationResponseDto(
+                        saveInvitation.getId(),
+                        saveInvitation.getUser().getId(),
+                        team.getTeamId(),
+                        team.getName(),
+                        team.getDescription(),
+                        leader.getUsername());
+
+        return invitationResponseDto;
     }
 
     //요청자가 팀장인지 확인하는 메서드 //다른 서비스나 컨트롤러에서 요청자가 팀장인지 확인하는데 사용될 수 있음

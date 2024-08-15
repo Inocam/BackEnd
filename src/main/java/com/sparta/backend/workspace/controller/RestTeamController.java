@@ -61,7 +61,7 @@ public class RestTeamController {
     @PostMapping("/invite")
     public ResponseEntity<InvitationResponseDto> inviteTeam(@RequestBody InvitationRequestDto invitationRequestDto) {
         InvitationResponseDto responseInvitationDto = teamService.inviteUserToTeam(invitationRequestDto);
-        messagingTemplate.convertAndSend("/topic/invite" + invitationRequestDto.getUserId(), responseInvitationDto);
+        messagingTemplate.convertAndSend("/topic/invite/" + invitationRequestDto.getUserId(), responseInvitationDto);
 
         return new ResponseEntity<>(responseInvitationDto, HttpStatus.CREATED);
     }
