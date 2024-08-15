@@ -69,7 +69,6 @@ public class RestTeamController {
     // 초대 처리 엔드포인트
     @PostMapping("/invite/processing")
     public ResponseEntity<InvitationSetResponseDto> setInvitation(@RequestBody InvitationSetRequestDto invitationSetRequestDto) {
-                invitationSetRequestDto.getInvitationId(), invitationSetRequestDto.isAccept());
         // Service Layer 호출
         InvitationSetResponseDto invitationSetResponseDto = teamService.setInvitation(invitationSetRequestDto);
         return ResponseEntity.ok(invitationSetResponseDto);
