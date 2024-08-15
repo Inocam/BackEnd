@@ -81,7 +81,7 @@ public class ChatRoomService {
 
         String targetUserName = targetUser.getUsername();
 
-        return new ChatRoomResponseDto(userRoom.getId(), user.getId(), targetUser.getId(), chatRoom.getRoomName(), targetUserName);
+        return new ChatRoomResponseDto(chatRoom.getRoomId(), user.getId(), targetUser.getId(), chatRoom.getRoomName(), targetUserName);
     }
 
     // 채팅방 전체 조회
