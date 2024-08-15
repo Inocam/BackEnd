@@ -8,10 +8,12 @@ import com.sparta.backend.user.model.UserRoleEnum;
 import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
 import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.repository.UserRepository;
+import com.sparta.backend.workspace.exception.CustomException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -51,7 +53,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             );
         } catch (IOException e) {
             setFailureResponse(response, "로그인 실패");
-            throw new RuntimeException(e.getMessage());
+            throw new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "없거나 잘못된 Email 또는 비밀번호입니다.");
         }
     }
 
