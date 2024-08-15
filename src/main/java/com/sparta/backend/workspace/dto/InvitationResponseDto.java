@@ -4,31 +4,33 @@ import com.sparta.backend.workspace.entity.Invitation;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 public class InvitationResponseDto {
     //팀 이름, 팀 설명, 팀장 이름
-    Long id;
-    Long userId;
+    Long invitationId;
+    Long targetUserId;
     Long teamId;
-    String teamName;
+    String name;
     String description;
-    String leaderName;
+    Long creatorId;
+    String creatorName;
+    String imageUrl;
 
     public InvitationResponseDto(Invitation invitation) {
-        this.id = invitation.getId();
-        this.userId = invitation.getUser().getId();
+        this.invitationId = invitation.getId();
+        this.targetUserId = invitation.getUser().getId();
         this.teamId = invitation.getTeam().getTeamId();
     }
 
-    public InvitationResponseDto(Long id, Long userId, Long teamId, String teamName, String description, String leaderName) {
-        this.id = id;
-        this.userId = userId;
+    public InvitationResponseDto(Long id, Long targetUserId, Long teamId, String teamName, String description, Long creatorId, String creatorName, String imageUrl) {
+        this.invitationId = id;
+        this.targetUserId = targetUserId;
         this.teamId = teamId;
-        this.teamName = teamName;
+        this.name = teamName;
         this.description = description;
-        this.leaderName = leaderName;
+        this.creatorId = creatorId;
+        this.creatorName = creatorName;
+        this.imageUrl = imageUrl;
     }
 }

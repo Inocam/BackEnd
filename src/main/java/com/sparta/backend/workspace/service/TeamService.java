@@ -103,7 +103,10 @@ public class TeamService {
                         team.getTeamId(),
                         team.getName(),
                         team.getDescription(),
-                        leader.getUsername());
+                        invitation.getRequesterId(),
+                        leader.getUsername(),
+                        team.getImageUrl()
+                );
 
         return invitationResponseDto;
     }
