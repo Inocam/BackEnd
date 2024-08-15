@@ -3,6 +3,7 @@ package com.sparta.backend.task.controller;
 
 import com.sparta.backend.task.dto.TaskRequestDto;
 import com.sparta.backend.task.dto.TaskResponseDto;
+import com.sparta.backend.task.dto.TaskUpdateResponseDto;
 import com.sparta.backend.task.service.TaskService;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -107,10 +108,10 @@ public class TaskController {
      * @return 수정된 일정의 ID
      */
     @PutMapping("/update/{taskId}")
-    public TaskResponseDto updateTask(@PathVariable Long taskId, @RequestBody TaskRequestDto requestDto) {
-        TaskResponseDto taskResponseDto = taskService.updateTask(taskId, requestDto);
-        messagingTemplate.convertAndSend("/topic/task/" + taskResponseDto.getTeamId(), taskResponseDto);
-        return taskResponseDto;
+    public TaskUpdateResponseDto updateTask(@PathVariable Long taskId, @RequestBody TaskRequestDto requestDto) {
+        TaskUpdateResponseDto taskUpdateResponseDto = taskService.updateTask(taskId, requestDto);
+        messagingTemplate.convertAndSend("/topic/task/" + taskUpdateResponseDto.getTaskResponseDto().getTeamId(), taskUpdateResponseDto);
+        return taskUpdateResponseDto;
     }
 
 

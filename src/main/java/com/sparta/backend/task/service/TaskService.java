@@ -3,12 +3,14 @@ package com.sparta.backend.task.service;
 
 import com.sparta.backend.task.dto.TaskRequestDto;
 import com.sparta.backend.task.dto.TaskResponseDto;
+import com.sparta.backend.task.dto.TaskUpdateResponseDto;
 import com.sparta.backend.task.entity.Task;
 import com.sparta.backend.task.repository.MainviewRepository;
 import com.sparta.backend.task.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,9 +83,11 @@ public class TaskService {
 
     /* 수정 */
     @Transactional //영속성 -> 변경추적
-    public TaskResponseDto updateTask(Long taskId, TaskRequestDto requestDto) {
+    public TaskUpdateResponseDto updateTask(Long taskId, TaskRequestDto requestDto) {
         // 해당 메모가 DB에 존재하는지 확인
         Task task = findTask(taskId);
+
+        String beforeDueDate = task.getDueDate();
 
         // task 내용 수정
         task.update(requestDto);
@@ -91,7 +95,9 @@ public class TaskService {
         TaskResponseDto taskResponseDto = new TaskResponseDto(task);
         taskResponseDto.setType("update");
 
-        return taskResponseDto;
+        TaskUpdateResponseDto taskUpdateResponseDto = new TaskUpdateResponseDto(taskResponseDto, beforeDueDate);
+
+        return taskUpdateResponseDto;
     }
 
     /* 삭제 */
