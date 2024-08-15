@@ -50,7 +50,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     )
             );
         } catch (IOException e) {
-            log.error(e.getMessage());
             setFailureResponse(response, "로그인 실패");
             throw new RuntimeException(e.getMessage());
         }
@@ -62,7 +61,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"" + message + "\"}");
         } catch (IOException e) {
-            log.error("Failed to set failure response", e);
             // 예외가 발생해도 추가 처리는 하지 않음
         }
     }

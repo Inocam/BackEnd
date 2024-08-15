@@ -46,10 +46,8 @@ public class ChatHandler implements ChannelInterceptor {
 
         try {
             Claims claims = jwtUtil.getUserInfoFromToken(token);
-            log.info("User authenticated: {}", claims.getSubject());
             return true;
         } catch (ExpiredJwtException | MalformedJwtException e) {
-            log.error("JWT validation error: {}", e.getMessage());
             return false;
         }
     }

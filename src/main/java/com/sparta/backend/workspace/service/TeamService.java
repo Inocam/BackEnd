@@ -171,26 +171,19 @@ public class TeamService {
     //초대 처리(수락,거부) 메서드(+) // 클라이언트가 요청한 초대
     @Transactional
     public InvitationSetResponseDto setInvitation(InvitationSetRequestDto invitationSetRequestDto){
-        log.info("Received invitation ID: {}", invitationSetRequestDto.getInvitationId());
-        log.info("accept : {}", invitationSetRequestDto.isAccept());
-
         // 초대 ID로 초대 객체를 조회
         Invitation invitation = invitationRepository.findById(invitationSetRequestDto.getInvitationId())     //클라이언트가 보낸 초대 id가 실제로 존재하는지 확인해야됨.
                         .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "Bad Request", "잘못된 초대 ID 입니다."));
 
-        log.info("isAccept : {}", invitationSetRequestDto.isAccept());
-
         if(invitationSetRequestDto.isAccept()){
-            log.info("Accepting the invitation");
             TeamUser teamUser = new TeamUser(invitation.getUser(), invitation.getTeam(),"팀원");
             //유저 추가 -> 초대장 삭제
             teamUserRepository.save(teamUser);
             invitation.setInvitationReceivedAt(LocalDateTime.now());  // 초대 수락 시간 설정
             invitationRepository.save(invitation);  // 초대 객체를 업데이트된 정보와 함께 저장
         }else{
-            log.info("Rejecting the invitation");
+
         }
-        log.info("Deleting the invitation");
         //초대장 삭제
         invitationRepository.delete(invitation);
         return new InvitationSetResponseDto(invitation);

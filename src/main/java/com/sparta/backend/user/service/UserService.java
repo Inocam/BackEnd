@@ -82,12 +82,10 @@ public class UserService {
         String accessToken = jwtUtil.getJwtFromHeader(request);
         Claims info = jwtUtil.getUserInfoFromToken(accessToken);
         String email = info.getSubject();
-        log.info("email = {}", email);
 
         //redis에 토큰이 없을 때
         if (!refreshTokenRedisRepository.existsByKey(email)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            log.info("refreshTokenRedisRepository.existsByKey not found");
             return;
         }
 
@@ -96,14 +94,11 @@ public class UserService {
         //redis에 있는 토큰이 오류가 있을 때
         if(!jwtUtil.validateToken(refreshToken)){
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            log.info("refreshTokenRedisRepository.existsByKey not validate");
             return;
         }
 
         //redis에 토큰이 있고 검증이 끝났다면
         String newToken = jwtUtil.createAccessToken(email, UserRoleEnum.USER);
-        log.info("refreshTokenRedisRepository.existsByKey");
-
         // JSON 객체 생성
         Map<String, String> userInfo = new HashMap<>();
         userInfo.put("email", email);
@@ -117,9 +112,7 @@ public class UserService {
             out.print(new Gson().toJson(userInfo)); // Gson 라이브러리를 사용하여 JSON 변환
             response.setStatus(HttpServletResponse.SC_OK);
             out.flush();
-            log.info("flush");
         } catch (IOException e) {
-            log.error("Failed to send response", e);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }

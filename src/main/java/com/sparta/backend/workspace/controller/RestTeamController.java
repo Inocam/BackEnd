@@ -69,7 +69,6 @@ public class RestTeamController {
     // 초대 처리 엔드포인트
     @PostMapping("/invite/processing")
     public ResponseEntity<InvitationSetResponseDto> setInvitation(@RequestBody InvitationSetRequestDto invitationSetRequestDto) {
-        log.info("Controller received: invitationId={}, isAccept={}",
                 invitationSetRequestDto.getInvitationId(), invitationSetRequestDto.isAccept());
         // Service Layer 호출
         InvitationSetResponseDto invitationSetResponseDto = teamService.setInvitation(invitationSetRequestDto);
@@ -86,8 +85,6 @@ public class RestTeamController {
     //팀원 삭제 엔드포인트 (+)// -> temaid와 userid를 사용하여 해당 팀과 사용자 간의 관계를 삭제하는 방식 -> 팀에서 특정 사용자 삭제
     @DeleteMapping("/{teamId}/members/{userId}/requester/{requesterId}")
     public ResponseEntity<ErrorResponse> removeTeamMember(@PathVariable Long teamId, @PathVariable Long userId, @PathVariable Long requesterId) {
-        log.info("removeTeamMember called with teamId={}, userId={}, requesterId={}", teamId, userId, requesterId);
-
         String message = teamService.removeTeamMember(teamId, userId, requesterId);
         ErrorResponse errorResponse = new ErrorResponse("SUCCESS", message, HttpStatus.OK.value());
         return new ResponseEntity<>(errorResponse, HttpStatus.OK);  //응답 본문 없이 204 상태 코드 반환
@@ -139,7 +136,6 @@ public class RestTeamController {
     //유저가 속한 전체 팀 목록 조회
     @GetMapping("/user/{userId}/teams")
     public ResponseEntity<List<CustomResponseTeamDto>> getTeamsByUserId(@PathVariable Long userId) {
-        log.info("API /user/{}/all called", userId);
         List<CustomResponseTeamDto> teams = teamService.getTeamsByUserId(userId);
         return new ResponseEntity<>(teams, HttpStatus.OK);
     }

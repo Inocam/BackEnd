@@ -13,8 +13,6 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e, HttpServletRequest request) {
-        log.error("error : {}, url {}, message : {}",e.getError(), request.getRequestURI(), e.getMessage());
-
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .error(e.getError())
                 .message(e.getMessage())

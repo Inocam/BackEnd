@@ -55,9 +55,6 @@ public class KakaoService {
         String token = jwtUtil.createAccessToken(kakaoUser.getEmail(), kakaoUser.getRole());
         String encodedValue = URLEncoder.encode(token, StandardCharsets.UTF_8);
 
-        log.info(encodedValue);
-
-
         String refreshToken = jwtUtil.createRefreshToken(kakaoUser.getEmail());
 
         // JSON 객체 생성
@@ -145,7 +142,6 @@ public class KakaoService {
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
 
-        log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
         return new KakaoUserInfoDto(id, nickname, email);
     }
 

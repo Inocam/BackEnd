@@ -39,7 +39,6 @@ public class S3ImageService {
         if(image.isEmpty() || Objects.isNull(image.getOriginalFilename())){
             throw new S3Exception(S3ErrorCode.EMPTY_FILE_EXCEPTION);
         }
-        log.info("Uploading image: {}", image.getOriginalFilename());
         //uploadImage를 호출하여 S3에 저장된 이미지의 public url을 반환한다.
         return this.uploadImage(image);
     }
@@ -84,8 +83,6 @@ public class S3ImageService {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
 
         try{
-            // 추가된 로그
-            log.info("Uploading to S3 with bucket: {} and file name: {}", bucketName, s3FileName);
             //S3로 putObject 할 때 사용할 요청 객체
             //생성자 : bucket 이름, 파일 명, byteInputStream, metadata
             PutObjectRequest putObjectRequest =
@@ -96,11 +93,7 @@ public class S3ImageService {
 
             //실제로 S3에 이미지 데이터를 넣는 부분이다.
             amazonS3.putObject(putObjectRequest); // put image to S3
-            // 추가된 로그
-            log.info("Upload successful");
         }catch (Exception e){
-            // 추가된 로그
-            log.error("Error uploading to S3", e);
             throw new S3Exception(S3ErrorCode.PUT_OBJECT_EXCEPTION);
         }finally {
             byteArrayInputStream.close();

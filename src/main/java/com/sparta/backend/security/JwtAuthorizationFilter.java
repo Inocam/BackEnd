@@ -37,7 +37,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(tokenValue)) {
 
             if (!jwtUtil.validateToken(tokenValue)) {
-                log.error("Token Error");
                 return;
             }
 
@@ -46,7 +45,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             try {
                 setAuthentication(info.getSubject());
             } catch (Exception e) {
-                log.error(e.getMessage());
                 return;
             }
         }
