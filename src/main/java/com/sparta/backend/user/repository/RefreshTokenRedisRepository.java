@@ -1,11 +1,13 @@
 package com.sparta.backend.user.repository;
 
 import jakarta.annotation.Resource;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.TimeUnit;
 
+@Primary
 @Repository
 public class RefreshTokenRedisRepository implements RefreshTokenRepository {
     private static final long EXPIRE_TIME = 6 * 60 * 60; // 6시간
