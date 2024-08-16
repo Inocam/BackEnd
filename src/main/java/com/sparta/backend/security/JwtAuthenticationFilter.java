@@ -74,6 +74,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String accessToken = jwtUtil.createAccessToken(email, role);
 
+        String refreshToken = jwtUtil.createRefreshToken(accessToken);
+        refreshTokenRedisRepository.save(email, refreshToken);
+
         // 응답 본문에 JSON 작성
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
