@@ -1,6 +1,7 @@
 package com.sparta.backend.task.controller;
 // 클라이언트에서 받은 요청을 서비스에게 전달하는 방법
 
+import com.sparta.backend.task.dto.TaskDeleteResponseDto;
 import com.sparta.backend.task.dto.TaskRequestDto;
 import com.sparta.backend.task.dto.TaskResponseDto;
 import com.sparta.backend.task.dto.TaskUpdateResponseDto;
@@ -124,10 +125,10 @@ public class TaskController {
      * @return 삭제된 일정의 ID
      */
     @DeleteMapping("/delete/{taskId}")
-    public Long deleteTaskAndReturnTeamId(@PathVariable Long taskId) {
-        Long teamId = taskService.deleteTaskAndReturnTeamId(taskId);
-        messagingTemplate.convertAndSend("/topic/task/" +teamId, taskId);
-        return taskId;
+    public TaskDeleteResponseDto deleteTask(@PathVariable Long taskId) {
+        TaskDeleteResponseDto taskDeleteResponseDto = taskService.deleteTask(taskId);
+        messagingTemplate.convertAndSend("/topic/task/" + taskDeleteResponseDto.getTeamId(), taskDeleteResponseDto);
+        return taskDeleteResponseDto;
     }
 
 }

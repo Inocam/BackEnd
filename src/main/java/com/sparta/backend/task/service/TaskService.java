@@ -1,6 +1,7 @@
 package com.sparta.backend.task.service;
 // 컨트롤러에서 전달된 데이터를 처리하는 방법
 
+import com.sparta.backend.task.dto.TaskDeleteResponseDto;
 import com.sparta.backend.task.dto.TaskRequestDto;
 import com.sparta.backend.task.dto.TaskResponseDto;
 import com.sparta.backend.task.dto.TaskUpdateResponseDto;
@@ -10,7 +11,6 @@ import com.sparta.backend.task.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,16 +102,18 @@ public class TaskService {
     }
 
     /* 삭제 */
-    public Long deleteTaskAndReturnTeamId(Long taskId) {
+    public TaskDeleteResponseDto deleteTask(Long taskId) {
         // 해당 메모가 DB에 존재하는지 확인
         Task task = findTask(taskId);
 
         Long teamId = task.getTeamId();
+        String dueDate = task.getDueDate();
+        String status = task.getStatus();
 
         // task 삭제
         taskRepository.delete(task);
 
-        return teamId;
+        return new TaskDeleteResponseDto(teamId, taskId, dueDate, status);
     }
 
     private Task findTask(Long TaskId) {
