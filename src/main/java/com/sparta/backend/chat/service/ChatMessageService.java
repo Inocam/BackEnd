@@ -67,7 +67,7 @@ public class ChatMessageService {
         Pageable pageable = PageRequest.of(page-1, size, Sort.by(Sort.Order.desc("sendDate")));
 
         // 페이지네이션된 ChatMessage 목록 조회
-        Page<ChatMessage> chatMessagesPage = chatMessageRepository.findByChatRoomrOrderBySendDateAsc(chatRoom, pageable);
+        Page<ChatMessage> chatMessagesPage = chatMessageRepository.findByChatRoomOrderBySendDateAsc(chatRoom, pageable);
 
         // ChatMessage 객체를 ReadMessageResponseDto로 변환
         List<ReadMessageResponseDto> readMessageResponseDto = new ArrayList<>();
