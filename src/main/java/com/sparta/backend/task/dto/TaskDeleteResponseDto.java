@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class TaskDeleteResponseDto {
+    String type = "delete";
     Long teamId;
     Long taskId;
     String dueDate;
