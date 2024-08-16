@@ -6,7 +6,7 @@ import com.sparta.backend.user.dto.SignupRequestDto;
 import com.sparta.backend.user.dto.UserResponseDto;
 import com.sparta.backend.user.model.User;
 import com.sparta.backend.user.model.UserRoleEnum;
-import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
+import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,7 +30,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
 
 
@@ -84,12 +84,12 @@ public class UserService {
         String email = info.getSubject();
 
         //redis에 토큰이 없을 때
-        if (!refreshTokenRedisRepository.existsByKey(email)) {
+        if (!refreshTokenRepository.existsByKey(email)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        String refreshToken = refreshTokenRedisRepository.findByKey(email);
+        String refreshToken = refreshTokenRepository.findByKey(email);
 
         //redis에 있는 토큰이 오류가 있을 때
         if(!jwtUtil.validateToken(refreshToken)){

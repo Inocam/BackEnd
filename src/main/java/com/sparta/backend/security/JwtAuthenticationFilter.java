@@ -3,7 +3,7 @@ package com.sparta.backend.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.backend.user.dto.LoginRequestDto;
 import com.sparta.backend.user.model.UserRoleEnum;
-import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
+import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.repository.UserRepository;
 import com.sparta.backend.workspace.exception.CustomException;
 import jakarta.servlet.FilterChain;
@@ -22,13 +22,13 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
 
-    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRedisRepository refreshTokenRedisRepository, UserRepository userRepository) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
-        this.refreshTokenRedisRepository = refreshTokenRedisRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
         this.userRepository = userRepository;
         setFilterProcessesUrl("/api/user/login");
     }
@@ -69,7 +69,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String accessToken = jwtUtil.createAccessToken(email, role);
 
         String refreshToken = jwtUtil.createRefreshToken(accessToken);
-        refreshTokenRedisRepository.save(email, refreshToken);
+        refreshTokenRepository.save(email, refreshToken);
 
         // 응답 본문에 JSON 작성
         response.setContentType("application/json");
