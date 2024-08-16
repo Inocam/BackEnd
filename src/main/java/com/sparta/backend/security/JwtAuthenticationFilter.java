@@ -1,12 +1,9 @@
 package com.sparta.backend.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.sparta.backend.user.dto.LoginRequestDto;
-import com.sparta.backend.user.model.RefreshToken;
 import com.sparta.backend.user.model.UserRoleEnum;
 import com.sparta.backend.user.repository.RefreshTokenRedisRepository;
-import com.sparta.backend.user.repository.RefreshTokenRepository;
 import com.sparta.backend.user.repository.UserRepository;
 import com.sparta.backend.workspace.exception.CustomException;
 import jakarta.servlet.FilterChain;
@@ -20,9 +17,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {

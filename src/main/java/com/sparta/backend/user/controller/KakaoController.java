@@ -18,9 +18,7 @@ public class KakaoController {
     private final KakaoService kakaoService;
 
     @GetMapping()
-    public String kakaoCallback(@RequestParam String code, HttpServletResponse response, @AuthenticationPrincipal UserDetailsImpl userDetails) throws JsonProcessingException {
+    public void kakaoCallback(@RequestParam String code, HttpServletResponse response, @AuthenticationPrincipal UserDetailsImpl userDetails) throws JsonProcessingException {
         kakaoService.kakaoLogin(code, response);
-
-        return "redirect:/";
     }
 }
