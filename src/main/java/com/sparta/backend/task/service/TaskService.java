@@ -88,6 +88,7 @@ public class TaskService {
         Task task = findTask(taskId);
 
         String beforeDueDate = task.getDueDate();
+        String beforeStatus = task.getStatus();
 
         // task 내용 수정
         task.update(requestDto);
@@ -95,7 +96,7 @@ public class TaskService {
         TaskResponseDto taskResponseDto = new TaskResponseDto(task);
         taskResponseDto.setType("update");
 
-        TaskUpdateResponseDto taskUpdateResponseDto = new TaskUpdateResponseDto(taskResponseDto, beforeDueDate);
+        TaskUpdateResponseDto taskUpdateResponseDto = new TaskUpdateResponseDto(taskResponseDto, beforeDueDate, beforeStatus);
 
         return taskUpdateResponseDto;
     }

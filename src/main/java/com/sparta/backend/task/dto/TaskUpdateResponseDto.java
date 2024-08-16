@@ -10,4 +10,5 @@ import java.time.LocalDateTime;
 public class TaskUpdateResponseDto {
     TaskResponseDto taskResponseDto;
     String beforeDueDate;
+    String beforeStatus;
 }
