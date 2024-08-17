@@ -56,14 +56,14 @@ public class RestTeamController {
 
     //controller 팀원 초대할 때 요청자가 팀장인지, 대상이 팀에 이미 속해 있는지, 초대장이 이미 있는지 확인
     //팀원 초대 엔드포인트(+)
-    @PostMapping("/invite")
+    @PostMapping("/invitations")    //동작은 어노테이션 매핑으로 나타내고, 명사로 작성하는 게 좋음***
     public ResponseEntity<InvitationResponseDto> inviteTeam(@RequestBody InvitationRequestDto invitationRequestDto) {
         InvitationResponseDto responseInvitationDto = teamService.inviteUserToTeam(invitationRequestDto);
         return new ResponseEntity<>(responseInvitationDto, HttpStatus.CREATED);
     }
 
     // 초대 처리 엔드포인트
-    @PostMapping("/invite/processing")
+    @PostMapping("/invitations/{invitationId}")
     public ResponseEntity<InvitationSetResponseDto> setInvitation(@RequestBody InvitationSetRequestDto invitationSetRequestDto) {
         log.info("Controller received: invitationId={}, isAccept={}",
                 invitationSetRequestDto.getInvitationId(), invitationSetRequestDto.isAccept());
@@ -73,15 +73,15 @@ public class RestTeamController {
     }
 
     //초대받은 모든 팀 목록 조회 엔드포인트
-    @GetMapping("/user/{userId}/all")
+    @GetMapping("/users/{userId}/invitations")
     public ResponseEntity<List<ResponseTeamInvitationIdDto>> getAllTeamsByUserId(@PathVariable Long userId) {
         List<ResponseTeamInvitationIdDto> teams = teamService.getAllTeamsByUserId(userId);
         return ResponseEntity.ok(teams);
     }
 
     //팀원 삭제 엔드포인트 (+)// -> temaid와 userid를 사용하여 해당 팀과 사용자 간의 관계를 삭제하는 방식 -> 팀에서 특정 사용자 삭제
-    @DeleteMapping("/{teamId}/members/{userId}/requester/{requesterId}")
-    public ResponseEntity<ErrorResponse> removeTeamMember(@PathVariable Long teamId, @PathVariable Long userId, @PathVariable Long requesterId) {
+    @DeleteMapping("/{teamId}/members/{userId}")    //requesterId는 요청 본문에 포함
+    public ResponseEntity<ErrorResponse> removeTeamMember(@PathVariable Long teamId, @PathVariable Long userId, @PathVariable Long requesterId) {   //(-) pathvariable 3개 받으면 dto가 더 깔끔?? > 어떤 경우에 pathvarible 을 쓰고, dto를 쓰는지..***
         log.info("removeTeamMember called with teamId={}, userId={}, requesterId={}", teamId, userId, requesterId);
 
         String message = teamService.removeTeamMember(teamId, userId, requesterId);
@@ -90,7 +90,7 @@ public class RestTeamController {
     }
 
     //팀 삭제 엔드포인트(+)
-    @DeleteMapping("/{teamId}/requester/{requesterId}")
+    @DeleteMapping("/{teamId}") //requesterId는 요청 본문에 포함
     public ResponseEntity<ErrorResponse> removeTeam(@PathVariable Long teamId, @PathVariable Long requesterId) {
        String message = teamService.removeTeam(teamId, requesterId);
         ErrorResponse errorResponse = new ErrorResponse("SUCCESS", message, HttpStatus.OK.value());
@@ -133,7 +133,7 @@ public class RestTeamController {
         return new ResponseEntity<>(members, HttpStatus.OK);
     }
     //유저가 속한 전체 팀 목록 조회
-    @GetMapping("/user/{userId}/teams")
+    @GetMapping("/users/{userId}/teams")
     public ResponseEntity<List<CustomResponseTeamDto>> getTeamsByUserId(@PathVariable Long userId) {
         log.info("API /user/{}/all called", userId);
         List<CustomResponseTeamDto> teams = teamService.getTeamsByUserId(userId);
