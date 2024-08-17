@@ -42,15 +42,22 @@ public class RestTeamController {
 //    }
     //클라이언트가  JSON 데이터를 포함하는 하나의 multipart/form-data 요청을 보내야함 -> json 데이터를 파일과 함께 전송해야하기 때문에 코드가 복잡해짐
 
-    //팀 스페이스 생성
-    @PostMapping
-    public ResponseEntity<ResponseTeamDto> createTeam(@RequestPart("team") RequestTeamDto requestTeamDto,
-                                                      @RequestPart(value = "image", required = false) MultipartFile image) {
-        ResponseTeamDto responseTeamDto = teamService.createTeam(requestTeamDto, image);
-        return new ResponseEntity<>(responseTeamDto, HttpStatus.CREATED);
+    //팀 스페이스 생성 (json 데이터와 파일을 함께 보내는 방법)
+//    @PostMapping
+//    public ResponseEntity<ResponseTeamDto> createTeam(@RequestPart("team") RequestTeamDto requestTeamDto,
+//                                                      @RequestPart(value = "image", required = false) MultipartFile image) {
+//        ResponseTeamDto responseTeamDto = teamService.createTeam(requestTeamDto, image);
+//        return new ResponseEntity<>(responseTeamDto, HttpStatus.CREATED);
+//    }
+    //이 방식은 파일이 없는 경우에도 multipart/form-data 형식을 사용해야함 -> 파일 처리와 json 데이터 처리가 혼합 -> 복잡
 
+
+    //팀 스페이스 생성 (json 데이터)
+    @PostMapping
+    public ResponseEntity<ResponseTeamDto> createTeam(@RequestBody RequestTeamDto requestTeamDto) {
+        ResponseTeamDto responseTeamDto = teamService.createTeam(requestTeamDto, null);
+        return new ResponseEntity<>(responseTeamDto, HttpStatus.CREATED);
     }
-//        이 방식은 파일이 없는 경우에도 multipart/form-data 형식을 사용해야함 -> 파일 처리와 json 데이터 처리가 혼합 -> 복잡
 
     /* ______________________________Invitation___________________________________________________ */
 
@@ -73,7 +80,7 @@ public class RestTeamController {
     }
 
     //초대받은 모든 팀 목록 조회 엔드포인트
-    @GetMapping("/users/{userId}/invitations")
+    @GetMapping("/user/{userId}/invitations")
     public ResponseEntity<List<ResponseTeamInvitationIdDto>> getAllTeamsByUserId(@PathVariable Long userId) {
         List<ResponseTeamInvitationIdDto> teams = teamService.getAllTeamsByUserId(userId);
         return ResponseEntity.ok(teams);
