@@ -12,13 +12,4 @@ public class RequestTeamDto {
     private String description;
     private long creatorId;
 
-
-//    @Override
-//    public String toString() {
-//        return "RequestTeamDto{" +
-//                "name='" + name + '\'' +
-//                ", description='" + description + '\'' +
-//                ", creatorId=" + creatorId +
-//                ", imageUrl='" + imageUrl + '\'' +
-//                '}';
-    }
+}
